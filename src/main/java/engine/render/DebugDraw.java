@@ -1,0 +1,191 @@
+package engine.render;
+
+import engine.util.AssetPool;
+import engine.util.Color;
+import engine.util.EnginePreferences;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static engine.util.Utils.rotateVertex;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.GL_FLOAT;
+import static org.lwjgl.opengl.GL15.GL_LINES;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.glDrawArrays;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL15.glLineWidth;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+
+public class DebugDraw {
+    private static final int MAX_LINES = 1024;
+
+    private static final int INDICES_COUNT = 6;
+
+    private static final List<Line> lines = new ArrayList<>(MAX_LINES);
+
+    private static final float[] vertexArray = new float[MAX_LINES * INDICES_COUNT * 2];
+
+    private static final Shader shader = AssetPool.getShader("asset/shader/debugLine.glsl");
+
+    private static int vaoID;
+
+    private static int vboID;
+
+    private static boolean started;
+
+    public static void start() {
+        vaoID = glGenVertexArrays();
+        glBindVertexArray(vaoID);
+
+        vboID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferData(GL_ARRAY_BUFFER, vertexArray.length * Float.BYTES, GL_DYNAMIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, INDICES_COUNT * Float.BYTES, 0);
+        glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, INDICES_COUNT * Float.BYTES, 3 * Float.BYTES);
+        glEnableVertexAttribArray(1);
+
+        glLineWidth(2.0f);
+    }
+
+    public static void beginFrame() {
+        if (!started) {
+            start();
+            started = true;
+        }
+
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).beginFrame() < 0) {
+                lines.remove(i--);
+            }
+        }
+    }
+
+
+    public static void draw() {
+        if (lines.isEmpty()) return;
+
+        int index = 0;
+        for (Line line : lines) {
+            for (int i = 0; i < 2; i++) {
+                Vector2f position = i == 0 ? line.getFrom() : line.getTo();
+                Vector4f color = line.getColor();
+
+                vertexArray[index] = position.x;
+                vertexArray[index + 1] = position.y;
+                vertexArray[index + 2] = line.getzOrder();
+
+                vertexArray[index + 3] = color.x;
+                vertexArray[index + 4] = color.y;
+                vertexArray[index + 5] = color.z;
+                index += INDICES_COUNT;
+            }
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertexArray, 0, lines.size() * INDICES_COUNT * 2));
+
+        shader.use();
+        shader.uploadMat4f("uProjection", Window.getCurrentScene().getCamera().getProjectionMatrix());
+        shader.uploadMat4f("uView", Window.getCurrentScene().getCamera().getViewMatrix());
+
+        glBindVertexArray(vaoID);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glDrawArrays(GL_LINES, 0, lines.size() * INDICES_COUNT * 2);
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glBindVertexArray(0);
+
+        shader.detach();
+    }
+
+    public static void drawLine(Vector2f from, Vector2f to, int zOrder) {
+        drawLine(from, to, zOrder, Color.GREEN, 1);
+    }
+
+    public static void drawLine(Vector2f from, Vector2f to, int zOrder, Color color) {
+        drawLine(from, to, zOrder, color, 1);
+    }
+
+    public static void drawLine(Vector2f from, Vector2f to, int zOrder, Color color, int lifetime) {
+        if (lines.size() >= MAX_LINES) return;
+        DebugDraw.lines.add(new Line(from, to, zOrder, color.asVector(), lifetime));
+    }
+
+    public static void drawBox(Vector2f center, Vector2f size, int zOrder, float rotation) {
+        drawBox(center, size, zOrder, rotation, Color.BLUE, 1);
+    }
+
+    public static void drawBox(Vector2f center, Vector2f size, int zOrder, float rotation, Color color) {
+        drawBox(center, size, zOrder, rotation, color, 1);
+    }
+
+    public static void drawBox(Vector2f center, Vector2f size, int zOrder, float rotation,
+                               Color color, int lifetime) {
+        Vector2f min = new Vector2f(center).sub(new Vector2f(size).mul(0.5f));
+        Vector2f max = new Vector2f(center).add(new Vector2f(size).mul(0.5f));
+
+        Vector2f[] vertices = {
+                new Vector2f(min.x, min.y), new Vector2f(min.x, max.y),
+                new Vector2f(max.x, max.y), new Vector2f(max.x, min.y)
+        };
+
+        if (rotation != 0.0f) {
+            for (Vector2f vertex : vertices) {
+                rotateVertex(vertex, rotation, center);
+            }
+        }
+
+        drawLine(vertices[0], vertices[1], zOrder, color, lifetime);
+        drawLine(vertices[1], vertices[2], zOrder, color, lifetime);
+        drawLine(vertices[2], vertices[3], zOrder, color, lifetime);
+        drawLine(vertices[3], vertices[0], zOrder, color, lifetime);
+    }
+
+    public static void drawCircle(Vector2f center, float radius, int zOrder) {
+        drawCircle(center, radius, zOrder, Color.BLUE, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+    }
+
+    public static void drawCircle(Vector2f center, float radius, int zOrder, Color color) {
+        drawCircle(center, radius, zOrder, color, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+    }
+
+    public static void drawCircle(Vector2f center, float radius, int zOrder, Color color, int lifetime) {
+        drawCircle(center, radius, zOrder, color, lifetime, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+    }
+
+    public static void drawCircle(Vector2f center, float radius, int zOrder, Color color, int lifetime, int segments) {
+        final Vector2f[] points = new Vector2f[segments];
+        float increment = 360f / points.length;
+        float currentAngle = 0;
+
+        for (int i = 0; i < points.length; i++) {
+            Vector2f tmp = new Vector2f(0, radius);
+            rotateVertex(tmp, currentAngle, new Vector2f());
+            points[i] = new Vector2f(tmp).add(center);
+
+            if (i > 0) {
+                drawLine(points[i - 1], points[i], zOrder, color, lifetime);
+            }
+            currentAngle += increment;
+        }
+
+        drawLine(points[points.length - 1], points[0], zOrder, color, lifetime);
+    }
+}

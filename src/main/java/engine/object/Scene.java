@@ -1,0 +1,136 @@
+package engine.object;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import engine.component.Component;
+import engine.render.Camera;
+import engine.render.Renderer;
+import engine.util.serializer.ComponentSerializer;
+import engine.util.serializer.GameObjectSerializer;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static engine.util.EnginePreferences.SAVE_FILE_NAME;
+
+public abstract class Scene {
+
+    protected Renderer renderer = new Renderer();
+
+    protected Camera camera;
+
+    private boolean isRunning = false;
+
+    protected transient boolean isLevelLoaded;
+
+    protected List<GameObject> gameObjects = new ArrayList<>();
+
+    private transient Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Component.class, new ComponentSerializer())
+            .registerTypeAdapter(GameObject.class, new GameObjectSerializer())
+            .create();
+
+    public Scene() {
+    }
+
+    public void init() {
+
+    }
+
+    public void start() {
+        for (GameObject go : gameObjects) {
+            go.start();
+            renderer.add(go);
+        }
+        isRunning = true;
+    }
+
+    public void addGameObjectToScene(GameObject go) {
+        if (!isRunning) {
+            gameObjects.add(go);
+        } else {
+            gameObjects.add(go);
+            go.start();
+            renderer.add(go);
+        }
+    }
+
+    public abstract void update(float dt);
+
+    public abstract void render();
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public void saveSceneData() {
+        try {
+            FileWriter writer = new FileWriter(SAVE_FILE_NAME);
+            List<GameObject> gameObjectsToSerialize = new ArrayList<>();
+            for (GameObject gameObject : gameObjects) {
+                if (gameObject.isDoSerialize()) {
+                    gameObjectsToSerialize.add(gameObject);
+                }
+            }
+            writer.write(gson.toJson(gameObjectsToSerialize));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadSceneData() {
+        Path path = Paths.get(SAVE_FILE_NAME);
+        if (!Files.exists(path)) return;
+
+        String inFile = "";
+        try {
+            inFile = new String(Files.readAllBytes(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (!inFile.isEmpty()) {
+            int maxComponentId = -1;
+            int maxGameObjectId = -1;
+            GameObject[] objects = gson.fromJson(inFile, GameObject[].class);
+            for (GameObject gameObject : objects) {
+                addGameObjectToScene(gameObject);
+                for (Component c : gameObject.getAllComponents()) {
+                    if (c.getUid() > maxComponentId) {
+                        maxComponentId = c.getUid();
+                    }
+                }
+                if (gameObject.getUid() > maxGameObjectId) {
+                    maxGameObjectId = gameObject.getUid();
+                }
+            }
+            Component.init(++maxComponentId);
+            GameObject.init(++maxGameObjectId);
+
+            isLevelLoaded = true;
+        }
+    }
+
+    public Optional<GameObject> getGameObjectByName(String name) {
+        throw new RuntimeException();
+//        return Optional.empty();
+    }
+
+    // TODO: 13.07.2024 возможно добавить в Gameobject переопределённый equals, который сравнивает только id, и вместо листа всех игровых объектов на сцене использовать хешсет либо хешмапу<id, Gameobject>, для ускоренного поиска
+    public Optional<GameObject> getGameObjectById(int id) {
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.getUid() == id) {
+                return Optional.of(gameObject);
+            }
+        }
+
+        return Optional.empty();
+    }
+}

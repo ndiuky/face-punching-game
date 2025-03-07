@@ -1,4 +1,4 @@
-package сomponent;
+package component;
 
 import engine.component.Component;
 import engine.util.Utils;

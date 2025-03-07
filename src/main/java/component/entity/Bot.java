@@ -1,24 +1,19 @@
-package сomponent.entity;
+package component.entity;
 
 import engine.component.Component;
-import gameComponent.GameComponent;
+import game_component.GameComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Entity extends Component {
+public abstract class Bot extends Component {
 
     protected List<GameComponent> gameComponents = new ArrayList<>();
 
-//    protected Vector2f velocity = new Vector2f(0,0);
-
     //TODO: добавить коллайдер
 
-
-    public Entity addGameComponent(GameComponent gameComponent) {
+    public Bot addGameComponent(GameComponent gameComponent) {
         gameComponents.add(gameComponent);
         return this;
     }
-
-
 }

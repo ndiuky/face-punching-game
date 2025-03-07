@@ -2,7 +2,7 @@ package engine.util.listener;
 
 public interface InputEventListener {
 
-    void OneMousePress(int button);
+    void OneMousePress(final int button);
 
-    void onMouseRelease(int button);
+    void onMouseRelease(final int button);
 }

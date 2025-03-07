@@ -15,9 +15,9 @@ import engine.render.Window;
 import engine.util.AssetPool;
 import engine.util.Color;
 import engine.util.listener.KeyListener;
-import gameComponent.moving.CMoveStraight;
-import сomponent.Item;
-import сomponent.entity.Player;
+import game_component.moving.CMoveStraight;
+import component.Item;
+import component.entity.Player;
 import org.joml.Vector2f;
 
 import static engine.util.EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID;

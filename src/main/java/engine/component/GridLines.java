@@ -36,11 +36,11 @@ public class GridLines extends Component {
             int y = firstY + (EnginePreferences.GRID_SIZE * i);
 
             if (i < horizontalLinesAmount) {
-                DebugDraw.drawLine(new Vector2f(firstX, y), new Vector2f(firstX + width, y), -9, Color.GREY);
+                DebugDraw.drawLine(new Vector2f(firstX, y), new Vector2f(firstX + width, y), 9, Color.GREY);
             }
 
             if (i < verticalLinesAmount) {
-                DebugDraw.drawLine(new Vector2f(x, firstY), new Vector2f(x, firstY + height), -9, Color.GREY);
+                DebugDraw.drawLine(new Vector2f(x, firstY), new Vector2f(x, firstY + height), 9, Color.GREY);
             }
 
         }

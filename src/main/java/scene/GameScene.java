@@ -15,17 +15,13 @@ import engine.render.Window;
 import engine.util.AssetPool;
 import engine.util.Color;
 import engine.util.listener.KeyListener;
-import gameComponent.Item;
-import gameComponent.PlayerControls;
-import org.joml.Math;
+import gameComponent.moving.CMoveStraight;
+import сomponent.Item;
+import сomponent.entity.Player;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
-import static engine.util.EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH;
-import static engine.util.EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_LOW;
 import static engine.util.EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class GameScene extends Scene {
@@ -51,7 +47,7 @@ public class GameScene extends Scene {
 
 
         GameObject player = new GameObject("player", new Transform(new Vector2f(0,0), new Vector2f(40, 40)), 5)
-                .addComponent(new PlayerControls())
+                .addComponent(new Player().addGameComponent(new CMoveStraight()))
                 .addComponent(new ItemPickUp(60))
                 .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(0)));
 
@@ -92,10 +88,11 @@ public class GameScene extends Scene {
             glfwSetWindowShouldClose(Window.getGlfwWindow(), true);
         }
 
-        DebugDraw.drawBox(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), new Vector2f(Window.getWidth()/4+10, Window.getHeight()/4),1, 0, Color.RED);
-        DebugDraw.drawCircle(new Vector2f(256, 256), 40 * Math.sin((float) glfwGetTime() * 2 + 0.5f) + 50, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
-        DebugDraw.drawCircle(new Vector2f(256, 256), 40 * Math.sin((float) glfwGetTime() * 2 + 1) + 50, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-        DebugDraw.drawCircle(new Vector2f(256, 256), 40 * Math.sin((float) glfwGetTime() * 2 + 1.5f) + 50, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_LOW);
+        DebugDraw.drawBox(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), new Vector2f(Window.getWidth()/4, Window.getHeight()/4),5, 0, Color.RED);
+        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
 
         for (GameObject gameObject : gameObjects) {
             gameObject.update(dt);

@@ -1,4 +1,4 @@
-package gameComponent;
+package сomponent;
 
 import engine.component.Component;
 import engine.util.Utils;

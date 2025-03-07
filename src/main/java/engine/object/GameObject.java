@@ -98,4 +98,8 @@ public class GameObject {
     public void setDoSerialize(boolean doSerialize) {
         this.doSerialize = doSerialize;
     }
+
+    public String getName() {
+        return name;
+    }
 }

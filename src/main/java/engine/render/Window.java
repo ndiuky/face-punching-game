@@ -197,7 +197,8 @@ public class Window {
 
             if (dt >= 0) {
                 DebugDraw.draw();
-                Renderer.bindShader(defaultShader);
+//                Renderer.bindShader(defaultShader);
+                Renderer.bindShader(pickingShader);
                 currentScene.update(dt);
                 currentScene.render();
             }

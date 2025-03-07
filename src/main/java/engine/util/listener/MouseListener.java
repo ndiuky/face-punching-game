@@ -1,6 +1,8 @@
 package engine.util.listener;
 
+import engine.object.GameObject;
 import engine.render.Camera;
+import engine.render.PickingTexture;
 import engine.render.Window;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -61,7 +63,7 @@ public class MouseListener {
         get().lastX = get().xPos;
         get().lastY = get().yPos;
         get().xPos = xPos;
-        get().yPos = yPos;
+        get().yPos = Window.getHeight() - yPos;
         get().isDragging = get().mouseButtonPressed[0] || get().mouseButtonPressed[1] || get().mouseButtonPressed[2];
     }
 
@@ -96,6 +98,12 @@ public class MouseListener {
         get().scrollY = 0;
         get().lastX = get().xPos;
         get().lastY = get().yPos;
+    }
+
+    public static GameObject getGameObjectUnderCursor(){
+        System.out.println(getX() + " " + getY());
+        System.out.println(getOrthoX() + " " + getOrthoY());
+        return Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int)getX(), (int)getY()));
     }
 
     public static float getX() {

@@ -124,13 +124,13 @@ public abstract class Scene {
     }
 
     // TODO: 13.07.2024 возможно добавить в Gameobject переопределённый equals, который сравнивает только id, и вместо листа всех игровых объектов на сцене использовать хешсет либо хешмапу<id, Gameobject>, для ускоренного поиска
-    public Optional<GameObject> getGameObjectById(int id) {
+    public GameObject getGameObjectById(int id) {
         for (GameObject gameObject : gameObjects) {
             if (gameObject.getUid() == id) {
-                return Optional.of(gameObject);
+                return gameObject;
             }
         }
 
-        return Optional.empty();
+        return null;
     }
 }

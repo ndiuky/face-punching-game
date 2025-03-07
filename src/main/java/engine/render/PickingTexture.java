@@ -33,11 +33,11 @@ import static org.lwjgl.opengl.GL30.glTexParameteri;
 
 public class PickingTexture {
 
-    private int pickingTextureId;
+    private static int pickingTextureId;
 
-    private int fbo;
+    private static int fbo;
 
-    private int depthTexture;
+    private static int depthTexture;
 
     public PickingTexture(int width, int height) {
         if (!init(width, height)) {
@@ -93,7 +93,7 @@ public class PickingTexture {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     }
 
-    public int readPixel(int x, int y) {
+    public static int readPixel(int x, int y) {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
 

@@ -9,15 +9,9 @@ public class Action {
     private Vector2f targetPos;
 
     public void perform(){
-
+//        switch (type){
+//            case MOVE -> ;
+//        }
     }
 
-    public enum ActionType{
-
-        MOVE,
-        ATTACK,
-        BLOCK,
-
-        ;
-    }
 }

@@ -12,7 +12,7 @@ public abstract class Bot extends Component {
 
     //TODO: добавить коллайдер
 
-    public Bot addGameComponent(GameComponent gameComponent) {
+    public final Bot addGameComponent(GameComponent gameComponent) {
         gameComponents.add(gameComponent);
         return this;
     }

@@ -8,7 +8,9 @@ import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-import scene.GameScene;
+import scene.BoxingRingScene;
+import scene.SceneSelectionScene;
+import scene.TestingScene;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
@@ -81,9 +83,12 @@ public class Window {
     }
 
     public static void changeScene(int newScene) {
+        System.out.println("Changing scene to " + newScene);
+
         currentScene = switch (newScene) {
-            case 0 -> new GameScene();
-//            case 1 -> new LevelScene();
+            case 0 -> new TestingScene();
+            case 1 -> new BoxingRingScene();
+            case 2 -> new SceneSelectionScene();
             default -> {
                 throw new RuntimeException("Unknown scene '" + newScene + "'");
             }
@@ -162,7 +167,7 @@ public class Window {
         glViewport(0, 0, width, height);
 
         //TODO: убрать хардкод
-        Window.changeScene(0);
+        Window.changeScene(2);
     }
 
     public void loop() {
@@ -197,8 +202,8 @@ public class Window {
 
             if (dt >= 0) {
                 DebugDraw.draw();
-//                Renderer.bindShader(defaultShader);
-                Renderer.bindShader(pickingShader);
+                Renderer.bindShader(defaultShader);
+//                Renderer.bindShader(pickingShader);
                 currentScene.update(dt);
                 currentScene.render();
             }

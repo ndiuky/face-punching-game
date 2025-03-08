@@ -1,6 +1,6 @@
-package engine.util.listener;
+package engine.event;
 
-public interface InputEventListener {
+public interface MouseEventListener {
 
     void OneMousePress(final int button);
 

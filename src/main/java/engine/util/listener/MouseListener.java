@@ -1,5 +1,7 @@
 package engine.util.listener;
 
+import engine.event.MouseEventListener;
+import engine.event.MouseEventProducer;
 import engine.object.GameObject;
 import engine.render.Camera;
 import engine.render.PickingTexture;
@@ -8,15 +10,12 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
-public class MouseListener {
+public class MouseListener implements MouseEventProducer {
 
     // TODO: 23.06.2024 переделать переменные на static чтобы освободить стекфреймы, создаваемые при вызове геттеров
     private static MouseListener instance;
@@ -32,10 +31,6 @@ public class MouseListener {
     private double lastY;
 
     private double lastX;
-
-    private static Map<Integer, List<InputEventListener>> pressListeners = new HashMap<>();
-
-    private static Map<Integer, List<InputEventListener>> releaseListeners = new HashMap<>();
 
     // TODO: 14.06.2024 опустить лимит кнопок до 3, нахуй кому-то больше нажимать?
     private final boolean[] mouseButtonPressed = new boolean[9];
@@ -63,7 +58,7 @@ public class MouseListener {
         get().lastX = get().xPos;
         get().lastY = get().yPos;
         get().xPos = xPos;
-        get().yPos = Window.getHeight() - yPos;
+        get().yPos = yPos;
         get().isDragging = get().mouseButtonPressed[0] || get().mouseButtonPressed[1] || get().mouseButtonPressed[2];
     }
 
@@ -72,7 +67,7 @@ public class MouseListener {
             if (button < get().mouseButtonPressed.length) {
                 get().mouseButtonPressed[button] = true;
 
-                final List<InputEventListener> listeners = pressListeners.get(button);
+                final List<MouseEventListener> listeners = pressListeners.get(button);
                 if (listeners != null) {
                     listeners.forEach(listener -> listener.OneMousePress(button));
                 }
@@ -81,7 +76,7 @@ public class MouseListener {
             get().mouseButtonPressed[button] = false;
             get().isDragging = false;
 
-            final List<InputEventListener> listeners = releaseListeners.get(button);
+            final List<MouseEventListener> listeners = releaseListeners.get(button);
             if (listeners != null) {
                 listeners.forEach(listener -> listener.onMouseRelease(button));
             }
@@ -100,10 +95,10 @@ public class MouseListener {
         get().lastY = get().yPos;
     }
 
-    public static GameObject getGameObjectUnderCursor(){
-        System.out.println(getX() + " " + getY());
-        System.out.println(getOrthoX() + " " + getOrthoY());
-        return Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int)getX(), (int)getY()));
+    public static GameObject getGameObjectUnderCursor() {
+//        System.out.println(getX() + " " + getY());
+//        System.out.println(getOrthoX() + " " + getOrthoY());
+        return Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int) getX(), (int) getY()));
     }
 
     public static float getX() {
@@ -124,14 +119,6 @@ public class MouseListener {
 
     public static float getScreenY() {
         return getY() * Window.getHeight();
-    }
-
-    public static void listenToPress(int button, InputEventListener i) {
-        pressListeners.computeIfAbsent(button, k -> new ArrayList<>()).add(i);
-    }
-
-    public static void listenToRelease(int button, InputEventListener i) {
-        releaseListeners.computeIfAbsent(button, k -> new ArrayList<>()).add(i);
     }
 
     // TODO: 13.07.2024 добавить кеширование вычисленного значение для каждого кадра, и доставать его при запросе в том же кадре. может повысить производительность, если количество запросов за кадр слишком большое. Возможно стоит применять эту технику только при большом объёме вызовов, в ином случае вычислять заново

@@ -1,7 +1,6 @@
 package scene;
 
 import engine.component.GameCamera;
-import engine.component.GridLines;
 import engine.component.ItemPickUp;
 import engine.component.SpriteRenderer;
 import engine.object.GameObject;
@@ -15,16 +14,17 @@ import engine.render.Window;
 import engine.util.AssetPool;
 import engine.util.Color;
 import engine.util.listener.KeyListener;
-import game_component.moving.CMoveStraight;
+import game_component.moving.CMoveArc;
 import component.Item;
 import component.entity.Player;
+import game_component.moving.CMoveStraight;
 import org.joml.Vector2f;
 
 import static engine.util.EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
-public class GameScene extends Scene {
+public class TestingScene extends Scene {
 
     private SpriteSheet sprites;
 
@@ -38,8 +38,7 @@ public class GameScene extends Scene {
 
         camera = new Camera(new Vector2f(0, 0));
         editorGameobject = new GameObject("random GameObject", new Transform(new Vector2f(0, 0), new Vector2f(50, 50)), 1)
-                .addComponent(new GameCamera(camera))
-                .addComponent(new GridLines(camera));
+                .addComponent(new GameCamera(camera));
 
         addGameObjectToScene(editorGameobject);
 
@@ -47,11 +46,18 @@ public class GameScene extends Scene {
 
 
         GameObject player = new GameObject("player", new Transform(new Vector2f(0,0), new Vector2f(40, 40)), 5)
-                .addComponent(new Player().addGameComponent(new CMoveStraight()))
+//                .addComponent(new Player().addGameComponent(new CMoveStraight()))
+                .addComponent(new Player().addGameComponent(new CMoveArc()))
                 .addComponent(new ItemPickUp(60))
                 .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);
+
+//        GameObject dummy = new GameObject("dummy", new Transform(new Vector2f(0,0), new Vector2f(40, 40)), 5)
+//                .addComponent(new Player().addGameComponent(new CMoveArc()))
+//                .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/chip-small.png"))));
+//
+//        addGameObjectToScene(player);
 
 
 
@@ -61,16 +67,6 @@ public class GameScene extends Scene {
 
 
         addGameObjectToScene(item);
-
-//        addGameObjectToScene(
-//                new GameObject("spriteRendererTestGO", new Transform(new Vector2f(10, 10), new Vector2f(10, 10)), 0)
-//                        .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(1)))
-//        );
-
-//        editorGameobject.start();
-//        player.start();
-
-//        gameObjects.get(0).addComponent(new SpriteRenderer().setColor(new Vector4f(1, 0, 0, 0)));
 
         if (isLevelLoaded) {
             return;
@@ -84,26 +80,20 @@ public class GameScene extends Scene {
         camera.adjustProjection();
 
         if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
-            System.out.println("exit");
-            glfwSetWindowShouldClose(Window.getGlfwWindow(), true);
+            Window.changeScene(2);
         }
 
-        DebugDraw.drawBox(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), new Vector2f(Window.getWidth()/4, Window.getHeight()/4),5, 0, Color.RED);
-        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+
+//        DebugDraw.drawBox(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), new Vector2f(Window.getWidth()/4, Window.getHeight()/4),5, 0, Color.RED);
+//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
 
         for (GameObject gameObject : gameObjects) {
             gameObject.update(dt);
         }
     }
-
-    @Override
-    public void render() {
-        this.renderer.render();
-    }
-
 
     private void loadResources() {
         AssetPool.getShader("asset/shader/default.glsl");

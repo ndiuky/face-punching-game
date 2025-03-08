@@ -36,8 +36,6 @@ public class CMoveStraight extends GameComponent {
     private void goToTarget(final float dt) {
         final Vector2f dir = new Vector2f(destination).sub(new Vector2f(bot.gameObject.transform.position));
 
-        System.out.println("GOING TO " + (int) destination.x + ", " + (int) destination.y + ", curr pos " + (int) bot.gameObject.transform.position.x + ", " + (int) bot.gameObject.transform.position.y);
-
         float distance = new Vector2f(dir).absolute().length();
 
         if (distance == 0f || distance < new Vector2f(dir).normalize().mul(movementSpeed * dt).absolute().length()) {

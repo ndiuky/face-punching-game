@@ -1,9 +1,15 @@
 package engine.util.listener;
 
+import engine.event.KeyboardEventListener;
+import engine.event.KeyboardEventProducer;
+import engine.event.MouseEventListener;
+
+import java.util.List;
+
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
-public class KeyListener {
+public class KeyListener implements KeyboardEventProducer {
 
     private static KeyListener instance;
 
@@ -22,8 +28,18 @@ public class KeyListener {
     public static void keyCallback(long window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS) {
             get().keyPressed[key] = true;
+
+            final List<KeyboardEventListener> listeners = pressListeners.get(key);
+            if (listeners != null) {
+                listeners.forEach(listener -> listener.onKeyPress(key));
+            }
         } else if (action == GLFW_RELEASE) {
             get().keyPressed[key] = false;
+
+            final List<KeyboardEventListener> listeners = releaseListeners.get(key);
+            if (listeners != null) {
+                listeners.forEach(listener -> listener.onKeyRelease(key));
+            }
         }
     }
 

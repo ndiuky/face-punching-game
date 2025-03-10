@@ -61,7 +61,20 @@ public abstract class Scene {
         }
     }
 
-    public abstract void update(float dt);
+    public final void update(float dt) {
+        this.camera.adjustProjection();
+
+        for (int i=0; i < gameObjects.size(); i++) {
+            GameObject go = gameObjects.get(i);
+            go.update(dt);
+
+            if (go.isDead()) {
+                gameObjects.remove(i);
+                this.renderer.destroyGameObject(go);
+                i--;
+            }
+        }
+    }
 
     public void render(){
         renderer.render();
@@ -120,9 +133,14 @@ public abstract class Scene {
         }
     }
 
-    public Optional<GameObject> getGameObjectByName(String name) {
-        throw new RuntimeException();
-//        return Optional.empty();
+    public GameObject getGameObjectByName(String name) {
+        for (GameObject gameObject : gameObjects) {
+            if (name.equals(gameObject.getName())){
+                return gameObject;
+            }
+        }
+
+        return null;
     }
 
     // TODO: 13.07.2024 возможно добавить в Gameobject переопределённый equals, который сравнивает только id, и вместо листа всех игровых объектов на сцене использовать хешсет либо хешмапу<id, Gameobject>, для ускоренного поиска
@@ -134,5 +152,11 @@ public abstract class Scene {
         }
 
         return null;
+    }
+
+    public void destroy() {
+        for (GameObject go : gameObjects) {
+            go.destroy();
+        }
     }
 }

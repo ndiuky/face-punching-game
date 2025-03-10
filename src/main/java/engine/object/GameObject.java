@@ -20,6 +20,8 @@ public class GameObject {
 
     private int zIndex;
 
+    private boolean isDead = false;
+
     private boolean doSerialize = true;
 
     public GameObject(String name, Transform transform, int zIndex) {
@@ -79,6 +81,13 @@ public class GameObject {
         }
     }
 
+    public void destroy() {
+        isDead = true;
+        for (int i=0; i < components.size(); i++) {
+            components.get(i).destroy();
+        }
+    }
+
     public List<Component> getAllComponents() {
         return components;
     }
@@ -101,5 +110,9 @@ public class GameObject {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isDead() {
+        return isDead;
     }
 }

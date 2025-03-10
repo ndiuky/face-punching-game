@@ -31,4 +31,8 @@ public abstract class Component {
     public int getUid() {
         return uid;
     }
+
+    public void destroy() {
+
+    }
 }

@@ -6,6 +6,7 @@ import engine.util.EnginePreferences;
 import engine.util.Utils;
 import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import scene.BoxingRingScene;
@@ -84,6 +85,10 @@ public class Window {
 
     public static void changeScene(int newScene) {
         System.out.println("Changing scene to " + newScene);
+
+        if (currentScene != null) {
+            currentScene.destroy();
+        }
 
         currentScene = switch (newScene) {
             case 0 -> new TestingScene();
@@ -231,6 +236,10 @@ public class Window {
         // TODO: 23.06.2024 убрать хардкод
         return 16f / 9f;
     }
+
+//    public static Vector2f getMiddleWindowPoint(){
+//
+//    }
 
     public static Scene getCurrentScene() {
         return currentScene;

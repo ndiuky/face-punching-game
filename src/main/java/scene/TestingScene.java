@@ -1,5 +1,8 @@
 package scene;
 
+import component.Item;
+import component.controls.TestingSceneControls;
+import component.entity.Player;
 import engine.component.GameCamera;
 import engine.component.ItemPickUp;
 import engine.component.SpriteRenderer;
@@ -9,20 +12,9 @@ import engine.object.Sprite;
 import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
-import engine.render.DebugDraw;
-import engine.render.Window;
 import engine.util.AssetPool;
-import engine.util.Color;
-import engine.util.listener.KeyListener;
-import game_component.moving.CMoveArc;
-import component.Item;
-import component.entity.Player;
-import game_component.moving.CMoveStraight;
+import game_component.move.CMoveArc;
 import org.joml.Vector2f;
-
-import static engine.util.EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class TestingScene extends Scene {
 
@@ -38,27 +30,19 @@ public class TestingScene extends Scene {
 
         camera = new Camera(new Vector2f(0, 0));
         editorGameobject = new GameObject("random GameObject", new Transform(new Vector2f(0, 0), new Vector2f(50, 50)), 1)
-                .addComponent(new GameCamera(camera));
+                .addComponent(new GameCamera(camera))
+                .addComponent(new TestingSceneControls());
 
         addGameObjectToScene(editorGameobject);
 
 
-
-
-        GameObject player = new GameObject("player", new Transform(new Vector2f(0,0), new Vector2f(40, 40)), 5)
+        GameObject player = new GameObject("player", new Transform(new Vector2f(0, 0), new Vector2f(40, 40)), 5)
 //                .addComponent(new Player().addGameComponent(new CMoveStraight()))
-                .addComponent(new Player().addGameComponent(new CMoveArc()))
+                .addComponent(new Player().setActionGameComponent(new CMoveArc()))
                 .addComponent(new ItemPickUp(60))
                 .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);
-
-//        GameObject dummy = new GameObject("dummy", new Transform(new Vector2f(0,0), new Vector2f(40, 40)), 5)
-//                .addComponent(new Player().addGameComponent(new CMoveArc()))
-//                .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/chip-small.png"))));
-//
-//        addGameObjectToScene(player);
-
 
 
         GameObject item = new GameObject("item", new Transform(new Vector2f(500, 500), new Vector2f(25, 25)), 1)
@@ -70,28 +54,6 @@ public class TestingScene extends Scene {
 
         if (isLevelLoaded) {
             return;
-        }
-    }
-
-    @Override
-    public void update(final float dt) {
-
-        // TODO: 13.07.2024 перенести вызов adjustProjection в более подходящее место, нет смысла вызывать его каждый кадр
-        camera.adjustProjection();
-
-        if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
-            Window.changeScene(2);
-        }
-
-
-//        DebugDraw.drawBox(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), new Vector2f(Window.getWidth()/4, Window.getHeight()/4),5, 0, Color.RED);
-//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-//        DebugDraw.drawCircle(new Vector2f(Window.getWidth()/4, Window.getHeight()/4), 40, 0, Color.GREEN, 1, DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-
-        for (GameObject gameObject : gameObjects) {
-            gameObject.update(dt);
         }
     }
 

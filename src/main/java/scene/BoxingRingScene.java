@@ -1,6 +1,10 @@
 package scene;
 
+import component.controls.RingControls;
+import component.entity.Dummy;
+import component.entity.Player;
 import engine.component.GameCamera;
+import engine.component.ItemPickUp;
 import engine.component.SpriteRenderer;
 import engine.object.GameObject;
 import engine.object.Scene;
@@ -8,46 +12,53 @@ import engine.object.Sprite;
 import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
-import engine.render.Window;
 import engine.util.AssetPool;
-import engine.util.listener.KeyListener;
+import game_component.attack.CForwardAttack;
+import game_component.move.CMoveStraight;
 import org.joml.Vector2f;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-
 public class BoxingRingScene extends Scene {
+
+    private SpriteSheet sprites;
+
+    private GameObject player;
+
+    private GameObject boxingRing;
 
     @Override
     public void init() {
         loadResources();
 
+        sprites = AssetPool.getSpritesheet("asset/texture/test-sprite-sheet.png");
+
         camera = new Camera(new Vector2f(0, 0));
         GameObject cameraGO = new GameObject("camera", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), 1)
-                .addComponent(new GameCamera(camera));
+                .addComponent(new GameCamera(camera))
+                .addComponent(new RingControls());
 
         addGameObjectToScene(cameraGO);
 
-        GameObject boxingRing = new GameObject("boxing ring", new Transform(new Vector2f(0, 0), new Vector2f(512, 512)), -1)
+        boxingRing = new GameObject("boxingRing", new Transform(new Vector2f(0, 0), new Vector2f(512, 512)), -1)
                 .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/boxing-ring.png"))
                 ));
 
         addGameObjectToScene(boxingRing);
-    }
 
-    @Override
-    public void update(final float dt) {
+        player = new GameObject("player", new Transform(new Vector2f(0, -128), new Vector2f(40, 40)), 5)
+                .addComponent(new Player()
+                        .setActionGameComponent(new CMoveStraight())
+                        .setActionGameComponent(new CForwardAttack()))
+//                .addComponent(new Player().addGameComponent(new CMoveArc()))
+                .addComponent(new ItemPickUp(60))
+                .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(0)));
 
-        camera.adjustProjection();
+        addGameObjectToScene(player);
 
-        if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
-            Window.changeScene(2);
-        }
+        GameObject dummy = new GameObject("dummy", new Transform(new Vector2f(0, 128), new Vector2f(50, 50)), 4)
+                .addComponent(new Dummy())
+                .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/dummy.png"))));
 
-
-
-        for (GameObject gameObject : gameObjects) {
-            gameObject.update(dt);
-        }
+        addGameObjectToScene(dummy);
     }
 
     private void loadResources() {

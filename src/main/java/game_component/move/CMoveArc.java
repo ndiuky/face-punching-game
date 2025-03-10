@@ -1,10 +1,6 @@
-package game_component.moving;
+package game_component.move;
 
 import component.entity.Bot;
-import controllerAttiribute.ActionType;
-import engine.render.DebugDraw;
-import engine.util.listener.MouseListener;
-import game_component.GameComponent;
 import org.joml.Vector2f;
 
 import java.util.ArrayDeque;
@@ -12,7 +8,7 @@ import java.util.ArrayDeque;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 
-public class CMoveArc extends GameComponent {
+public class CMoveArc extends MoveGameComponent {
 
     private ArrayDeque<Vector2f> path = new ArrayDeque<>();
 
@@ -30,12 +26,6 @@ public class CMoveArc extends GameComponent {
     private boolean isAtTargetDestination = true;
 
     @Override
-    public void init(final Bot bot) {
-        actionType = ActionType.MOVE;
-        this.bot = bot;
-    }
-
-    @Override
     public void update(final float dt) {
         if (!isAtTargetDestination) {
             followPath(dt);
@@ -43,15 +33,21 @@ public class CMoveArc extends GameComponent {
     }
 
     @Override
-    public void onClick(final int button, final Vector2f clickPos) {
+    public void executeMovement(final int button, final Vector2f position) {
         if (path.isEmpty()) {
             if (button == GLFW_MOUSE_BUTTON_1) {
-                calculatePath(clickPos, true);
+                calculatePath(position, true);
             } else if (button == GLFW_MOUSE_BUTTON_2) {
-                calculatePath(clickPos, false);
+                calculatePath(position, false);
             }
-//            DebugDraw.drawPath(path.toArray(Vector2f[]::new), 120);
         }
+    }
+
+    @Override
+    public void stopExecution() {
+        path.clear();
+        currentDestination = null;
+        isAtTargetDestination = true;
     }
 
     private void followPath(final float dt) {

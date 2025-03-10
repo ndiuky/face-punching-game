@@ -69,7 +69,7 @@ public class MouseListener implements MouseEventProducer {
 
                 final List<MouseEventListener> listeners = pressListeners.get(button);
                 if (listeners != null) {
-                    listeners.forEach(listener -> listener.OneMousePress(button));
+                    listeners.forEach(listener -> listener.onMousePress(button));
                 }
             }
         } else if (action == GLFW_RELEASE && button < get().mouseButtonPressed.length) {
@@ -99,6 +99,10 @@ public class MouseListener implements MouseEventProducer {
 //        System.out.println(getX() + " " + getY());
 //        System.out.println(getOrthoX() + " " + getOrthoY());
         return Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int) getX(), (int) getY()));
+    }
+
+    public static float getRelativeAngle(Vector2f position) {
+        return (float) (Math.atan2(position.x - getOrthoX(), position.y - getOrthoY()) * 180 / Math.PI);
     }
 
     public static float getX() {

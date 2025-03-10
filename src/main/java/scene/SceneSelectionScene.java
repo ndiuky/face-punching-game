@@ -1,25 +1,15 @@
 package scene;
 
-import engine.component.GameCamera;
+import component.controls.SelectionControls;
 import engine.component.SpriteRenderer;
-import engine.event.MouseEventListener;
 import engine.object.GameObject;
 import engine.object.Scene;
 import engine.object.Sprite;
 import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
-import engine.render.Window;
 import engine.util.AssetPool;
-import engine.util.listener.KeyListener;
-import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
-
-import static engine.event.MouseEventProducer.listenToPress;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class SceneSelectionScene extends Scene {
 
@@ -28,7 +18,8 @@ public class SceneSelectionScene extends Scene {
         loadResources();
 
         camera = new Camera(new Vector2f(0, 0));
-        GameObject cameraGO = new GameObject("camera", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), 1);
+        GameObject cameraGO = new GameObject("camera", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), 1)
+                .addComponent(new SelectionControls());
 
         addGameObjectToScene(cameraGO);
         GameObject ringSelectGO = new GameObject("ring select", new Transform(new Vector2f(200, 300), new Vector2f(256, 256)), -1)
@@ -40,32 +31,6 @@ public class SceneSelectionScene extends Scene {
                 .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/chip-small.png"))));
 
         addGameObjectToScene(testingSelectGO);
-    }
-
-    @Override
-    public void update(final float dt) {
-
-        camera.adjustProjection();
-
-        if (KeyListener.isKeyPressed(GLFW_KEY_BACKSPACE)) {
-            System.out.println("exit");
-            glfwSetWindowShouldClose(Window.getGlfwWindow(), true);
-        } else if(MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_1)){
-            final GameObject go;
-            if ((go = MouseListener.getGameObjectUnderCursor()) != null) {
-                if (go.getName().equals("ring select")){
-                    Window.changeScene(1);
-                } else if(go.getName().equals("testing select")){
-                    Window.changeScene(0);
-                }
-            }
-        }
-
-
-
-        for (GameObject gameObject : gameObjects) {
-            gameObject.update(dt);
-        }
     }
 
     private void loadResources() {

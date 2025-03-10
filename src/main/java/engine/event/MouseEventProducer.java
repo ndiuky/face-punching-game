@@ -11,12 +11,11 @@ public interface MouseEventProducer {
 
     Map<Integer, List<MouseEventListener>> releaseListeners = new HashMap<>();
 
-    static void listenToPress(int button, MouseEventListener i) {
+    static void listenToMousePress(int button, MouseEventListener i) {
         pressListeners.computeIfAbsent(button, k -> new ArrayList<>()).add(i);
     }
 
-    static void listenToRelease(int button, MouseEventListener i) {
+    static void listenToMouseRelease(int button, MouseEventListener i) {
         releaseListeners.computeIfAbsent(button, k -> new ArrayList<>()).add(i);
     }
-
 }

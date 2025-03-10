@@ -1,23 +1,15 @@
-package game_component.moving;
+package game_component.move;
 
 import component.entity.Bot;
-import controllerAttiribute.ActionType;
-import game_component.GameComponent;
 import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
-public class CMoveStraight extends GameComponent {
+public class CMoveStraight extends MoveGameComponent {
 
     private Vector2f destination;
 
     private float movementSpeed = 400;
-
-    @Override
-    public void init(Bot bot) {
-        actionType = ActionType.MOVE;
-        this.bot = bot;
-    }
 
     @Override
     public void update(final float dt) {
@@ -27,12 +19,18 @@ public class CMoveStraight extends GameComponent {
     }
 
     @Override
-    public void onClick(final int button, final Vector2f clickPos) {
-        if (button == GLFW_MOUSE_BUTTON_1){
-            destination = clickPos;
+    public void executeMovement(int button, Vector2f position) {
+        if (button == GLFW_MOUSE_BUTTON_1) {
+            destination = position;
         }
     }
 
+    @Override
+    public void stopExecution() {
+        destination = null;
+    }
+
+    //TODO: не вычислять каждый раз направление движения, а сделать это один раз перед началом движения
     private void goToTarget(final float dt) {
         final Vector2f dir = new Vector2f(destination).sub(new Vector2f(bot.gameObject.transform.position));
 

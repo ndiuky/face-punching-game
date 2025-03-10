@@ -1,6 +1,7 @@
 package engine.render;
 
 import engine.component.SpriteRenderer;
+import engine.object.GameObject;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -270,6 +271,21 @@ public class RenderBatch implements Comparable<RenderBatch> {
         elements[offsetArrayIndex + 3] = offset;
         elements[offsetArrayIndex + 4] = offset + 2;
         elements[offsetArrayIndex + 5] = offset + 1;
+    }
+
+    public boolean destroyIfExists(GameObject go) {
+        SpriteRenderer sprite = go.getComponent(SpriteRenderer.class);
+        for (int i = 0; i < numSprites; i++) {
+            if (sprites[i] == sprite) {
+                for (int j = i; j < numSprites - 1; j++) {
+                    sprites[j] = sprites[j + 1];
+                    sprites[j].setIsDirty();
+                }
+                numSprites--;
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean hasRoom() {

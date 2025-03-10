@@ -84,8 +84,6 @@ public class Window {
     }
 
     public static void changeScene(int newScene) {
-        System.out.println("Changing scene to " + newScene);
-
         if (currentScene != null) {
             currentScene.destroy();
         }

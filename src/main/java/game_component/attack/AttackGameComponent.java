@@ -13,6 +13,8 @@ public abstract class AttackGameComponent extends GameComponent {
 
     protected AttackState attackState = INACTIVE;
 
+    protected GameObject target;
+
     public abstract void executeAttack(int button, GameObject target);
 
     protected enum AttackState{

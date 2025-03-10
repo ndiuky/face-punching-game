@@ -13,7 +13,7 @@ import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.util.AssetPool;
-import game_component.attack.CForwardAttack;
+import game_component.attack.CArcAttack;
 import game_component.move.CMoveStraight;
 import org.joml.Vector2f;
 
@@ -46,9 +46,11 @@ public class BoxingRingScene extends Scene {
 
         player = new GameObject("player", new Transform(new Vector2f(0, -128), new Vector2f(40, 40)), 5)
                 .addComponent(new Player()
-                        .setActionGameComponent(new CMoveStraight())
-                        .setActionGameComponent(new CForwardAttack()))
-//                .addComponent(new Player().addGameComponent(new CMoveArc()))
+//                                .setActionGameComponent(new CMoveArc())
+                                .setActionGameComponent(new CMoveStraight())
+//                                .setActionGameComponent(new CForwardAttack())
+                                .setActionGameComponent(new CArcAttack())
+                )
                 .addComponent(new ItemPickUp(60))
                 .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(0)));
 

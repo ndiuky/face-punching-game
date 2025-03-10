@@ -28,7 +28,6 @@ public class Camera {
         inverseProjectionMatrix = new Matrix4f();
         inverseViewMatrix = new Matrix4f();
 
-
         adjustProjection();
     }
 

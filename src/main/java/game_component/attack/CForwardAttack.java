@@ -1,6 +1,8 @@
 package game_component.attack;
 
 import component.entity.Bot;
+import controllerAttiribute.Knockable;
+import engine.component.Component;
 import engine.object.GameObject;
 import engine.object.Prefab;
 import engine.render.Window;
@@ -14,27 +16,19 @@ public class CForwardAttack extends AttackGameComponent {
 
     private GameObject fistGO;
 
-    private float fistSpeed = 500;
+    private float fistSpeed = 1000;
 
-    private float retractingSpeedMultiplier = 0.7f;
+    private float retractingSpeedMultiplier = 0.6f;
 
     private GameObject target;
 
     @Override
     public void executeAttack(final int button, final GameObject target) {
-        System.out.println("button = " + button);
-        if (target == null || target.getComponent(Bot.class) == null) {
-            System.out.println("target cannot be punched in the face");
+        if (!INACTIVE.equals(attackState)
+                || target == null
+                || target.getComponent(Bot.class) == null) {
             return;
         }
-
-        System.out.println("target = " + target.getName());
-
-        if (!INACTIVE.equals(attackState)){
-            System.out.println("already performing a punch");
-            return;
-        }
-
 
         fistGO = Prefab.generateSpriteObject(fistSprite, 15, 15, bot.gameObject.getZIndex() - 1);
         fistGO.transform.position = new Vector2f(bot.gameObject.transform.position);
@@ -50,7 +44,7 @@ public class CForwardAttack extends AttackGameComponent {
         attackState = INACTIVE;
         target = null;
 
-        if (fistGO != null){
+        if (fistGO != null) {
             fistGO.destroy();
         }
     }
@@ -73,6 +67,14 @@ public class CForwardAttack extends AttackGameComponent {
         if (distance == 0f || distance < new Vector2f(dir).normalize().mul(fistSpeed * dt).absolute().length()) {
 
             fistGO.transform.position = new Vector2f(target.transform.position);
+
+            for (Component component : target.getAllComponents()){
+                if (component instanceof Knockable){
+                    ((Knockable) component).onKnockbackApplied(dir.normalize().mul(fistSpeed/25));
+                    break;
+                }
+            }
+
             attackState = RETRACTING;
 
             System.out.println("пиздюли успешно получены");

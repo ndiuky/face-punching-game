@@ -2,11 +2,13 @@ package game_component.move;
 
 import component.entity.Bot;
 import org.joml.Vector2f;
+import util.Utils;
 
 import java.util.ArrayDeque;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
+import static util.Utils.calculatePath;
 
 public class CMoveArc extends MoveGameComponent {
 
@@ -35,11 +37,14 @@ public class CMoveArc extends MoveGameComponent {
     @Override
     public void executeMovement(final int button, final Vector2f position) {
         if (path.isEmpty()) {
+
             if (button == GLFW_MOUSE_BUTTON_1) {
-                calculatePath(position, true);
+                path = calculatePath(bot.gameObject.transform.position, position, true, arcSegments, approachAngle, middlePointDistance);
             } else if (button == GLFW_MOUSE_BUTTON_2) {
-                calculatePath(position, false);
+                path = calculatePath(bot.gameObject.transform.position, position, false, arcSegments, approachAngle, middlePointDistance);
             }
+
+            isAtTargetDestination = false;
         }
     }
 
@@ -74,44 +79,4 @@ public class CMoveArc extends MoveGameComponent {
     }
 
     //TODO: удалить debugMode, либо переделать его в более геймплейно обоснованный вид
-    private void calculatePath(final Vector2f destination, final boolean isLeftSided) {
-
-        final float botX = bot.gameObject.transform.position.x;
-        final float botY = bot.gameObject.transform.position.y;
-
-        final float destinationX = destination.x;
-        final float destinationY = destination.y;
-
-        final Vector2f BPoint = calculateBPoint(botX, botY, destinationX, destinationY, isLeftSided);
-
-        float BX = BPoint.x;
-        float BY = BPoint.y;
-
-        final float iterationStep = 1f / arcSegments;
-        float currTime, currTimeSquared, oneMinusCurrTime, oneMinusCurrTimeSquared;
-        for (int i = 0; i <= arcSegments; i++) {
-            currTime = iterationStep * i;
-            oneMinusCurrTime = 1 - currTime;
-            oneMinusCurrTimeSquared = oneMinusCurrTime * oneMinusCurrTime;
-            currTimeSquared = currTime * currTime;
-
-            path.add(new Vector2f(
-                    oneMinusCurrTimeSquared * botX + 2 * oneMinusCurrTime * currTime * BX + currTimeSquared * destinationX,
-                    oneMinusCurrTimeSquared * botY + 2 * oneMinusCurrTime * currTime * BY + currTimeSquared * destinationY
-            ));
-            isAtTargetDestination = false;
-        }
-    }
-
-    private Vector2f calculateBPoint(final float botX, final float botY, final float destinationX, final float destinationY, final boolean isLeftSided) {
-        float fromToXDivided = (destinationX - botX) * approachAngle;
-        float fromToYDivided = (destinationY - botY) * approachAngle;
-
-        final float sideAdjustment = (isLeftSided == (botY > destinationY) ? 1 : -1) * middlePointDistance;
-
-        return new Vector2f(
-                botX + fromToXDivided + fromToYDivided * sideAdjustment,
-                botY + fromToYDivided - fromToXDivided * sideAdjustment
-        );
-    }
 }

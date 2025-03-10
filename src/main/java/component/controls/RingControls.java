@@ -1,7 +1,6 @@
 package component.controls;
 
 import component.entity.Bot;
-import component.entity.Player;
 import controllerAttiribute.ActionType;
 import engine.component.Component;
 import engine.object.GameObject;

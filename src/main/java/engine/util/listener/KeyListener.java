@@ -31,14 +31,18 @@ public class KeyListener implements KeyboardEventProducer {
 
             final List<KeyboardEventListener> listeners = pressListeners.get(key);
             if (listeners != null) {
-                listeners.forEach(listener -> listener.onKeyPress(key));
+                for (KeyboardEventListener listener : listeners) {
+                    listener.onKeyPress(key);
+                }
             }
         } else if (action == GLFW_RELEASE) {
             get().keyPressed[key] = false;
 
             final List<KeyboardEventListener> listeners = releaseListeners.get(key);
             if (listeners != null) {
-                listeners.forEach(listener -> listener.onKeyRelease(key));
+                for (KeyboardEventListener listener : listeners) {
+                    listener.onKeyRelease(key);
+                }
             }
         }
     }

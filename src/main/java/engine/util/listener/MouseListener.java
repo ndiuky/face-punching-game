@@ -17,25 +17,24 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class MouseListener implements MouseEventProducer {
 
-    // TODO: 23.06.2024 переделать переменные на static чтобы освободить стекфреймы, создаваемые при вызове геттеров
-    private static MouseListener instance;
+    private static float scrollX;
 
-    private double scrollX;
+    private static float scrollY;
 
-    private double scrollY;
+    private static float xPos;
 
-    private double xPos;
+    private static float yPos;
 
-    private double yPos;
+    private static float lastY;
 
-    private double lastY;
-
-    private double lastX;
+    private static float lastX;
 
     // TODO: 14.06.2024 опустить лимит кнопок до 3, нахуй кому-то больше нажимать?
-    private final boolean[] mouseButtonPressed = new boolean[9];
+    //TODO: возмножно удалить этот массив вообще, и ограничиться ивентами нажатия/отпускания
+    private static final boolean[] mouseButtonPressed = new boolean[9];
 
-    private boolean isDragging;
+    //TODO: убрать isDragging???
+    private static boolean isDragging;
 
     private MouseListener() {
         scrollX = 0;
@@ -46,58 +45,52 @@ public class MouseListener implements MouseEventProducer {
         lastY = 0;
     }
 
-    public static MouseListener get() {
-        if (instance == null) {
-            instance = new MouseListener();
-        }
-
-        return instance;
-    }
-
     public static void mousePosCallback(long window, double xPos, double yPos) {
-        get().lastX = get().xPos;
-        get().lastY = get().yPos;
-        get().xPos = xPos;
-        get().yPos = yPos;
-        get().isDragging = get().mouseButtonPressed[0] || get().mouseButtonPressed[1] || get().mouseButtonPressed[2];
+        lastX = (float) xPos;
+        lastY = (float) yPos;
+        MouseListener.xPos = (float) xPos;
+        MouseListener.yPos = (float) yPos;
+        isDragging = mouseButtonPressed[0] || mouseButtonPressed[1] || mouseButtonPressed[2];
     }
 
     public static void mouseButtonCallback(long window, int button, int action, int mods) {
         if (action == GLFW_PRESS) {
-            if (button < get().mouseButtonPressed.length) {
-                get().mouseButtonPressed[button] = true;
+            if (button < mouseButtonPressed.length) {
+                mouseButtonPressed[button] = true;
 
-                final List<MouseEventListener> listeners = pressListeners.get(button);
+                List<MouseEventListener> listeners = pressListeners.get(button);
                 if (listeners != null) {
-                    listeners.forEach(listener -> listener.onMousePress(button));
+                    for (MouseEventListener listener : listeners) {
+                        listener.onMousePress(button);
+                    }
                 }
             }
-        } else if (action == GLFW_RELEASE && button < get().mouseButtonPressed.length) {
-            get().mouseButtonPressed[button] = false;
-            get().isDragging = false;
+        } else if (action == GLFW_RELEASE && button < mouseButtonPressed.length) {
+            mouseButtonPressed[button] = false;
+            isDragging = false;
 
-            final List<MouseEventListener> listeners = releaseListeners.get(button);
+            List<MouseEventListener> listeners = releaseListeners.get(button);
             if (listeners != null) {
-                listeners.forEach(listener -> listener.onMouseRelease(button));
+                for (MouseEventListener listener : listeners) {
+                    listener.onMouseRelease(button);
+                }
             }
         }
     }
 
     public static void mouseScrollCallback(long window, double xOffset, double yOffset) {
-        get().scrollX = xOffset;
-        get().scrollY = yOffset;
+        scrollX = (float) xOffset;
+        scrollY = (float) yOffset;
     }
 
     public static void reset() {
-        get().scrollX = 0;
-        get().scrollY = 0;
-        get().lastX = get().xPos;
-        get().lastY = get().yPos;
+        scrollX = 0;
+        scrollY = 0;
+        lastX = xPos;
+        lastY = yPos;
     }
 
     public static GameObject getGameObjectUnderCursor() {
-//        System.out.println(getX() + " " + getY());
-//        System.out.println(getOrthoX() + " " + getOrthoY());
         return Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int) getX(), (int) getY()));
     }
 
@@ -106,11 +99,11 @@ public class MouseListener implements MouseEventProducer {
     }
 
     public static float getX() {
-        return (float) get().xPos;
+        return xPos;
     }
 
     public static float getY() {
-        return (float) get().yPos;
+        return yPos;
     }
 
     public static Vector2f getPos() {
@@ -127,6 +120,7 @@ public class MouseListener implements MouseEventProducer {
 
     // TODO: 13.07.2024 добавить кеширование вычисленного значение для каждого кадра, и доставать его при запросе в том же кадре. может повысить производительность, если количество запросов за кадр слишком большое. Возможно стоит применять эту технику только при большом объёме вызовов, в ином случае вычислять заново
     //TODO: убрать лишние переменные
+    //TODO: возможно объединить вычисление X и Y
     public static float getOrthoX() {
         float currentX = getX();
         currentX = (currentX / (float) Window.getWidth()) * 2.0f - 1.0f;
@@ -160,30 +154,30 @@ public class MouseListener implements MouseEventProducer {
     }
 
     public static boolean mouseButtonDown(int button) {
-        if (button < get().mouseButtonPressed.length) {
-            return get().mouseButtonPressed[button];
+        if (button < mouseButtonPressed.length) {
+            return mouseButtonPressed[button];
         }
 
         return false;
     }
 
     public static float getDx() {
-        return (float) (get().lastX - get().xPos);
+        return lastX - xPos;
     }
 
     public static float getDy() {
-        return (float) (get().lastY - get().yPos);
+        return lastY - yPos;
     }
 
     public static float getScrollX() {
-        return (float) get().scrollX;
+        return scrollX;
     }
 
     public static float getScrollY() {
-        return (float) get().scrollY;
+        return scrollY;
     }
 
     public static boolean isDragging() {
-        return get().isDragging;
+        return isDragging;
     }
 }

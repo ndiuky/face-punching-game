@@ -77,6 +77,4 @@ public class CMoveArc extends MoveGameComponent {
             bot.gameObject.transform.position.add(new Vector2f(dir).normalize().mul(movementSpeed * dt));
         }
     }
-
-    //TODO: удалить debugMode, либо переделать его в более геймплейно обоснованный вид
 }

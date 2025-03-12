@@ -18,4 +18,9 @@ public interface KeyboardEventProducer {
     static void listenToKeyboardRelease(int key, KeyboardEventListener i) {
         releaseListeners.computeIfAbsent(key, k -> new ArrayList<>()).add(i);
     }
+
+    static void clearListeners(){
+        pressListeners.clear();
+        releaseListeners.clear();
+    }
 }

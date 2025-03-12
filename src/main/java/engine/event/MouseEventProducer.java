@@ -18,4 +18,9 @@ public interface MouseEventProducer {
     static void listenToMouseRelease(int button, MouseEventListener i) {
         releaseListeners.computeIfAbsent(button, k -> new ArrayList<>()).add(i);
     }
+
+    static void clearListeners(){
+        pressListeners.clear();
+        releaseListeners.clear();
+    }
 }

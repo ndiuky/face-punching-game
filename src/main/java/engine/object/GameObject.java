@@ -1,7 +1,9 @@
 package engine.object;
 
 
+import component.entity.Bot;
 import engine.component.Component;
+import game_component.GameComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ public class GameObject {
         uid = idCounter++;
     }
 
-    public static void init(int maxId){
+    public static void init(int maxId) {
         idCounter = maxId;
     }
 
@@ -72,7 +74,7 @@ public class GameObject {
     }
 
     public <T extends Component> void removeComponent(Class<T> componentClass) {
-        for (int i=0; i < components.size(); i++) {
+        for (int i = 0; i < components.size(); i++) {
             Component c = components.get(i);
             if (componentClass.isAssignableFrom(c.getClass())) {
                 components.remove(i);
@@ -83,8 +85,12 @@ public class GameObject {
 
     public void destroy() {
         isDead = true;
-        for (int i=0; i < components.size(); i++) {
-            components.get(i).destroy();
+        for (int i = 0; i < components.size(); i++) {
+            Component curr = components.get(i);
+            if (curr instanceof Bot) {
+                ((Bot) curr).callForEachGameComponent(GameComponent::stopExecution);
+            }
+            curr.destroy();
         }
     }
 

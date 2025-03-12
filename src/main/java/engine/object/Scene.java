@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static engine.util.EnginePreferences.SAVE_FILE_NAME;
 
@@ -64,19 +63,18 @@ public abstract class Scene {
     public final void update(float dt) {
         this.camera.adjustProjection();
 
-        for (int i=0; i < gameObjects.size(); i++) {
+        for (int i = 0; i < gameObjects.size(); i++) {
             GameObject go = gameObjects.get(i);
             go.update(dt);
 
             if (go.isDead()) {
-                gameObjects.remove(i);
-                this.renderer.destroyGameObject(go);
-                i--;
+                gameObjects.remove(i--);
+                renderer.destroyGameObject(go);
             }
         }
     }
 
-    public void render(){
+    public void render() {
         renderer.render();
     }
 
@@ -135,7 +133,7 @@ public abstract class Scene {
 
     public GameObject getGameObjectByName(String name) {
         for (GameObject gameObject : gameObjects) {
-            if (name.equals(gameObject.getName())){
+            if (name.equals(gameObject.getName())) {
                 return gameObject;
             }
         }

@@ -2,6 +2,7 @@ package component.controls;
 
 import engine.component.Component;
 import engine.object.GameObject;
+import engine.render.TextRenderer;
 import engine.render.Window;
 import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
@@ -13,6 +14,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class SelectionControls extends Component {
     @Override
     public void start() {
+
         super.start();
     }
 

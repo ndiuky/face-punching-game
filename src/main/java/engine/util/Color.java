@@ -11,7 +11,7 @@ public enum Color {
     BLACK(0, 0, 0, 1),
     GREY(0.3f, 0.3f, 0.3f, 1);
 
-    private float r, g, b, a;
+    public float r, g, b, a;
 
     Color(float r, float g, float b, float a) {
         this.r = r;

@@ -61,6 +61,8 @@ public class Window implements KeyboardEventListener {
 
     private static GLFWVidMode vidMode;
 
+    private TextRenderer textRenderer;
+
     private static long primaryMonitor;
 
     private static int width, height;
@@ -91,6 +93,7 @@ public class Window implements KeyboardEventListener {
         b = 0.1f;
         g = 0.1f;
         a = 1;
+
     }
 
     public static void changeScene(int newScene) {
@@ -151,6 +154,8 @@ public class Window implements KeyboardEventListener {
         //TODO: запомнить последнюю позицию
         createWindow(true);
         createWindow(fullscreen);
+
+        textRenderer = new TextRenderer();
 
         //TODO: убрать хардкод
         Window.changeScene(2);
@@ -220,33 +225,36 @@ public class Window implements KeyboardEventListener {
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
-            glDisable(GL_BLEND);
-            pickingTexture.enableWriting();
+            textRenderer.init();
+            textRenderer.drawText("Penis.", 400, 400);
 
-            glViewport(0, 0, width, height);
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            Renderer.bindShader(pickingShader);
-            currentScene.render();
-
-            pickingTexture.disableWriting();
-            glDisable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
-
-            DebugDraw.beginFrame();
-
-            glClearColor(r, g, b, a);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            if (dt >= 0) {
-                DebugDraw.draw();
-                Renderer.bindShader(defaultShader);
-//                Renderer.bindShader(pickingShader);
-
-                currentScene.update(dt);
-                currentScene.render();
-            }
+//            glDisable(GL_BLEND);
+//            pickingTexture.enableWriting();
+//
+//            glViewport(0, 0, width, height);
+//            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//            Renderer.bindShader(pickingShader);
+//            currentScene.render();
+//
+//            pickingTexture.disableWriting();
+//            glDisable(GL_DEPTH_TEST);
+//            glEnable(GL_BLEND);
+//
+//            DebugDraw.beginFrame();
+//
+//            glClearColor(r, g, b, a);
+//            glClear(GL_COLOR_BUFFER_BIT);
+//
+//            if (dt >= 0) {
+//                DebugDraw.draw();
+//                Renderer.bindShader(defaultShader);
+////                Renderer.bindShader(pickingShader);
+//
+//                currentScene.update(dt);
+//                currentScene.render();
+//            }
 
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
@@ -260,6 +268,8 @@ public class Window implements KeyboardEventListener {
 
     private void clear() {
         currentScene.saveSceneData();
+
+        textRenderer.dispose();
 
         glfwFreeCallbacks(glfwWindow);
         glfwDestroyWindow(glfwWindow);

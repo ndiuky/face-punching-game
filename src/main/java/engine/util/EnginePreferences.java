@@ -10,4 +10,5 @@ public class EnginePreferences {
     public static final int DEBUG_CIRCLE_SEGMENTS_AMOUNT_LOW = 8;
     //true to enable deserialization
     public static final boolean ENABLE_DATA_LOADING = false;
+    public static final boolean ENABLE_VSYNK = false;
 }

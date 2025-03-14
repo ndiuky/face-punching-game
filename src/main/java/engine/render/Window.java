@@ -17,6 +17,7 @@ import scene.BoxingRingScene;
 import scene.SceneSelectionScene;
 import scene.TestingScene;
 
+import static engine.util.EnginePreferences.ENABLE_VSYNK;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
@@ -46,15 +47,15 @@ import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11C.glClearColor;
+import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window implements KeyboardEventListener {
@@ -192,7 +193,7 @@ public class Window implements KeyboardEventListener {
             );
         }
 
-        GLFW.glfwSwapInterval(1);
+        GLFW.glfwSwapInterval(ENABLE_VSYNK ? 1 : 0);
 
         glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
@@ -222,11 +223,13 @@ public class Window implements KeyboardEventListener {
         Shader defaultShader = AssetPool.getShader("asset/shader/default.glsl");
         Shader pickingShader = AssetPool.getShader("asset/shader/pickingShader.glsl");
 
+        textRenderer.init();
+
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
-            textRenderer.init();
-            textRenderer.drawText("Penis.", 400, 400);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            textRenderer.drawText("Penis.", (float) (400 + Math.sin(Utils.time()) * 150), (float) (200 + Math.sin(Utils.time()) * 200));
 
 //            glDisable(GL_BLEND);
 //            pickingTexture.enableWriting();
@@ -250,18 +253,19 @@ public class Window implements KeyboardEventListener {
 //            if (dt >= 0) {
 //                DebugDraw.draw();
 //                Renderer.bindShader(defaultShader);
-////                Renderer.bindShader(pickingShader);
 //
 //                currentScene.update(dt);
 //                currentScene.render();
 //            }
 
+            System.out.println((int) (1 / dt));
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
 
             endTime = (float) glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
+
         }
 
     }
@@ -328,6 +332,7 @@ public class Window implements KeyboardEventListener {
         if (key == GLFW_KEY_F11) {
             toggleFullscreen();
         }
+        //TODO: добавить F3 для меню дебага
     }
 
     @Override

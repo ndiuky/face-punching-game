@@ -151,9 +151,6 @@ public class RenderBatch implements Comparable<RenderBatch> {
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
-
         Shader shader = Renderer.getCurrentShader();
         shader.use();
         shader.uploadMat4f("uProjection", Window.getCurrentScene().getCamera().getProjectionMatrix());

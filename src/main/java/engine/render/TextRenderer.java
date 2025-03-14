@@ -63,8 +63,7 @@ public class TextRenderer {
      * Initializes the renderer.
      */
     public void init() {
-        /* Setup shader programs */
-        setupShaderProgram();
+        shader = AssetPool.getShader("asset/shader/fontShader.glsl");
 
         /* Enable blending */
         glEnable(GL_BLEND);
@@ -94,6 +93,8 @@ public class TextRenderer {
         if (drawing) {
             throw new IllegalStateException("Renderer is already drawing!");
         }
+        /* Setup shader programs */
+        setupShaderProgram();
         drawing = true;
         numVertices = 0;
     }
@@ -359,7 +360,7 @@ public class TextRenderer {
     /**
      * Setups the default shader shader.
      */
-    private void setupShaderProgram() {
+    public void setupShaderProgram() {
         /* Generate Vertex Array Object */
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
@@ -379,22 +380,6 @@ public class TextRenderer {
         numVertices = 0;
         drawing = false;
 
-        /* Load shaders */
-//        Shader vertexShader, fragmentShader;
-//        if (Game.isDefaultContext()) {
-//            vertexShader = Shader.loadShader(GL_VERTEX_SHADER, "resources/default.vert");
-//            fragmentShader = Shader.loadShader(GL_FRAGMENT_SHADER, "resources/default.frag");
-//        } else {
-//            vertexShader = Shader.loadShader(GL_VERTEX_SHADER, "resources/legacy.vert");
-//            fragmentShader = Shader.loadShader(GL_FRAGMENT_SHADER, "resources/legacy.frag");
-//        }
-
-        /* Create shader shader */
-//        shader = new ShaderProgram();
-//        shader.attachShader(vertexShader);
-//        shader.attachShader(fragmentShader);
-
-        shader = AssetPool.getShader("asset/shader/fontShader.glsl");
         glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
 
         /* Delete linked shaders */

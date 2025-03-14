@@ -11,4 +11,6 @@ public class EnginePreferences {
     //true to enable deserialization
     public static final boolean ENABLE_DATA_LOADING = false;
     public static final boolean ENABLE_VSYNK = false;
+    public static final int FONT_RESOLUTION = 64;
+    public static final int MAX_BATCH_SIZE = 1024;
 }

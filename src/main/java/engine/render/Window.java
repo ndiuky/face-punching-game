@@ -17,7 +17,10 @@ import scene.BoxingRingScene;
 import scene.SceneSelectionScene;
 import scene.TestingScene;
 
+import java.util.ArrayList;
+
 import static engine.util.EnginePreferences.ENABLE_VSYNK;
+import static engine.util.EnginePreferences.FONT_RESOLUTION;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
@@ -223,13 +226,11 @@ public class Window implements KeyboardEventListener {
         Shader defaultShader = AssetPool.getShader("asset/shader/default.glsl");
         Shader pickingShader = AssetPool.getShader("asset/shader/pickingShader.glsl");
 
-        textRenderer.init();
+        textRenderer.init(FONT_RESOLUTION);
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            textRenderer.drawText("Penis.", (float) (400 + Math.sin(Utils.time()) * 150), (float) (200 + Math.sin(Utils.time()) * 200));
 
 //            glDisable(GL_BLEND);
 //            pickingTexture.enableWriting();
@@ -256,9 +257,12 @@ public class Window implements KeyboardEventListener {
 //
 //                currentScene.update(dt);
 //                currentScene.render();
+
+            textRenderer.clear();
+            textRenderer.drawText("Penis.", (float) (600 + Math.sin(Utils.time()) * 150), (float) (200 + Math.sin(Utils.time()) * 200));
+            textRenderer.drawText("fps: " + (int) (1 / dt), 0, 0);
 //            }
 
-            System.out.println((int) (1 / dt));
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
 

@@ -3,7 +3,7 @@ package engine.object;
 
 import component.entity.Bot;
 import engine.component.Component;
-import game_component.GameComponent;
+import gameComponent.GameComponent;
 
 import java.util.ArrayList;
 import java.util.List;

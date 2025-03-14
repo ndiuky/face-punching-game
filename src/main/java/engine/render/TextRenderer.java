@@ -1,18 +1,22 @@
 package engine.render;
 
 import engine.text.Font;
+import engine.text.Glyph;
+import engine.text.Text;
 import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
-import java.awt.FontFormatException;
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,12 +61,11 @@ public class TextRenderer {
     private boolean drawing;
 
     private Font font;
-    private Font debugFont;
 
     /**
      * Initializes the renderer.
      */
-    public void init() {
+    public void init(int fontSize) {
         shader = AssetPool.getShader("asset/shader/fontShader.glsl");
 
         /* Enable blending */
@@ -71,12 +74,11 @@ public class TextRenderer {
 
         /* Create fonts */
         try {
-            font = new Font(new FileInputStream("asset/font/Roboto-Bold.ttf"), 128);
+            font = new Font(new FileInputStream("asset/font/Roboto-Bold.ttf"), fontSize);
         } catch (FontFormatException | IOException ex) {
             Logger.getLogger(Renderer.class.getName()).log(Level.CONFIG, null, ex);
             font = new Font();
         }
-        debugFont = new Font(12, false);
     }
 
     /**
@@ -93,7 +95,6 @@ public class TextRenderer {
         if (drawing) {
             throw new IllegalStateException("Renderer is already drawing!");
         }
-        /* Setup shader programs */
         setupShaderProgram();
         drawing = true;
         numVertices = 0;
@@ -142,26 +143,6 @@ public class TextRenderer {
     }
 
     /**
-     * Calculates total width of a debug text.
-     *
-     * @param text The text
-     * @return Total width of the text
-     */
-    public int getDebugTextWidth(CharSequence text) {
-        return debugFont.getWidth(text);
-    }
-
-    /**
-     * Calculates total height of a debug text.
-     *
-     * @param text The text
-     * @return Total width of the text
-     */
-    public int getDebugTextHeight(CharSequence text) {
-        return debugFont.getHeight(text);
-    }
-
-    /**
      * Draw text at the specified position.
      *
      * @param text Text to draw
@@ -170,17 +151,6 @@ public class TextRenderer {
      */
     public void drawText(CharSequence text, float x, float y) {
         font.drawText(this, text, x, y);
-    }
-
-    /**
-     * Draw debug text at the specified position.
-     *
-     * @param text Text to draw
-     * @param x    X coordinate of the text position
-     * @param y    Y coordinate of the text position
-     */
-    public void drawDebugText(CharSequence text, float x, float y) {
-        debugFont.drawText(this, text, x, y);
     }
 
     /**
@@ -193,18 +163,6 @@ public class TextRenderer {
      */
     public void drawText(CharSequence text, float x, float y, Color c) {
         font.drawText(this, text, x, y, c);
-    }
-
-    /**
-     * Draw debug text at the specified position and color.
-     *
-     * @param text Text to draw
-     * @param x    X coordinate of the text position
-     * @param y    Y coordinate of the text position
-     * @param c    Color to use
-     */
-    public void drawDebugText(CharSequence text, float x, float y, Color c) {
-        debugFont.drawText(this, text, x, y, c);
     }
 
     /**
@@ -279,7 +237,7 @@ public class TextRenderer {
         float x2 = x + regWidth;
         float y2 = y + regHeight;
 
-        /* Texture coordinates */
+        //TODO: заранее вычислить все текстурные координаты
         float s1 = regX / texture.getWidth();
         float t1 = regY / texture.getHeight();
         float s2 = (regX + regWidth) / texture.getWidth();
@@ -341,6 +299,19 @@ public class TextRenderer {
         numVertices += 6;
     }
 
+    public void drawFullText(Text text) {
+        int textSize = text.getTextSize();
+        Color color = text.getColor();
+        List<Glyph> content = text.getContent();
+        List<Vector2f> positions = text.getPositions();
+
+        for (int i = 0; i < textSize; i++) {
+            Vector2f pos = positions.get(i);
+            Glyph glyph = content.get(i);
+            drawTextureRegion(font.getTexture(), pos.x, pos.y, glyph.x, glyph.y, glyph.width, glyph.height, color);
+        }
+    }
+
     /**
      * Dispose renderer and clean up its used data.
      */
@@ -354,7 +325,6 @@ public class TextRenderer {
         shader.detach();
 
         font.dispose();
-        debugFont.dispose();
     }
 
     /**
@@ -382,10 +352,6 @@ public class TextRenderer {
 
         glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
 
-        /* Delete linked shaders */
-//        vertexShader.delete();
-//        fragmentShader.delete();
-
         /* Get width and height of framebuffer */
         long window = GLFW.glfwGetCurrentContext();
         int width, height;
@@ -401,36 +367,28 @@ public class TextRenderer {
         specifyVertexAttributes();
 
         /* Set texture uniform */
-        int uniTex = shader.getUniformLocation("texImage");
-        shader.setUniform(uniTex, 0);
+        shader.setUniform(shader.getUniformLocation("texImage"), 0);
 
         /* Set model matrix to identity matrix */
-        Matrix4f model = new Matrix4f();
-        int uniModel = shader.getUniformLocation("model");
-        shader.setUniform(uniModel, model);
+        shader.setUniform(shader.getUniformLocation("model"),
+                new Matrix4f()
+        );
 
         /* Set view matrix to identity matrix */
-        Matrix4f view = new Matrix4f();
-        int uniView = shader.getUniformLocation("view");
-        shader.setUniform(uniView, view);
+        shader.setUniform(shader.getUniformLocation("view"),
+                new Matrix4f()
+        );
 
         /* Set projection matrix to an orthographic projection */
 
-        Matrix4f ortho = new Matrix4f();
-
-        float tx = -(width + 0f) / (width - 0f);
-        float ty = -(height + 0f) / (height - 0f);
-        float tz = -(1 + -1) / (1 - -1);
-
-        ortho.m00(2f / (width - 0f));
-        ortho.m11(2f / (height - 0f));
-        ortho.m22(-2f / (1 - -1));
-        ortho.m03(tx);
-        ortho.m13(ty);
-        ortho.m23(tz);
-
-        int uniProjection = shader.getUniformLocation("projection");
-        shader.setUniform(uniProjection, ortho);
+        shader.setUniform(shader.getUniformLocation("projection"),
+                new Matrix4f(
+                        2f / width, 0f, 0f, -1f,
+                        0f, 2f / height, 0f, -1f,
+                        0f, 0f, -1f, 0f,
+                        0f, 0f, 0f, 1f
+                )
+        );
     }
 
     /**

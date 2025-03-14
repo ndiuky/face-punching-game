@@ -1,8 +1,6 @@
-package game_component.move;
+package gameComponent.move;
 
-import component.entity.Bot;
 import org.joml.Vector2f;
-import util.Utils;
 
 import java.util.ArrayDeque;
 

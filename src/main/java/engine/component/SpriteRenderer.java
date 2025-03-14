@@ -9,6 +9,7 @@ import org.joml.Vector4f;
 
 public class SpriteRenderer extends Component {
 
+    //TODO: переделать на util.Color
     private Vector4f color = new Vector4f(1, 1, 1, 1);
 
     private Sprite sprite = new Sprite();

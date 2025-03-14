@@ -13,8 +13,8 @@ import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.util.AssetPool;
-import game_component.attack.CArcAttack;
-import game_component.move.CMoveStraight;
+import gameComponent.attack.CArcAttack;
+import gameComponent.move.CMoveStraight;
 import org.joml.Vector2f;
 
 public class BoxingRingScene extends Scene {

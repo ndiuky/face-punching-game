@@ -1,4 +1,4 @@
-package game_component;
+package gameComponent;
 
 import component.entity.Bot;
 

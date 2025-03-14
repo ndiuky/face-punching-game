@@ -1,4 +1,4 @@
-package game_component.attack;
+package gameComponent.attack;
 
 import component.entity.Bot;
 import controllerAttiribute.Knockable;
@@ -11,9 +11,9 @@ import org.joml.Vector2f;
 
 import java.util.ArrayDeque;
 
-import static game_component.attack.AttackGameComponent.AttackState.INACTIVE;
-import static game_component.attack.AttackGameComponent.AttackState.MOVING_TO_TARGET;
-import static game_component.attack.AttackGameComponent.AttackState.RETRACTING;
+import static gameComponent.attack.AttackGameComponent.AttackState.INACTIVE;
+import static gameComponent.attack.AttackGameComponent.AttackState.MOVING_TO_TARGET;
+import static gameComponent.attack.AttackGameComponent.AttackState.RETRACTING;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 import static util.Utils.calculatePath;

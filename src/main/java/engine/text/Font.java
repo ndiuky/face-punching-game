@@ -1,27 +1,20 @@
 package engine.text;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import engine.render.TextRenderer;
+import engine.render.Texture;
+import engine.util.Color;
+import org.joml.Vector2f;
+import org.lwjgl.system.MemoryUtil;
+
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.FontFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-
-import engine.render.TextRenderer;
-import engine.util.Color;
-import org.lwjgl.system.MemoryUtil;
-//import silvertiger.tutorial.lwjgl.graphic.Color;
-//import silvertiger.tutorial.lwjgl.graphic.Texture;
-//import silvertiger.tutorial.lwjgl.graphic.Renderer;
-import engine.render.Texture;
-
-
 
 import static java.awt.Font.MONOSPACED;
 import static java.awt.Font.PLAIN;
@@ -90,7 +83,6 @@ public class Font {
      *
      * @param in   The input stream
      * @param size Font size
-     *
      * @throws FontFormatException if fontFile does not contain the required
      *                             font tables for the specified format
      * @throws IOException         If font can't be read
@@ -105,7 +97,6 @@ public class Font {
      * @param in        The input stream
      * @param size      Font size
      * @param antiAlias Wheter the font should be antialiased or not
-     *
      * @throws FontFormatException if fontFile does not contain the required
      *                             font tables for the specified format
      * @throws IOException         If font can't be read
@@ -139,7 +130,6 @@ public class Font {
      *
      * @param font      The AWT font
      * @param antiAlias Wheter the font should be antialiased or not
-     *
      * @return Font texture
      */
     private Texture createFontTexture(java.awt.Font font, boolean antiAlias) {
@@ -242,7 +232,6 @@ public class Font {
      * @param font      The AWT font
      * @param c         The char
      * @param antiAlias Wheter the char should be antialiased or not
-     *
      * @return Char image
      */
     private BufferedImage createCharImage(java.awt.Font font, char c, boolean antiAlias) {
@@ -282,7 +271,6 @@ public class Font {
      * Gets the width of the specified text.
      *
      * @param text The text
-     *
      * @return Width of text
      */
     public int getWidth(CharSequence text) {
@@ -312,7 +300,6 @@ public class Font {
      * Gets the height of the specified text.
      *
      * @param text The text
-     *
      * @return Height of text
      */
     public int getHeight(CharSequence text) {
@@ -340,14 +327,14 @@ public class Font {
     /**
      * Draw text at the specified position and color.
      *
-     * @param renderer The renderer to use
-     * @param text     Text to draw
-     * @param x        X coordinate of the text position
-     * @param y        Y coordinate of the text position
-     * @param c        Color to use
+     * @param renderer     The renderer to use
+     * @param charSequence Text to draw
+     * @param x            X coordinate of the text position
+     * @param y            Y coordinate of the text position
+     * @param color            Color to use
      */
-    public void drawText(TextRenderer renderer, CharSequence text, float x, float y, Color c) {
-        int textHeight = getHeight(text);
+    public void drawText(TextRenderer renderer, CharSequence charSequence, float x, float y, Color color) {
+        int textHeight = getHeight(charSequence);
 
         float drawX = x;
         float drawY = y;
@@ -355,10 +342,13 @@ public class Font {
             drawY += textHeight - fontHeight;
         }
 
+        Text text = new Text();
+        text.setColor(color);
+
         texture.bind();
         renderer.begin();
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
+        for (int i = 0; i < charSequence.length(); i++) {
+            char ch = charSequence.charAt(i);
             if (ch == '\n') {
                 /* Line feed, set x and y to draw at the next line */
                 drawY -= fontHeight;
@@ -370,9 +360,10 @@ public class Font {
                 continue;
             }
             Glyph g = glyphs.get(ch);
-            renderer.drawTextureRegion(texture, drawX, drawY, g.x, g.y, g.width, g.height, c);
+            text.addGlyph(g, new Vector2f(drawX, drawY));
             drawX += g.width;
         }
+        renderer.drawFullText(text);
         renderer.end();
     }
 
@@ -395,4 +386,7 @@ public class Font {
         texture.unbind();
     }
 
+    public Texture getTexture() {
+        return texture;
+    }
 }

@@ -3,6 +3,7 @@ package engine.render;
 import engine.component.Component;
 import engine.component.SpriteRenderer;
 import engine.object.GameObject;
+import engine.util.AssetPool;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -120,7 +121,8 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
         }
 
-        Shader shader = Renderer.getCurrentShader();
+        Shader shader = AssetPool.getShader("asset/shader/default.glsl");
+        Renderer.bindShader(shader);
         shader.use();
         shader.uploadMat4f("uProjection", Window.getCurrentScene().getCamera().getProjectionMatrix());
         shader.uploadMat4f("uView", Window.getCurrentScene().getCamera().getViewMatrix());

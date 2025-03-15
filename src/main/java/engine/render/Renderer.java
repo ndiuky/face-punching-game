@@ -2,6 +2,7 @@ package engine.render;
 
 import engine.component.SpriteRenderer;
 import engine.object.GameObject;
+import engine.util.AssetPool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,14 +71,18 @@ public class Renderer {
 //    }
 
     public void render() {
-        currentShader.use();
 
-        for (TextureRenderBatch textureBatch : textureBatches) {
-            textureBatch.render();
-        }
-        for (TextRenderBatch textBatch : textBatches) {
-            textBatch.render();
-        }
+//        for (TextureRenderBatch textureBatch : textureBatches) {
+//            textureBatch.render();
+//        }
+
+        TextRenderer.render();
+
+
+
+//        for (TextRenderBatch textBatch : textBatches) {
+//            textBatch.render();
+//        }
     }
 
     public void destroyGameObject(GameObject go) {

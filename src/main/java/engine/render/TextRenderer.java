@@ -1,17 +1,19 @@
 package engine.render;
 
+import engine.component.Component;
 import engine.text.Font;
 import engine.text.Glyph;
 import engine.text.Text;
 import engine.util.AssetPool;
 import engine.util.Color;
+import engine.util.EnginePreferences;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
-import java.awt.*;
+import java.awt.FontFormatException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -50,7 +53,7 @@ import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
  *
  * @author Heiko Brumme
  */
-public class TextRenderer {
+public class TextRenderer extends Component {
 
     private int vao = -1;
     private int vbo = -1;
@@ -62,10 +65,52 @@ public class TextRenderer {
 
     private Font font;
 
+    private String text;
+    private float posX, posY;
+
+    //TODO: FOR TESTS ONLY!!! REMOVE LATER!!!
+    //====================================
+    private static TextRenderer instance;
+
+    public static void render(){
+        get().update(0.006f);
+    }
+
+    public static TextRenderer get(){
+        if (instance == null) {
+            instance = new TextRenderer();
+        }
+        return instance;
+    }
+    //====================================
+
+    @Override
+    public void update(float dt) {
+        drawText(text, posX, posY);
+    }
+
+    public TextRenderer setText(String text) {
+        this.text = text;
+        return this;
+    }
+
+    public TextRenderer setPos(float x, float y) {
+        posX = x;
+        posY = y;
+
+        return this;
+    }
+
+    @Override
+    public void start() {
+        initialize(EnginePreferences.FONT_RESOLUTION);
+    }
+
     /**
      * Initializes the renderer.
      */
-    public void init(int fontSize) {
+
+    public void initialize(int fontSize) {
         shader = AssetPool.getShader("asset/shader/fontShader.glsl");
 
         /* Enable blending */
@@ -122,6 +167,8 @@ public class TextRenderer {
                 glBindBuffer(vbo, GL_ARRAY_BUFFER);
                 specifyVertexAttributes();
             }
+
+            Renderer.bindShader(shader);
             shader.use();
 
             glBindBuffer(vbo, GL_ARRAY_BUFFER);
@@ -129,8 +176,13 @@ public class TextRenderer {
 
             glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
+            glBindBuffer(0, GL_ARRAY_BUFFER);
+
             vertices.clear();
             numVertices = 0;
+
+            //TODO: если использовать detach(), то текст будет рендериться
+            shader.detach();
         }
     }
 
@@ -149,6 +201,7 @@ public class TextRenderer {
      * @param x    X coordinate of the text position
      * @param y    Y coordinate of the text position
      */
+    //TODO: THIS
     public void drawText(CharSequence text, float x, float y) {
         font.drawText(this, text, x, y);
     }

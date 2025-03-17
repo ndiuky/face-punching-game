@@ -19,11 +19,11 @@ public class Item extends Component {
     }
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         wobble(dt);
     }
 
-    private void wobble(final float dt){
+    private void wobble(float dt){
         yOffset = Math.sin(EngineUtils.time()*2) * yDelta;
 
         gameObject.transform.position = new Vector2f(originalPos).add(new Vector2f(0, yOffset));

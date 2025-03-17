@@ -9,8 +9,7 @@ import org.joml.Vector4f;
 
 public class SpriteRenderer extends Component {
 
-    //TODO: переделать на util.Color
-    private Vector4f color = new Vector4f(1, 1, 1, 1);
+    private Color color = Color.WHITE;
 
     private Sprite sprite = new Sprite();
 
@@ -31,20 +30,17 @@ public class SpriteRenderer extends Component {
         }
     }
 
-    public Vector4f getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public SpriteRenderer setColor(Vector4f color) {
+    public SpriteRenderer setColor(Color color) {
         if (!this.color.equals(color)) {
-            this.color.set(color);
+            this.color = color;
             isDirty = true;
         }
-        return this;
-    }
 
-    public SpriteRenderer setColor(Color color) {
-        return setColor(color.asVector());
+        return this;
     }
 
     public Texture getTexture() {
@@ -53,6 +49,7 @@ public class SpriteRenderer extends Component {
 
     public SpriteRenderer setTexture(Texture texture){
         sprite.setTexture(texture);
+
         return this;
     }
 
@@ -66,12 +63,14 @@ public class SpriteRenderer extends Component {
 
     public SpriteRenderer setIsDirty() {
         isDirty = false;
+
         return this;
     }
 
     public SpriteRenderer setSprite(Sprite sprite) {
         this.sprite = sprite;
         isDirty = true;
+
         return this;
     }
 }

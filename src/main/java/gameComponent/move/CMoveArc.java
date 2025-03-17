@@ -26,14 +26,14 @@ public class CMoveArc extends MoveGameComponent {
     private boolean isAtTargetDestination = true;
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         if (!isAtTargetDestination) {
             followPath(dt);
         }
     }
 
     @Override
-    public void executeMovement(final int button, final Vector2f position) {
+    public void executeMovement(int button, Vector2f position) {
         if (path.isEmpty()) {
 
             if (button == GLFW_MOUSE_BUTTON_1) {
@@ -53,12 +53,12 @@ public class CMoveArc extends MoveGameComponent {
         isAtTargetDestination = true;
     }
 
-    private void followPath(final float dt) {
+    private void followPath(float dt) {
         if (currentDestination == null) {
             currentDestination = path.pop();
         }
 
-        final Vector2f dir = new Vector2f(currentDestination).sub(new Vector2f(bot.gameObject.transform.position));
+        Vector2f dir = new Vector2f(currentDestination).sub(new Vector2f(bot.gameObject.transform.position));
 
         float distance = new Vector2f(dir).absolute().length();
 

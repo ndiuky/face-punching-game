@@ -11,6 +11,7 @@ import org.joml.Vector2f;
 
 import java.util.ArrayDeque;
 
+import static controllerAttiribute.Knockable.SPEED_REDUCTION_MULTIPLIER;
 import static gameComponent.attack.AttackGameComponent.AttackState.INACTIVE;
 import static gameComponent.attack.AttackGameComponent.AttackState.MOVING_TO_TARGET;
 import static gameComponent.attack.AttackGameComponent.AttackState.RETRACTING;
@@ -38,7 +39,7 @@ public class CArcAttack extends AttackGameComponent {
     private float retractingSpeedMultiplier = 0.6f;
 
     @Override
-    public void executeAttack(final int button, final GameObject target) {
+    public void executeAttack(int button, GameObject target) {
         if (!INACTIVE.equals(attackState)
                 || target == null
                 || target.getComponent(Bot.class) == null) {
@@ -76,7 +77,7 @@ public class CArcAttack extends AttackGameComponent {
     }
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         if (MOVING_TO_TARGET.equals(attackState)) {
             moveFistToTarget(dt);
         } else if (RETRACTING.equals(attackState)) {
@@ -84,12 +85,12 @@ public class CArcAttack extends AttackGameComponent {
         }
     }
 
-    private void moveFistToTarget(final float dt) {
+    private void moveFistToTarget(float dt) {
         if (currentDestination == null) {
             currentDestination = path.pop();
         }
 
-        final Vector2f dir = new Vector2f(currentDestination).sub(new Vector2f(fistGO.transform.position));
+        Vector2f dir = new Vector2f(currentDestination).sub(new Vector2f(fistGO.transform.position));
 
         float distance = new Vector2f(dir).absolute().length();
 
@@ -106,8 +107,7 @@ public class CArcAttack extends AttackGameComponent {
                         float sin = Math.sin(radians);
 
                         dir.normalize();
-                        //TODO: убрать константу '25'
-                        ((Knockable) component).onKnockbackApplied(new Vector2f(dir.x * cos + dir.y * -sin, dir.x * sin + dir.y * cos).normalize().mul(fistSpeed / 25));
+                        ((Knockable) component).onKnockbackApplied(new Vector2f(dir.x * cos + dir.y * -sin, dir.x * sin + dir.y * cos).normalize().mul(fistSpeed * SPEED_REDUCTION_MULTIPLIER));
 
                         break;
                     }
@@ -127,8 +127,8 @@ public class CArcAttack extends AttackGameComponent {
         }
     }
 
-    private void retractFist(final float dt) {
-        final Vector2f dir = new Vector2f(bot.gameObject.transform.position).sub(new Vector2f(fistGO.transform.position));
+    private void retractFist(float dt) {
+        Vector2f dir = new Vector2f(bot.gameObject.transform.position).sub(new Vector2f(fistGO.transform.position));
 
         float distance = new Vector2f(dir).absolute().length();
 

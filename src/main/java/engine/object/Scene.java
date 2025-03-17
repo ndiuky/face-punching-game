@@ -20,6 +20,10 @@ import static engine.util.EnginePreferences.SAVE_FILE_NAME;
 
 public abstract class Scene {
 
+    private static int idCounter = 0;
+
+    protected int uid = -1;
+
     protected Renderer renderer = new Renderer();
 
     protected Camera camera;
@@ -35,7 +39,11 @@ public abstract class Scene {
             .registerTypeAdapter(GameObject.class, new GameObjectSerializer())
             .create();
 
+    private static final List<Scene> scenesList = new ArrayList<>();
+
     public Scene() {
+        uid = idCounter++;
+        scenesList.add(this);
     }
 
     public void init() {
@@ -93,8 +101,8 @@ public abstract class Scene {
             }
             writer.write(gson.toJson(gameObjectsToSerialize));
             writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to save scene data: " + ex.getMessage());
         }
     }
 
@@ -105,13 +113,14 @@ public abstract class Scene {
         String inFile = "";
         try {
             inFile = new String(Files.readAllBytes(path));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to read bytes from save file: " + ex.getMessage());
         }
 
         if (!inFile.isEmpty()) {
             int maxComponentId = -1;
             int maxGameObjectId = -1;
+
             GameObject[] objects = gson.fromJson(inFile, GameObject[].class);
             for (GameObject gameObject : objects) {
                 addGameObjectToScene(gameObject);
@@ -157,4 +166,23 @@ public abstract class Scene {
             go.destroy();
         }
     }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public List<Scene> getAllScenes() {
+        return scenesList;
+    }
+
+    public static Scene getSceneById(int sceneId) {
+        for (Scene scene : scenesList) {
+            if (scene.getUid() == sceneId) {
+                return scene;
+            }
+        }
+
+        throw new RuntimeException("Scene with id=" + sceneId + " does not exist");
+    }
+
 }

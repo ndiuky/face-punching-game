@@ -3,15 +3,14 @@ package engine.text;
 import engine.util.Color;
 import org.joml.Vector2f;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Text {
 
-    //TODO: мб поменять на ArrayList
-    private final List<Glyph> content = new LinkedList<>();
+    private final List<Glyph> content = new ArrayList<>();
 
-    private final List<Vector2f> positions = new LinkedList<>();
+    private final List<Vector2f> positions = new ArrayList<>();
 
     private String textContent;
 
@@ -23,9 +22,9 @@ public class Text {
     //TODO: прикрутить lifetime к системе рендера, сейчас он всегда изначально равен 1
     private int lifetime = 1;
 
-    public void addGlyph(Glyph glyph, Vector2f pos){
-       content.add(glyph);
-       positions.add(pos);
+    public void addGlyph(Glyph glyph, Vector2f pos) {
+        content.add(glyph);
+        positions.add(pos);
     }
 
 
@@ -33,7 +32,7 @@ public class Text {
         this.color = color;
     }
 
-    public int getTextSize(){
+    public int getTextSize() {
         return textContent.length();
     }
 

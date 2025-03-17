@@ -33,9 +33,6 @@ public class MouseListener implements MouseEventProducer {
     //TODO: возмножно удалить этот массив вообще, и ограничиться ивентами нажатия/отпускания
     private static final boolean[] mouseButtonPressed = new boolean[9];
 
-    //TODO: убрать isDragging???
-    private static boolean isDragging;
-
     private MouseListener() {
         scrollX = 0;
         scrollY = 0;
@@ -50,24 +47,24 @@ public class MouseListener implements MouseEventProducer {
         lastY = (float) yPos;
         MouseListener.xPos = (float) xPos;
         MouseListener.yPos = (float) yPos;
-        isDragging = mouseButtonPressed[0] || mouseButtonPressed[1] || mouseButtonPressed[2];
     }
 
     public static void mouseButtonCallback(long window, int button, int action, int mods) {
-        if (action == GLFW_PRESS) {
-            if (button < mouseButtonPressed.length) {
-                mouseButtonPressed[button] = true;
+        if (button >= mouseButtonPressed.length) {
+            return;
+        }
 
-                List<MouseEventListener> listeners = pressListeners.get(button);
-                if (listeners != null) {
-                    for (MouseEventListener listener : listeners) {
-                        listener.onMousePress(button);
-                    }
+        if (action == GLFW_PRESS) {
+            mouseButtonPressed[button] = true;
+
+            List<MouseEventListener> listeners = pressListeners.get(button);
+            if (listeners != null) {
+                for (MouseEventListener listener : listeners) {
+                    listener.onMousePress(button);
                 }
             }
-        } else if (action == GLFW_RELEASE && button < mouseButtonPressed.length) {
+        } else if (action == GLFW_RELEASE) {
             mouseButtonPressed[button] = false;
-            isDragging = false;
 
             List<MouseEventListener> listeners = releaseListeners.get(button);
             if (listeners != null) {
@@ -95,7 +92,9 @@ public class MouseListener implements MouseEventProducer {
     }
 
     public static float getRelativeAngle(Vector2f position) {
-        return (float) (Math.atan2(position.x - getOrthoX(), position.y - getOrthoY()) * 180 / Math.PI);
+        Vector2f ortho = getOrtho();
+
+        return (float) (Math.atan2(position.x - ortho.x, position.y - ortho.y) * 180 / Math.PI);
     }
 
     public static float getX() {
@@ -118,12 +117,8 @@ public class MouseListener implements MouseEventProducer {
         return getY() * Window.getHeight();
     }
 
-    //TODO: 13.07.2024 добавить кеширование вычисленного значение для каждого кадра, и доставать его при запросе в том же кадре. может повысить производительность, если количество запросов за кадр слишком большое. Возможно стоит применять эту технику только при большом объёме вызовов, в ином случае вычислять заново
-    //TODO: убрать лишние переменные
-    //TODO: возможно объединить вычисление X и Y
     public static float getOrthoX() {
-        float currentX = getX();
-        currentX = (currentX / (float) Window.getWidth()) * 2.0f - 1.0f;
+        float currentX = (xPos / (float) Window.getWidth()) * 2.0f - 1.0f;
         Vector4f tmp = new Vector4f(currentX, 0, 0, 1);
 
         Camera camera = Window.getCurrentScene().getCamera();
@@ -136,8 +131,7 @@ public class MouseListener implements MouseEventProducer {
     }
 
     public static float getOrthoY() {
-        float currentY = getY();
-        currentY = -((currentY / (float) Window.getHeight()) * 2.0f - 1.0f);
+        float currentY = -((yPos / (float) Window.getHeight()) * 2.0f - 1.0f);
         Vector4f tmp = new Vector4f(0, currentY, 0, 1);
 
         Camera camera = Window.getCurrentScene().getCamera();
@@ -149,8 +143,19 @@ public class MouseListener implements MouseEventProducer {
         return currentY;
     }
 
+    //TODO: 13.07.2024 добавить кеширование вычисленного значение для каждого кадра, и доставать его при запросе в том же кадре. может повысить производительность, если количество запросов за кадр слишком большое. Возможно стоит применять эту технику только при большом объёме вызовов, в ином случае вычислять заново
     public static Vector2f getOrtho() {
-        return new Vector2f(getOrthoX(), getOrthoY());
+        float currentX = (xPos / (float) Window.getWidth()) * 2.0f - 1.0f;
+        float currentY = -((yPos / (float) Window.getHeight()) * 2.0f - 1.0f);
+        Vector4f tmp = new Vector4f(currentX, currentY, 0, 1);
+
+        Camera camera = Window.getCurrentScene().getCamera();
+        Matrix4f viewProjection = new Matrix4f();
+        camera.getInverseViewMatrix().mul(camera.getInverseProjectionMatrix(), viewProjection);
+
+        tmp.mul(viewProjection);
+
+        return new Vector2f(tmp.x, tmp.y);
     }
 
     public static boolean mouseButtonDown(int button) {
@@ -175,9 +180,5 @@ public class MouseListener implements MouseEventProducer {
 
     public static float getScrollY() {
         return scrollY;
-    }
-
-    public static boolean isDragging() {
-        return isDragging;
     }
 }

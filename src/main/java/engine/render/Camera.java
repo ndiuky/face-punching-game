@@ -9,6 +9,7 @@ public class Camera {
 
     private final Matrix4f projectionMatrix;
 
+    //TODO: убрать зависимость от GRID_SIZE
     private final Vector2f projectionSize = new Vector2f(EnginePreferences.GRID_SIZE * 40.0f, EnginePreferences.GRID_SIZE * 21.0f);
 
     private final Matrix4f viewMatrix;
@@ -49,9 +50,10 @@ public class Camera {
         return projectionSize;
     }
 
+    //TODO: мб кешировать матрицу для каждого кадра
     public Matrix4f getViewMatrix() {
-        final Vector3f cameraFront = new Vector3f(0.0f, 0.0f, -1.0f);
-        final Vector3f cameraUp = new Vector3f(0.0f, 1.0f, 0.0f);
+        Vector3f cameraFront = new Vector3f(0.0f, 0.0f, -1.0f);
+        Vector3f cameraUp = new Vector3f(0.0f, 1.0f, 0.0f);
         viewMatrix.identity();
         viewMatrix.lookAt(new Vector3f(position.x, position.y, 20.0f),
                 cameraFront.add(position.x, position.y, 0.0f),

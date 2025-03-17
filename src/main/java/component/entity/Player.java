@@ -36,12 +36,12 @@ public class Player extends Bot implements MouseEventListener, KeyboardEventList
     }
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         callForEachGameComponent(gameComponent -> gameComponent.update(dt));
     }
 
     @Override
-    public void onMousePress(final int button) {
+    public void onMousePress(int button) {
         switch (currActionType) {
             case MOVE -> moveGC.executeMovement(button, MouseListener.getOrtho());
             case ATTACK -> attackGC.executeAttack(button, MouseListener.getGameObjectUnderCursor());
@@ -53,11 +53,11 @@ public class Player extends Bot implements MouseEventListener, KeyboardEventList
     }
 
     @Override
-    public void onMouseRelease(final int button) {
+    public void onMouseRelease(int button) {
     }
 
     @Override
-    public void onKeyPress(final int key) {
+    public void onKeyPress(int key) {
         ActionType lastActionType = currActionType;
 
         switch (key) {
@@ -92,7 +92,7 @@ public class Player extends Bot implements MouseEventListener, KeyboardEventList
     }
 
     @Override
-    public void onKeyRelease(final int key) {
+    public void onKeyRelease(int key) {
 
     }
 }

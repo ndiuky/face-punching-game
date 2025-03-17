@@ -3,6 +3,7 @@ package engine.text;
 import engine.render.TextRenderer;
 import engine.render.Texture;
 import engine.util.Color;
+import engine.util.EnginePreferences;
 import org.joml.Vector2f;
 import org.lwjgl.system.MemoryUtil;
 
@@ -10,13 +11,11 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.awt.Font.MONOSPACED;
 import static java.awt.Font.PLAIN;
 import static java.awt.Font.TRUETYPE_FONT;
 
@@ -30,100 +29,24 @@ public class Font {
     /**
      * Contains the glyphs for each char.
      */
-    private final Map<Character, Glyph> glyphs;
+    private static final Map<Character, Glyph> glyphs = new HashMap<>();
     /**
      * Contains the font texture.
      */
-    private final Texture texture;
+    private static final Texture texture;
+
+    static {
+        try {
+            texture = createFontTexture(java.awt.Font.createFont(TRUETYPE_FONT, new FileInputStream("asset/font/Roboto-Bold.ttf")).deriveFont(PLAIN, EnginePreferences.FONT_RESOLUTION), true);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to create font texture: " + ex.getMessage());
+        }
+    }
 
     /**
      * Height of the font.
      */
-    private int fontHeight;
-
-    /**
-     * Creates a default antialiased font with monospaced glyphs and default
-     * size 16.
-     */
-    public Font() {
-        this(new java.awt.Font(MONOSPACED, PLAIN, 16), true);
-    }
-
-    /**
-     * Creates a default font with monospaced glyphs and default size 16.
-     *
-     * @param antiAlias Wheter the font should be antialiased or not
-     */
-    public Font(boolean antiAlias) {
-        this(new java.awt.Font(MONOSPACED, PLAIN, 16), antiAlias);
-    }
-
-    /**
-     * Creates a default antialiased font with monospaced glyphs and specified
-     * size.
-     *
-     * @param size Font size
-     */
-    public Font(int size) {
-        this(new java.awt.Font(MONOSPACED, PLAIN, size), true);
-    }
-
-    /**
-     * Creates a default font with monospaced glyphs and specified size.
-     *
-     * @param size      Font size
-     * @param antiAlias Wheter the font should be antialiased or not
-     */
-    public Font(int size, boolean antiAlias) {
-        this(new java.awt.Font(MONOSPACED, PLAIN, size), antiAlias);
-    }
-
-    /**
-     * Creates a antialiased Font from an input stream.
-     *
-     * @param in   The input stream
-     * @param size Font size
-     * @throws FontFormatException if fontFile does not contain the required
-     *                             font tables for the specified format
-     * @throws IOException         If font can't be read
-     */
-    public Font(InputStream in, int size) throws FontFormatException, IOException {
-        this(in, size, true);
-    }
-
-    /**
-     * Creates a Font from an input stream.
-     *
-     * @param in        The input stream
-     * @param size      Font size
-     * @param antiAlias Wheter the font should be antialiased or not
-     * @throws FontFormatException if fontFile does not contain the required
-     *                             font tables for the specified format
-     * @throws IOException         If font can't be read
-     */
-    public Font(InputStream in, int size, boolean antiAlias) throws FontFormatException, IOException {
-        this(java.awt.Font.createFont(TRUETYPE_FONT, in).deriveFont(PLAIN, size), antiAlias);
-    }
-
-    /**
-     * Creates a antialiased font from an AWT Font.
-     *
-     * @param font The AWT Font
-     */
-    public Font(java.awt.Font font) {
-        this(font, true);
-    }
-
-    /**
-     * Creates a font from an AWT Font.
-     *
-     * @param font      The AWT Font
-     * @param antiAlias Wheter the font should be antialiased or not
-     */
-    public Font(java.awt.Font font, boolean antiAlias) {
-        glyphs = new HashMap<>();
-        texture = createFontTexture(font, antiAlias);
-    }
+    private static int fontHeight;
 
     /**
      * Creates a font texture from specified AWT font.
@@ -132,7 +55,7 @@ public class Font {
      * @param antiAlias Wheter the font should be antialiased or not
      * @return Font texture
      */
-    private Texture createFontTexture(java.awt.Font font, boolean antiAlias) {
+    private static Texture createFontTexture(java.awt.Font font, boolean antiAlias) {
         /* Loop through the characters to get charWidth and charHeight */
         int imageWidth = 0;
         int imageHeight = 0;
@@ -234,7 +157,7 @@ public class Font {
      * @param antiAlias Wheter the char should be antialiased or not
      * @return Char image
      */
-    private BufferedImage createCharImage(java.awt.Font font, char c, boolean antiAlias) {
+    private static BufferedImage createCharImage(java.awt.Font font, char c, boolean antiAlias) {
         /* Creating temporary image to extract character size */
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
@@ -267,13 +190,7 @@ public class Font {
         return image;
     }
 
-    /**
-     * Gets the width of the specified text.
-     *
-     * @param text The text
-     * @return Width of text
-     */
-    public int getWidth(CharSequence text) {
+    public static int getWidth(CharSequence text) {
         int width = 0;
         int lineWidth = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -296,13 +213,7 @@ public class Font {
         return width;
     }
 
-    /**
-     * Gets the height of the specified text.
-     *
-     * @param text The text
-     * @return Height of text
-     */
-    public int getHeight(CharSequence text) {
+    public static int getHeight(CharSequence text) {
         int height = 0;
         int lineHeight = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -324,16 +235,7 @@ public class Font {
         return height;
     }
 
-    /**
-     * Draw text at the specified position and color.
-     *
-     * @param renderer     The renderer to use
-     * @param charSequence Text to draw
-     * @param x            X coordinate of the text position
-     * @param y            Y coordinate of the text position
-     * @param color            Color to use
-     */
-    public void drawText(TextRenderer renderer, CharSequence charSequence, float x, float y, Color color) {
+    public static void drawText(CharSequence charSequence, float x, float y, Color color) {
         int textHeight = getHeight(charSequence);
 
         float drawX = x;
@@ -346,7 +248,7 @@ public class Font {
         text.setColor(color);
 
         texture.bind();
-        renderer.begin();
+        TextRenderer.begin();
         for (int i = 0; i < charSequence.length(); i++) {
             char ch = charSequence.charAt(i);
             if (ch == '\n') {
@@ -363,30 +265,29 @@ public class Font {
             text.addGlyph(g, new Vector2f(drawX, drawY));
             drawX += g.width;
         }
-        renderer.drawFullText(text);
-        renderer.end();
+        TextRenderer.drawFullText(text);
+        TextRenderer.end();
     }
 
     /**
      * Draw text at the specified position.
      *
-     * @param renderer The renderer to use
      * @param text     Text to draw
      * @param x        X coordinate of the text position
      * @param y        Y coordinate of the text position
      */
-    public void drawText(TextRenderer renderer, CharSequence text, float x, float y) {
-        drawText(renderer, text, x, y, Color.WHITE);
+    public static void drawText(CharSequence text, float x, float y) {
+        drawText(text, x, y, Color.WHITE);
     }
 
     /**
      * Disposes the font.
      */
-    public void dispose() {
+    public static void dispose() {
         texture.unbind();
     }
 
-    public Texture getTexture() {
+    public static Texture getTexture() {
         return texture;
     }
 }

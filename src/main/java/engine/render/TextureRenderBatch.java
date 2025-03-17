@@ -121,8 +121,7 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
         }
 
-        Shader shader = AssetPool.getShader("asset/shader/default.glsl");
-        Renderer.bindShader(shader);
+        Shader shader = Renderer.getCurrentShader();
         shader.use();
         shader.uploadMat4f("uProjection", Window.getCurrentScene().getCamera().getProjectionMatrix());
         shader.uploadMat4f("uView", Window.getCurrentScene().getCamera().getViewMatrix());

@@ -18,7 +18,6 @@ import scene.SceneSelectionScene;
 import scene.TestingScene;
 
 import static engine.util.EnginePreferences.ENABLE_VSYNK;
-import static engine.util.EnginePreferences.FONT_RESOLUTION;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
@@ -224,43 +223,39 @@ public class Window implements KeyboardEventListener {
         Shader defaultShader = AssetPool.getShader("asset/shader/default.glsl");
         Shader pickingShader = AssetPool.getShader("asset/shader/pickingShader.glsl");
 
-//        textRenderer.initialize(FONT_RESOLUTION);
-
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
 
 
-            textRenderer.clear();
-
             glDisable(GL_BLEND);
-//            pickingTexture.enableWriting();
+            pickingTexture.enableWriting();
 
             glViewport(0, 0, width, height);
-//            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//            Renderer.bindShader(pickingShader);
-//            currentScene.render();
+            renderSceneWithShader(pickingShader);
 
-//            pickingTexture.disableWriting();
+            pickingTexture.disableWriting();
             glDisable(GL_DEPTH_TEST);
             glEnable(GL_BLEND);
 
-//            DebugDraw.beginFrame();
+            DebugDraw.beginFrame();
 
-//            glClearColor(r, g, b, a);
-//            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(r, g, b, a);
+            glClear(GL_COLOR_BUFFER_BIT);
 
             if (dt >= 0) {
-//                DebugDraw.draw();
+                DebugDraw.draw();
 
-//                currentScene.update(dt);
-                currentScene.render();
+                TextRenderer.drawText("PLS WORK", 150, 100);
 
-//            textRenderer.drawText("Penis.", (float) (600 + Math.sin(Utils.time()) * 150), (float) (200 + Math.sin(Utils.time()) * 200));
-//            textRenderer.drawText("fps: " + (int) (1 / dt), 0, 0);
+                currentScene.update(dt);
+                renderSceneWithShader(defaultShader);
             }
+
+            //TODO: падает по ООМ, скорее всего потому что каждый кадр динамически аллоцирую память под вертексы для рендера текста
 
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
@@ -271,6 +266,11 @@ public class Window implements KeyboardEventListener {
 
         }
 
+    }
+
+    private void renderSceneWithShader(Shader shader){
+        Renderer.bindShader(shader);
+        currentScene.render();
     }
 
     private void clear() {

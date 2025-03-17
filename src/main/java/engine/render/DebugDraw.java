@@ -76,7 +76,9 @@ public class DebugDraw {
 
 
     public static void draw() {
-        if (lines.isEmpty()) return;
+        if (lines.isEmpty()) {
+            return;
+        }
 
         int index = 0;
         for (Line line : lines) {

@@ -72,11 +72,9 @@ public class Renderer {
 
     public void render() {
 
-//        for (TextureRenderBatch textureBatch : textureBatches) {
-//            textureBatch.render();
-//        }
-
-        TextRenderer.render();
+        for (TextureRenderBatch textureBatch : textureBatches) {
+            textureBatch.render();
+        }
 
 
 

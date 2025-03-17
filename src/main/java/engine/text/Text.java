@@ -13,9 +13,15 @@ public class Text {
 
     private List<Vector2f> positions = new LinkedList<>();
 
+    private String textContent;
+
     private float sizeModifier;
 
     private Color color;
+
+    // TODO: переделать lifetime на float для использования в секундах
+    //TODO: прикрутить lifetime к системе рендера, сейчас он всегда изначально равен 1
+    private int lifetime = 1;
 
     public void addGlyph(Glyph glyph, Vector2f pos){
        content.add(glyph);
@@ -28,7 +34,7 @@ public class Text {
     }
 
     public int getTextSize(){
-        return positions.size();
+        return textContent.length();
     }
 
     public List<Glyph> getContent() {
@@ -49,5 +55,17 @@ public class Text {
 
     public Color getColor() {
         return color;
+    }
+
+    public String getTextContent() {
+        return textContent;
+    }
+
+    public void setTextContent(String textContent) {
+        this.textContent = textContent;
+    }
+
+    public int beginFrame() {
+        return --lifetime;
     }
 }

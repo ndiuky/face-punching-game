@@ -35,7 +35,7 @@ public class SceneSelectionScene extends Scene {
 
         addGameObjectToScene(testingSelectGO);
 
-        DebugDraw.drawBox(new Vector2f(100, 100), new Vector2f(50, 100), -1, 30, Color.WHITE, 10000);
+        DebugDraw.drawBox(new Vector2f(100, 100), new Vector2f(50, 100), -1, 30, Color.WHITE, 1000000);
 
 
 //        GameObject textGO = new GameObject("textGO", new Transform(new Vector2f(100, 100), new Vector2f(128, 128)), -1)

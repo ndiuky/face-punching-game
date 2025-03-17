@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static engine.util.EnginePreferences.MAX_BATCH_SIZE;
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
 
 public class Renderer {
 
@@ -72,6 +75,7 @@ public class Renderer {
 
     public void render() {
 
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         for (TextureRenderBatch textureBatch : textureBatches) {
             textureBatch.render();
         }

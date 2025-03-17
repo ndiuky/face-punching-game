@@ -31,6 +31,8 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
 
     private static final int COLOR_SIZE = 4;
 
+    private static final int EBO_REDUCTION_TO = 4;
+
     private static final int TEXTURE_COORDS_SIZE = 2;
 
     private static final int TEXTURE_ID_SIZE = 1;
@@ -153,7 +155,7 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
     private void loadVertexProperties(int index) {
         SpriteRenderer sprite = this.sprites[index];
 
-        int offset = index * 4 * VERTEX_SIZE;
+        int offset = index * EBO_REDUCTION_TO * VERTEX_SIZE;
 
         Vector4f color = sprite.getColor();
         Vector2f[] textureCoords = sprite.getTextureCoords();
@@ -181,7 +183,7 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
 
         float xAdd = 0.5f;
         float yAdd = 0.5f;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < EBO_REDUCTION_TO; i++) {
             if (i == 1) {
                 yAdd = -0.5f;
             } else if (i == 2) {
@@ -220,7 +222,7 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
 
     private void loadElementIndices(int[] elements, int index) {
         int offsetArrayIndex = 6 * index;
-        int offset = 4 * index;
+        int offset = EBO_REDUCTION_TO * index;
 
         elements[offsetArrayIndex] = offset + 3;
         elements[offsetArrayIndex + 1] = offset + 2;

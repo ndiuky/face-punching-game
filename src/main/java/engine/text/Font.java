@@ -235,8 +235,8 @@ public class Font {
         return height;
     }
 
-    public static void drawText(CharSequence charSequence, float x, float y, Color color) {
-        int textHeight = getHeight(charSequence);
+    public static void drawText(String textToRender, float x, float y, Color color) {
+        int textHeight = getHeight(textToRender);
 
         float drawX = x;
         float drawY = y;
@@ -245,12 +245,13 @@ public class Font {
         }
 
         Text text = new Text();
+        text.setTextContent(textToRender);
         text.setColor(color);
 
-        texture.bind();
-        TextRenderer.begin();
-        for (int i = 0; i < charSequence.length(); i++) {
-            char ch = charSequence.charAt(i);
+//        texture.bind();
+//        TextRenderer.beginFrame();
+        for (int i = 0; i < textToRender.length(); i++) {
+            char ch = textToRender.charAt(i);
             if (ch == '\n') {
                 /* Line feed, set x and y to draw at the next line */
                 drawY -= fontHeight;
@@ -266,7 +267,7 @@ public class Font {
             drawX += g.width;
         }
         TextRenderer.drawFullText(text);
-        TextRenderer.end();
+//        TextRenderer.end();
     }
 
     /**
@@ -276,7 +277,7 @@ public class Font {
      * @param x        X coordinate of the text position
      * @param y        Y coordinate of the text position
      */
-    public static void drawText(CharSequence text, float x, float y) {
+    public static void drawText(String text, float x, float y) {
         drawText(text, x, y, Color.WHITE);
     }
 

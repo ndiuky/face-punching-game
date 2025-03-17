@@ -47,6 +47,7 @@ import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -61,8 +62,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window implements KeyboardEventListener {
 
     private static GLFWVidMode vidMode;
-
-    private TextRenderer textRenderer;
 
     private static long primaryMonitor;
 
@@ -156,8 +155,6 @@ public class Window implements KeyboardEventListener {
         createWindow(true);
         createWindow(fullscreen);
 
-        textRenderer = new TextRenderer();
-
         //TODO: убрать хардкод
         Window.changeScene(2);
     }
@@ -242,17 +239,19 @@ public class Window implements KeyboardEventListener {
             glEnable(GL_BLEND);
 
             DebugDraw.beginFrame();
+            TextRenderer.beginFrame();
 
             glClearColor(r, g, b, a);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (dt >= 0) {
-                DebugDraw.draw();
-
-                TextRenderer.drawText("PLS WORK", 150, 100);
-
                 currentScene.update(dt);
                 renderSceneWithShader(defaultShader);
+
+                DebugDraw.draw();
+                TextRenderer.draw();
+
+                TextRenderer.drawText("fps: " + (int) (1 / dt), (float) (600 + Math.sin(Utils.time()) * 150), (float) (200 + Math.sin(Utils.time()) * 200));
             }
 
             //TODO: падает по ООМ, скорее всего потому что каждый кадр динамически аллоцирую память под вертексы для рендера текста
@@ -275,8 +274,6 @@ public class Window implements KeyboardEventListener {
 
     private void clear() {
         currentScene.saveSceneData();
-
-        textRenderer.dispose();
 
         glfwFreeCallbacks(glfwWindow);
         glfwDestroyWindow(glfwWindow);

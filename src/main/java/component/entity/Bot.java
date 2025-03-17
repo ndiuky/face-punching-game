@@ -3,11 +3,11 @@ package component.entity;
 import controllerAttiribute.ActionType;
 import controllerAttiribute.Knockable;
 import engine.component.Component;
-import game_component.GameComponent;
-import game_component.attack.AttackGameComponent;
-import game_component.block.BlockGameComponent;
-import game_component.bonus.BonusGameComponent;
-import game_component.move.MoveGameComponent;
+import gameComponent.GameComponent;
+import gameComponent.attack.AttackGameComponent;
+import gameComponent.block.BlockGameComponent;
+import gameComponent.bonus.BonusGameComponent;
+import gameComponent.move.MoveGameComponent;
 import org.joml.Vector2f;
 
 import java.util.function.Consumer;

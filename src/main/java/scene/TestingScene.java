@@ -13,7 +13,7 @@ import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.util.AssetPool;
-import game_component.move.CMoveArc;
+import gameComponent.move.CMoveArc;
 import org.joml.Vector2f;
 
 public class TestingScene extends Scene {
@@ -58,7 +58,7 @@ public class TestingScene extends Scene {
     }
 
     private void loadResources() {
-        AssetPool.getShader("asset/shader/default.glsl");
+        AssetPool.getShaderByName("default");
 
         AssetPool.getTexture("asset/texture/chip-small.png");
 

@@ -7,6 +7,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -23,7 +24,6 @@ import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glCompileShader;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
 import static org.lwjgl.opengl.GL20.glCreateShader;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
@@ -39,6 +39,7 @@ import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20C.glGetAttribLocation;
 
 public class Shader {
 
@@ -81,8 +82,7 @@ public class Shader {
             } else {
                 throw new IOException("Unexpected token '" + secondPattern + "'");
             }
-        } catch(IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
             throw new RuntimeException("Error: Could not open file for shader: '" + filepath + "'");
         }
     }
@@ -139,7 +139,6 @@ public class Shader {
 
     public void uploadMat4f(String varName, Matrix4f mat4) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
         mat4.get(matBuffer);
         glUniformMatrix4fv(varLocation, false, matBuffer);
@@ -147,7 +146,6 @@ public class Shader {
 
     public void uploadMat3f(String varName, Matrix3f mat3) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(9);
         mat3.get(matBuffer);
         glUniformMatrix3fv(varLocation, false, matBuffer);
@@ -155,41 +153,65 @@ public class Shader {
 
     public void uploadVec4f(String varName, Vector4f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         glUniform4f(varLocation, vec.x, vec.y, vec.z, vec.w);
     }
 
     public void uploadVec3f(String varName, Vector3f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         glUniform3f(varLocation, vec.x, vec.y, vec.z);
     }
 
     public void uploadVec2f(String varName, Vector2f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         glUniform2f(varLocation, vec.x, vec.y);
     }
 
     public void uploadFloat(String varName, float val) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         glUniform1f(varLocation, val);
     }
 
     public void uploadInt(String varName, int val) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         glUniform1i(varLocation, val);
     }
 
-    public void uploadIntArray(String varName, int[] val){
+    public void uploadIntArray(String varName, int[] val) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-        use();
         glUniform1iv(varLocation, val);
     }
 
     public void uploadTexture(String varName, int slot) {
         uploadInt(varName, slot);
     }
+
+    public int getShaderProgramID() {
+        return shaderProgramID;
+    }
+
+    public int getAttributeLocation(CharSequence name) {
+        return glGetAttribLocation(shaderProgramID, name);
+    }
+
+    public int getUniformLocation(CharSequence name) {
+        return glGetUniformLocation(shaderProgramID, name);
+    }
+
+    public void setUniform(int location, int value) {
+        glUniform1i(location, value);
+    }
+
+    //TODO: переделать на загрузку обычных массивов
+    public void setUniform(int location, Matrix4f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4 * 4);
+            buffer.put(value.m00()).put(value.m10()).put(value.m20()).put(value.m30());
+            buffer.put(value.m01()).put(value.m11()).put(value.m21()).put(value.m31());
+            buffer.put(value.m02()).put(value.m12()).put(value.m22()).put(value.m32());
+            buffer.put(value.m03()).put(value.m13()).put(value.m23()).put(value.m33());
+            buffer.flip();
+            glUniformMatrix4fv(location, false, buffer);
+        }
+    }
+
 }

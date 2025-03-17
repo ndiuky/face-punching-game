@@ -1,6 +1,6 @@
-package game_component.move;
+package gameComponent.move;
 
-import game_component.GameComponent;
+import gameComponent.GameComponent;
 import org.joml.Vector2f;
 
 public abstract class MoveGameComponent extends GameComponent {

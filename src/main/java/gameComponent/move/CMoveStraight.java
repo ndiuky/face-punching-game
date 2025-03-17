@@ -1,6 +1,5 @@
-package game_component.move;
+package gameComponent.move;
 
-import component.entity.Bot;
 import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;

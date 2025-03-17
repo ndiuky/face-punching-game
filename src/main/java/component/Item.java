@@ -1,7 +1,7 @@
 package component;
 
 import engine.component.Component;
-import engine.util.Utils;
+import engine.util.EngineUtils;
 import org.joml.Math;
 import org.joml.Vector2f;
 
@@ -24,7 +24,7 @@ public class Item extends Component {
     }
 
     private void wobble(final float dt){
-        yOffset = Math.sin(Utils.time()*2) * yDelta;
+        yOffset = Math.sin(EngineUtils.time()*2) * yDelta;
 
         gameObject.transform.position = new Vector2f(originalPos).add(new Vector2f(0, yOffset));
     }

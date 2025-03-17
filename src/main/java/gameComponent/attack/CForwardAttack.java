@@ -1,4 +1,4 @@
-package game_component.attack;
+package gameComponent.attack;
 
 import component.entity.Bot;
 import controllerAttiribute.Knockable;
@@ -8,9 +8,9 @@ import engine.object.Prefab;
 import engine.render.Window;
 import org.joml.Vector2f;
 
-import static game_component.attack.AttackGameComponent.AttackState.INACTIVE;
-import static game_component.attack.AttackGameComponent.AttackState.MOVING_TO_TARGET;
-import static game_component.attack.AttackGameComponent.AttackState.RETRACTING;
+import static gameComponent.attack.AttackGameComponent.AttackState.INACTIVE;
+import static gameComponent.attack.AttackGameComponent.AttackState.MOVING_TO_TARGET;
+import static gameComponent.attack.AttackGameComponent.AttackState.RETRACTING;
 
 public class CForwardAttack extends AttackGameComponent {
 
@@ -77,7 +77,7 @@ public class CForwardAttack extends AttackGameComponent {
 
             attackState = RETRACTING;
 
-            System.out.println("пиздюли успешно получены");
+            System.out.println("пиздюли успешно доставлены");
         } else {
             fistGO.transform.position.add(new Vector2f(dir).normalize().mul(fistSpeed * dt));
         }

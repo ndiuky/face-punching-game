@@ -9,7 +9,7 @@ import org.joml.Vector2f;
 public class GridLines extends Component {
 
     private final Camera camera;
-    // TODO: 14.07.2024 добавить уменьшение/увеличение количества линий при сильном изменении зума
+    //TODO: 14.07.2024 добавить уменьшение/увеличение количества линий при сильном изменении зума
     private final int CLAMP_RATIO = 2;
 
     public GridLines(Camera camera) {
@@ -36,11 +36,11 @@ public class GridLines extends Component {
             int y = firstY + (EnginePreferences.GRID_SIZE * i);
 
             if (i < horizontalLinesAmount) {
-                DebugDraw.drawLine(new Vector2f(firstX, y), new Vector2f(firstX + width, y), 9, Color.GREY);
+                DebugDraw.drawLine(new Vector2f(firstX, y), new Vector2f(firstX + width, y), 9, Color.GREY3);
             }
 
             if (i < verticalLinesAmount) {
-                DebugDraw.drawLine(new Vector2f(x, firstY), new Vector2f(x, firstY + height), 9, Color.GREY);
+                DebugDraw.drawLine(new Vector2f(x, firstY), new Vector2f(x, firstY + height), 9, Color.GREY3);
             }
 
         }

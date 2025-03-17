@@ -1,6 +1,6 @@
-package game_component.block;
+package gameComponent.block;
 
-import game_component.GameComponent;
+import gameComponent.GameComponent;
 
 public abstract class BlockGameComponent extends GameComponent {
 

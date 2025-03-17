@@ -1,11 +1,11 @@
-package game_component.attack;
+package gameComponent.attack;
 
 import engine.object.GameObject;
 import engine.object.Sprite;
 import engine.util.AssetPool;
-import game_component.GameComponent;
+import gameComponent.GameComponent;
 
-import static game_component.attack.AttackGameComponent.AttackState.INACTIVE;
+import static gameComponent.attack.AttackGameComponent.AttackState.INACTIVE;
 
 public abstract class AttackGameComponent extends GameComponent {
 

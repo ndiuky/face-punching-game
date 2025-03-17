@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static engine.util.Utils.rotateVertex;
+import static engine.util.EngineUtils.rotateVertex;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_FLOAT;
@@ -34,9 +34,9 @@ public class DebugDraw {
 
     private static final List<Line> lines = new ArrayList<>(MAX_LINES);
 
-    private static final float[] vertexArray = new float[MAX_LINES * INDICES_COUNT * 2];
+    private static final float[] vertices = new float[MAX_LINES * INDICES_COUNT * 2];
 
-    private static final Shader shader = AssetPool.getShader("asset/shader/debugLine.glsl");
+    private static final Shader shader = AssetPool.getShaderByName("debugLine");
 
     private static int vaoID;
 
@@ -50,7 +50,7 @@ public class DebugDraw {
 
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, vertexArray.length * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
 
         glVertexAttribPointer(0, 3, GL_FLOAT, false, INDICES_COUNT * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
@@ -76,27 +76,30 @@ public class DebugDraw {
 
 
     public static void draw() {
-        if (lines.isEmpty()) return;
+        if (lines.isEmpty()) {
+            return;
+        }
 
         int index = 0;
         for (Line line : lines) {
+            Vector4f color = line.getColor();
+
             for (int i = 0; i < 2; i++) {
                 Vector2f position = i == 0 ? line.getFrom() : line.getTo();
-                Vector4f color = line.getColor();
 
-                vertexArray[index] = position.x;
-                vertexArray[index + 1] = position.y;
-                vertexArray[index + 2] = line.getzOrder();
+                vertices[index] = position.x;
+                vertices[index + 1] = position.y;
+                vertices[index + 2] = line.getzOrder();
 
-                vertexArray[index + 3] = color.x;
-                vertexArray[index + 4] = color.y;
-                vertexArray[index + 5] = color.z;
+                vertices[index + 3] = color.x;
+                vertices[index + 4] = color.y;
+                vertices[index + 5] = color.z;
                 index += INDICES_COUNT;
             }
         }
 
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertexArray, 0, lines.size() * INDICES_COUNT * 2));
+        glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertices, 0, lines.size() * INDICES_COUNT * 2));
 
         shader.use();
         shader.uploadMat4f("uProjection", Window.getCurrentScene().getCamera().getProjectionMatrix());
@@ -124,7 +127,10 @@ public class DebugDraw {
     }
 
     public static void drawLine(Vector2f from, Vector2f to, int zOrder, Color color, int lifetime) {
-        if (lines.size() >= MAX_LINES) return;
+        if (lines.size() >= MAX_LINES) {
+            return;
+        }
+
         lines.add(new Line(from, to, zOrder, color.asVector(), lifetime));
     }
 

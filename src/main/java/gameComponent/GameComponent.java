@@ -1,4 +1,4 @@
-package game_component;
+package gameComponent;
 
 import component.entity.Bot;
 
@@ -10,8 +10,8 @@ public abstract class GameComponent {
         this.bot = bot;
     }
 
-    //Override on demand
     public void update(final float dt) {
+        //Override on demand
     }
 
     public abstract void stopExecution();

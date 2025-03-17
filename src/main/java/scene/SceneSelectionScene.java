@@ -8,7 +8,9 @@ import engine.object.Sprite;
 import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
+import engine.render.DebugDraw;
 import engine.util.AssetPool;
+import engine.util.Color;
 import org.joml.Vector2f;
 
 public class SceneSelectionScene extends Scene {
@@ -31,10 +33,26 @@ public class SceneSelectionScene extends Scene {
                 .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/chip-small.png"))));
 
         addGameObjectToScene(testingSelectGO);
+
+        DebugDraw.drawBox(new Vector2f(100, 100), new Vector2f(50, 100), -1, 30, Color.WHITE, 1000000);
+
+
+//        GameObject textGO = new GameObject("textGO", new Transform(new Vector2f(100, 100), new Vector2f(128, 128)), -1)
+//                .addComponent(new TextRenderer().setText("penis.").setPos(100, 100));
+//
+//        addGameObjectToScene(textGO);
+
+//        GameObject textGO = new GameObject("textGO", new Transform(new Vector2f(100, 100), new Vector2f(128, 128)), -1)
+//                .addComponent(TextRenderer.get().setText("penis.").setPos(100, 100));
+//
+//        addGameObjectToScene(textGO);
+
     }
 
+
+
     private void loadResources() {
-        AssetPool.getShader("asset/shader/default.glsl");
+        AssetPool.getShaderByName("default");
 
         AssetPool.getTexture("asset/texture/chip-small.png");
 

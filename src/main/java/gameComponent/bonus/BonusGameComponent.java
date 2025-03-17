@@ -1,7 +1,6 @@
-package game_component.bonus;
+package gameComponent.bonus;
 
-import component.entity.Bot;
-import game_component.GameComponent;
+import gameComponent.GameComponent;
 
 public class BonusGameComponent extends GameComponent {
 

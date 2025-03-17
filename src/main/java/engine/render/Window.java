@@ -6,7 +6,7 @@ import engine.event.MouseEventProducer;
 import engine.object.Scene;
 import engine.util.AssetPool;
 import engine.util.EnginePreferences;
-import engine.util.Utils;
+import engine.util.EngineUtils;
 import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
 import org.lwjgl.glfw.GLFW;
@@ -17,6 +17,7 @@ import scene.BoxingRingScene;
 import scene.SceneSelectionScene;
 import scene.TestingScene;
 
+import static engine.util.EnginePreferences.ENABLE_VSYNK;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
@@ -44,17 +45,17 @@ import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11C.glClear;
+import static org.lwjgl.opengl.GL11C.glClearColor;
+import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window implements KeyboardEventListener {
@@ -91,6 +92,7 @@ public class Window implements KeyboardEventListener {
         b = 0.1f;
         g = 0.1f;
         a = 1;
+
     }
 
     public static void changeScene(int newScene) {
@@ -147,7 +149,6 @@ public class Window implements KeyboardEventListener {
 
         }
 
-        //calling it with true parameter to fix issue, where camera scaling wasn't applying properly
         //TODO: запомнить последнюю позицию
         createWindow(true);
         createWindow(fullscreen);
@@ -187,7 +188,7 @@ public class Window implements KeyboardEventListener {
             );
         }
 
-        GLFW.glfwSwapInterval(1);
+        GLFW.glfwSwapInterval(ENABLE_VSYNK ? 1 : 0);
 
         glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
@@ -210,15 +211,16 @@ public class Window implements KeyboardEventListener {
     }
 
     public void loop() {
-        float beginTime = Utils.time();
+        float beginTime = EngineUtils.time();
         float endTime;
         float dt = -1.0f;
 
-        Shader defaultShader = AssetPool.getShader("asset/shader/default.glsl");
-        Shader pickingShader = AssetPool.getShader("asset/shader/pickingShader.glsl");
+        Shader defaultShader = AssetPool.getShaderByName("default");
+        Shader pickingShader = AssetPool.getShaderByName("pickingShader");
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
+
 
             glDisable(GL_BLEND);
             pickingTexture.enableWriting();
@@ -227,26 +229,29 @@ public class Window implements KeyboardEventListener {
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            Renderer.bindShader(pickingShader);
-            currentScene.render();
+            renderSceneWithShader(pickingShader);
 
             pickingTexture.disableWriting();
             glDisable(GL_DEPTH_TEST);
             glEnable(GL_BLEND);
 
             DebugDraw.beginFrame();
+            TextRenderer.beginFrame();
 
             glClearColor(r, g, b, a);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (dt >= 0) {
-                DebugDraw.draw();
-                Renderer.bindShader(defaultShader);
-//                Renderer.bindShader(pickingShader);
-
                 currentScene.update(dt);
-                currentScene.render();
+                renderSceneWithShader(defaultShader);
+
+                DebugDraw.draw();
+                TextRenderer.draw();
+
+                TextRenderer.add("fps: " + (int) (1 / dt), (float) (600 + Math.sin(EngineUtils.time()) * 150), (float) (200 + Math.sin(EngineUtils.time()) * 200));
             }
+
+            //TODO: падает по ООМ, скорее всего потому что каждый кадр динамически аллоцирую память под вертексы для рендера текста
 
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
@@ -254,8 +259,14 @@ public class Window implements KeyboardEventListener {
             endTime = (float) glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
+
         }
 
+    }
+
+    private void renderSceneWithShader(Shader shader) {
+        Renderer.bindShader(shader);
+        currentScene.render();
     }
 
     private void clear() {
@@ -284,7 +295,7 @@ public class Window implements KeyboardEventListener {
     public static float getAspectRatio() {
         return aspectRatio;
     }
-
+//TODO: реализовать
 //    public static Vector2f getMiddleWindowPoint(){
 //
 //    }
@@ -318,6 +329,7 @@ public class Window implements KeyboardEventListener {
         if (key == GLFW_KEY_F11) {
             toggleFullscreen();
         }
+        //TODO: добавить F3 для меню дебага
     }
 
     @Override

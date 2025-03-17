@@ -10,19 +10,21 @@ import java.util.Map;
 
 public class AssetPool {
 
+    private static final String SHADER_PATH_TEMPLATE = "asset/shader/%s.glsl";
+
     private static final Map<String, Shader> shaders = new HashMap<>();
 
     private static final Map<String, Texture> textures = new HashMap<>();
 
     private static final Map<String, SpriteSheet> spriteSheets = new HashMap<>();
 
-    public static Shader getShader(String resourceName) {
-        if (shaders.containsKey(resourceName)) {
-            return shaders.get(resourceName);
+    public static Shader getShaderByName(String shaderName) {
+        if (shaders.containsKey(shaderName)) {
+            return shaders.get(shaderName);
         } else {
-            Shader shader = new Shader(resourceName);
+            Shader shader = new Shader(getFullShaderPath(shaderName));
             shader.compile();
-            shaders.put(resourceName, shader);
+            shaders.put(shaderName, shader);
             return shader;
         }
     }
@@ -45,10 +47,10 @@ public class AssetPool {
     }
 
     public static SpriteSheet getSpritesheet(String resourceName) {
-//        if (!spriteSheets.containsKey(resourceName)){
-//            throw new RuntimeException("Error: Tried to access spritesheet '" + resourceName + "' and it has not been added to asset pool.");
-//        }
-
         return spriteSheets.getOrDefault(resourceName, null);
+    }
+
+    private static String getFullShaderPath(String shaderName) {
+        return String.format(SHADER_PATH_TEMPLATE, shaderName);
     }
 }

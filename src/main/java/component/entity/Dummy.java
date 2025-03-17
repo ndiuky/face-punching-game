@@ -7,7 +7,7 @@ public class Dummy extends Bot {
     }
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         if (isKnocked) {
             flyFromKnock(dt);
         }

@@ -7,10 +7,7 @@ import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MemoryStack;
 
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +37,7 @@ import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
 public class TextRenderer {
 
-    private static final int MAX_TEXT_BLOCKS = 4096;
+    private static final int MAX_GLYPHS = 1024;
 
     private static final int VERTICES_PER_QUAD = 6;
 
@@ -49,8 +46,8 @@ public class TextRenderer {
     private static int vboID = -1;
     private static final Shader shader = AssetPool.getShaderByName("fontShader");
 
-    private static final float[] vertices = new float[MAX_TEXT_BLOCKS * VERTICES_PER_QUAD * 2];
-    private static final List<Text> contentToRender = new ArrayList<>(MAX_TEXT_BLOCKS);
+    private static final float[] vertices = new float[MAX_GLYPHS * VERTICES_PER_QUAD * VERTEX_SIZE];
+    private static final List<Text> contentToRender = new ArrayList<>();
     private static int numVertices = 0;
 
     private static boolean started;
@@ -90,7 +87,7 @@ public class TextRenderer {
         }
 
         glActiveTexture(GL_TEXTURE0);
-        Font.getTexture().bind();
+        Font.bind();
 
         for (Text text : contentToRender) {
             int textSize = text.getTextSize();
@@ -193,33 +190,23 @@ public class TextRenderer {
         shader.use();
         enableVertexAttributes();
 
-        //TODO: брать окно из Window
-        long window = GLFW.glfwGetCurrentContext();
-        int width, height;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer widthBuffer = stack.mallocInt(1);
-            IntBuffer heightBuffer = stack.mallocInt(1);
-            GLFW.glfwGetFramebufferSize(window, widthBuffer, heightBuffer);
-            width = widthBuffer.get();
-            height = heightBuffer.get();
-        }
+        shader.setUniform(shader.getUniformLocation("uTexture"), 0);
 
-        shader.setUniform(shader.getUniformLocation("texImage"), 0);
-
-        shader.setUniform(shader.getUniformLocation("model"),
+        shader.setUniform(shader.getUniformLocation("uModel"),
                 new Matrix4f()
         );
 
-        shader.setUniform(shader.getUniformLocation("view"),
+        //TODO: брать view матрицу из камеры
+        shader.setUniform(shader.getUniformLocation("uView"),
                 new Matrix4f()
         );
 
         //TODO: брать матрицу проекции из камеры
-        shader.setUniform(shader.getUniformLocation("projection"),
+        shader.setUniform(shader.getUniformLocation("uProjection"),
 //                    Window.getCurrentScene().getCamera().getProjectionMatrix()
                 new Matrix4f(
-                        2f / width, 0f, 0f, -1f,
-                        0f, 2f / height, 0f, -1f,
+                        2f / Window.getWidth(), 0f, 0f, -1f,
+                        0f, 2f / Window.getHeight(), 0f, -1f,
                         0f, 0f, -1f, 0f,
                         0f, 0f, 0f, 1f
                 )
@@ -233,9 +220,10 @@ public class TextRenderer {
 
         numVertices = 0;
 
-        //TODO: если использовать detach(), то текст не будет рендериться
-        shader.detach();
+        //TODO: возможно здесь нужно вызывать detach() на текстуре
+//        Font.unbind();
 
+        shader.detach();
     }
 
     public static void add(String text, float x, float y) {
@@ -276,18 +264,16 @@ public class TextRenderer {
 
     private static void disableVertexAttributes() {
 
+        //TODO: переделать на константные значения
         int posAttrib = shader.getAttributeLocation("position");
         int colAttrib = shader.getAttributeLocation("color");
         int texAttrib = shader.getAttributeLocation("texcoord");
 
         glDisableVertexAttribArray(posAttrib);
-//        glVertexAttribPointer(posAttrib, 2, GL_FLOAT, false, 8 * Float.BYTES, 0);
 
         glDisableVertexAttribArray(colAttrib);
-//        glVertexAttribPointer(colAttrib, 4, GL_FLOAT, false, 8 * Float.BYTES, 2 * Float.BYTES);
 
         glDisableVertexAttribArray(texAttrib);
-//        glVertexAttribPointer(texAttrib, 2, GL_FLOAT, false, 8 * Float.BYTES, 6 * Float.BYTES);
     }
 
 }

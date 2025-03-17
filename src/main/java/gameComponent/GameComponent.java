@@ -6,11 +6,11 @@ public abstract class GameComponent {
 
     protected Bot bot;
 
-    public void init(final Bot bot){
+    public void init(Bot bot){
         this.bot = bot;
     }
 
-    public void update(final float dt) {
+    public void update(float dt) {
         //Override on demand
     }
 

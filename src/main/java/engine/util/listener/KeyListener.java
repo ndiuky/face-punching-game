@@ -26,7 +26,7 @@ public class KeyListener implements KeyboardEventProducer {
         if (action == GLFW_PRESS) {
             get().keyPressed[key] = true;
 
-            final List<KeyboardEventListener> listeners = pressListeners.get(key);
+            List<KeyboardEventListener> listeners = pressListeners.get(key);
             if (listeners != null) {
                 for (KeyboardEventListener listener : listeners) {
                     listener.onKeyPress(key);
@@ -35,7 +35,7 @@ public class KeyListener implements KeyboardEventProducer {
         } else if (action == GLFW_RELEASE) {
             get().keyPressed[key] = false;
 
-            final List<KeyboardEventListener> listeners = releaseListeners.get(key);
+            List<KeyboardEventListener> listeners = releaseListeners.get(key);
             if (listeners != null) {
                 for (KeyboardEventListener listener : listeners) {
                     listener.onKeyRelease(key);

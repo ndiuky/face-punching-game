@@ -72,7 +72,7 @@ public class Shader {
             } else if (firstPattern.equals("fragment")) {
                 fragmentSource = splitString[1];
             } else {
-                throw new IOException("Unexpected token '" + firstPattern + "'");
+                throw new RuntimeException("Unexpected token '" + firstPattern + "'");
             }
 
             if (secondPattern.equals("vertex")) {
@@ -80,7 +80,7 @@ public class Shader {
             } else if (secondPattern.equals("fragment")) {
                 fragmentSource = splitString[2];
             } else {
-                throw new IOException("Unexpected token '" + secondPattern + "'");
+                throw new RuntimeException("Unexpected token '" + secondPattern + "'");
             }
         } catch (IOException e) {
             throw new RuntimeException("Error: Could not open file for shader: '" + filepath + "'");

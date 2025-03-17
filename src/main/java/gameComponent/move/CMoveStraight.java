@@ -11,7 +11,7 @@ public class CMoveStraight extends MoveGameComponent {
     private float movementSpeed = 400;
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         if (destination != null) {
             goToTarget(dt);
         }
@@ -30,8 +30,8 @@ public class CMoveStraight extends MoveGameComponent {
     }
 
     //TODO: не вычислять каждый раз направление движения, а сделать это один раз перед началом движения
-    private void goToTarget(final float dt) {
-        final Vector2f dir = new Vector2f(destination).sub(new Vector2f(bot.gameObject.transform.position));
+    private void goToTarget(float dt) {
+        Vector2f dir = new Vector2f(destination).sub(new Vector2f(bot.gameObject.transform.position));
 
         float distance = new Vector2f(dir).absolute().length();
 

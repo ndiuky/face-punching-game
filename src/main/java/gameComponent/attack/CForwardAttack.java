@@ -23,7 +23,7 @@ public class CForwardAttack extends AttackGameComponent {
     private GameObject target;
 
     @Override
-    public void executeAttack(final int button, final GameObject target) {
+    public void executeAttack(int button, GameObject target) {
         if (!INACTIVE.equals(attackState)
                 || target == null
                 || target.getComponent(Bot.class) == null) {
@@ -50,7 +50,7 @@ public class CForwardAttack extends AttackGameComponent {
     }
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         if (MOVING_TO_TARGET.equals(attackState)) {
             moveFistToTarget(dt);
         } else if (RETRACTING.equals(attackState)) {
@@ -60,7 +60,7 @@ public class CForwardAttack extends AttackGameComponent {
 
     //TODO: не вычислять каждый раз направление движения, а сделать это один раз перед началом движения
     private void moveFistToTarget(float dt) {
-        final Vector2f dir = new Vector2f(target.transform.position).sub(new Vector2f(fistGO.transform.position));
+        Vector2f dir = new Vector2f(target.transform.position).sub(new Vector2f(fistGO.transform.position));
 
         float distance = new Vector2f(dir).absolute().length();
 
@@ -83,8 +83,8 @@ public class CForwardAttack extends AttackGameComponent {
         }
     }
 
-    private void retractFist(final float dt) {
-        final Vector2f dir = new Vector2f(bot.gameObject.transform.position).sub(new Vector2f(fistGO.transform.position));
+    private void retractFist(float dt) {
+        Vector2f dir = new Vector2f(bot.gameObject.transform.position).sub(new Vector2f(fistGO.transform.position));
 
         float distance = new Vector2f(dir).absolute().length();
 

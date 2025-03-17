@@ -216,7 +216,11 @@ public class Font {
         drawText(text, x, y, Color.WHITE);
     }
 
-    public static void dispose() {
+    public static void bind(){
+        texture.bind();
+    }
+
+    public static void unbind() {
         texture.unbind();
     }
 

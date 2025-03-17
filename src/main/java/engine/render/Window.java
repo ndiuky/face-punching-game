@@ -5,6 +5,7 @@ import engine.event.KeyboardEventProducer;
 import engine.event.MouseEventProducer;
 import engine.object.Scene;
 import engine.util.AssetPool;
+import engine.util.Color;
 import engine.util.EnginePreferences;
 import engine.util.EngineUtils;
 import engine.util.listener.KeyListener;
@@ -13,14 +14,13 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
-import scene.BoxingRingScene;
 import scene.SceneSelectionScene;
-import scene.TestingScene;
 
 import static engine.util.EnginePreferences.ENABLE_VSYNK;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F3;
 import static org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
@@ -70,6 +70,8 @@ public class Window implements KeyboardEventListener {
 
     private static boolean fullscreen;
 
+    private static boolean isDebugMenuActive = false;
+
     private static int windowPosX, windowPosY;
 
     private static String title;
@@ -78,40 +80,33 @@ public class Window implements KeyboardEventListener {
 
     private static PickingTexture pickingTexture;
 
-    public static float r, g, b, a;
+    public static Color bgColor = Color.GREY1;
 
     private static Scene currentScene;
 
     private static Window instance;
 
     public Window() {
-
         title = "Face punching game idk";
         fullscreen = false;
-        r = 0.1f;
-        b = 0.1f;
-        g = 0.1f;
-        a = 1;
-
     }
 
-    public static void changeScene(int newScene) {
+    public static void changeScene(Class<? extends Scene> sceneClass) {
         if (currentScene != null) {
             currentScene.destroy();
             MouseEventProducer.clearListeners();
             KeyboardEventProducer.clearListeners();
         }
 
-        KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F11, instance);
+        try {
+            currentScene = sceneClass.getDeclaredConstructor().newInstance();
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to create new instance of the scene from class " + sceneClass.getName() + ". Message: " + ex.getMessage());
+        }
 
-        currentScene = switch (newScene) {
-            case 0 -> new TestingScene();
-            case 1 -> new BoxingRingScene();
-            case 2 -> new SceneSelectionScene();
-            default -> {
-                throw new RuntimeException("Unknown scene '" + newScene + "'");
-            }
-        };
+        //TODO: понятия не имею почему это здесь
+        KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F11, instance);
+        KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F3, instance);
 
         if (EnginePreferences.ENABLE_DATA_LOADING) {
             currentScene.loadSceneData();
@@ -130,7 +125,7 @@ public class Window implements KeyboardEventListener {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit()) {
-            throw new IllegalStateException("Unable to initialize GLFW.");
+            throw new RuntimeException("Unable to initialize GLFW.");
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -150,11 +145,11 @@ public class Window implements KeyboardEventListener {
         }
 
         //TODO: запомнить последнюю позицию
+        //TODO: нормально пофиксить кривое положение курсора при запуске окна с первого раза
         createWindow(true);
         createWindow(fullscreen);
 
-        //TODO: убрать хардкод
-        Window.changeScene(2);
+        Window.changeScene(SceneSelectionScene.class);
     }
 
     private static void createWindow(boolean fullscreen) {
@@ -226,7 +221,7 @@ public class Window implements KeyboardEventListener {
             pickingTexture.enableWriting();
 
             glViewport(0, 0, width, height);
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            clearColor(Color.TRANSPARENT);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             renderSceneWithShader(pickingShader);
@@ -238,7 +233,7 @@ public class Window implements KeyboardEventListener {
             DebugDraw.beginFrame();
             TextRenderer.beginFrame();
 
-            glClearColor(r, g, b, a);
+            clearColor(bgColor);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (dt >= 0) {
@@ -250,8 +245,6 @@ public class Window implements KeyboardEventListener {
 
                 TextRenderer.add("fps: " + (int) (1 / dt), (float) (600 + Math.sin(EngineUtils.time()) * 150), (float) (200 + Math.sin(EngineUtils.time()) * 200));
             }
-
-            //TODO: падает по ООМ, скорее всего потому что каждый кадр динамически аллоцирую память под вертексы для рендера текста
 
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
@@ -284,6 +277,12 @@ public class Window implements KeyboardEventListener {
         createWindow(fullscreen);
     }
 
+    private void toggleDebugMenu() {
+        isDebugMenuActive = !isDebugMenuActive;
+        //TODO: реализовать
+    }
+
+
     public static Window get() {
         if (instance == null) {
             instance = new Window();
@@ -295,7 +294,8 @@ public class Window implements KeyboardEventListener {
     public static float getAspectRatio() {
         return aspectRatio;
     }
-//TODO: реализовать
+
+    //TODO: реализовать
 //    public static Vector2f getMiddleWindowPoint(){
 //
 //    }
@@ -324,12 +324,17 @@ public class Window implements KeyboardEventListener {
         return glfwWindow;
     }
 
+    public static void clearColor(Color color) {
+        glClearColor(color.r, color.g, color.b, color.a);
+    }
+
     @Override
     public void onKeyPress(int key) {
         if (key == GLFW_KEY_F11) {
             toggleFullscreen();
+        } else if (key == GLFW_KEY_F3) {
+            toggleDebugMenu();
         }
-        //TODO: добавить F3 для меню дебага
     }
 
     @Override

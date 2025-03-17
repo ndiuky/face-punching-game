@@ -176,9 +176,9 @@ public class DebugDraw {
         drawCircle(center, radius, zOrder, color, lifetime, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
     }
 
-    public static void drawCircle(final Vector2f center, final float radius, final int zOrder, final Color color, final int lifetime, final int segments) {
-        final Vector2f[] points = new Vector2f[segments];
-        final float increment = 360f / points.length;
+    public static void drawCircle(Vector2f center, float radius, int zOrder, Color color, int lifetime, int segments) {
+        Vector2f[] points = new Vector2f[segments];
+        float increment = 360f / points.length;
         float currentAngle = 0;
 
         for (int i = 0; i < points.length; i++) {
@@ -195,13 +195,13 @@ public class DebugDraw {
         drawLine(points[points.length - 1], points[0], zOrder, color, lifetime);
     }
 
-    public static void drawPath(final Vector2f[] path) {
+    public static void drawPath(Vector2f[] path) {
         for (int i = 0; i < path.length - 1; i++) {
             drawLine(path[i], path[i + 1], -1, Color.GREEN);
         }
     }
 
-    public static void drawPath(final Vector2f[] path, int lifetime) {
+    public static void drawPath(Vector2f[] path, int lifetime) {
         for (int i = 0; i < path.length - 1; i++) {
             drawLine(path[i], path[i + 1], -1, Color.GREEN, lifetime);
         }

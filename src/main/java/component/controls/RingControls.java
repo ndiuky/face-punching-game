@@ -6,6 +6,7 @@ import engine.component.Component;
 import engine.object.GameObject;
 import engine.render.Window;
 import engine.util.listener.KeyListener;
+import scene.SceneSelectionScene;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
@@ -31,9 +32,9 @@ public class RingControls extends Component {
     }
 
     @Override
-    public void update(final float dt) {
+    public void update(float dt) {
         if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
-            Window.changeScene(2);
+            Window.changeScene(SceneSelectionScene.class);
         }
 
         //TODO: переделать на нормальные коллайдеры

@@ -15,6 +15,7 @@ public class Utils {
         final float destinationX = destination.x;
         final float destinationY = destination.y;
 
+        //TODO: убрать метод calculateBPoint, и перенести вычисление BX и BY по отдельности в этот метод
         final Vector2f BPoint = calculateBPoint(botX, botY, destinationX, destinationY, isLeftSided, approachAngle, middlePointDistance);
 
         float BX = BPoint.x;
@@ -22,6 +23,8 @@ public class Utils {
 
         final float iterationStep = 1f / arcSegments;
         float currTime, currTimeSquared, oneMinusCurrTime, oneMinusCurrTimeSquared;
+
+        //TODO: мб заменить ArrayDeque на обычный массив
         final ArrayDeque<Vector2f> path = new ArrayDeque<>();
         for (int i = 0; i <= arcSegments; i++) {
             currTime = iterationStep * i;

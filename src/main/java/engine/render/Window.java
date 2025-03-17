@@ -6,7 +6,7 @@ import engine.event.MouseEventProducer;
 import engine.object.Scene;
 import engine.util.AssetPool;
 import engine.util.EnginePreferences;
-import engine.util.Utils;
+import engine.util.EngineUtils;
 import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
 import org.lwjgl.glfw.GLFW;
@@ -47,7 +47,6 @@ import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -150,7 +149,6 @@ public class Window implements KeyboardEventListener {
 
         }
 
-        //calling it with true parameter to fix issue, where camera scaling wasn't applying properly
         //TODO: запомнить последнюю позицию
         createWindow(true);
         createWindow(fullscreen);
@@ -213,16 +211,15 @@ public class Window implements KeyboardEventListener {
     }
 
     public void loop() {
-        float beginTime = Utils.time();
+        float beginTime = EngineUtils.time();
         float endTime;
         float dt = -1.0f;
 
-        Shader defaultShader = AssetPool.getShader("asset/shader/default.glsl");
-        Shader pickingShader = AssetPool.getShader("asset/shader/pickingShader.glsl");
+        Shader defaultShader = AssetPool.getShaderByName("default");
+        Shader pickingShader = AssetPool.getShaderByName("pickingShader");
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
-
 
 
             glDisable(GL_BLEND);
@@ -251,7 +248,7 @@ public class Window implements KeyboardEventListener {
                 DebugDraw.draw();
                 TextRenderer.draw();
 
-                TextRenderer.drawText("fps: " + (int) (1 / dt), (float) (600 + Math.sin(Utils.time()) * 150), (float) (200 + Math.sin(Utils.time()) * 200));
+                TextRenderer.add("fps: " + (int) (1 / dt), (float) (600 + Math.sin(EngineUtils.time()) * 150), (float) (200 + Math.sin(EngineUtils.time()) * 200));
             }
 
             //TODO: падает по ООМ, скорее всего потому что каждый кадр динамически аллоцирую память под вертексы для рендера текста
@@ -267,7 +264,7 @@ public class Window implements KeyboardEventListener {
 
     }
 
-    private void renderSceneWithShader(Shader shader){
+    private void renderSceneWithShader(Shader shader) {
         Renderer.bindShader(shader);
         currentScene.render();
     }
@@ -298,7 +295,7 @@ public class Window implements KeyboardEventListener {
     public static float getAspectRatio() {
         return aspectRatio;
     }
-
+//TODO: реализовать
 //    public static Vector2f getMiddleWindowPoint(){
 //
 //    }

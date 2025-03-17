@@ -92,14 +92,6 @@ public class Texture {
         return this;
     }
 
-    /**
-     * Creates a texture with specified width, height and data.
-     *
-     * @param width  Width of the texture
-     * @param height Height of the texture
-     * @param data   Picture Data in RGBA format
-     * @return Texture from the specified data
-     */
     public static Texture createTexture(int width, int height, ByteBuffer data) {
         Texture texture = new Texture();
         texture.setWidth(width);
@@ -118,27 +110,10 @@ public class Texture {
         return texture;
     }
 
-    /**
-     * Uploads image data with specified width and height.
-     *
-     * @param width  Width of the image
-     * @param height Height of the image
-     * @param data   Pixel data of the image
-     */
     public void uploadData(int width, int height, ByteBuffer data) {
         uploadData(GL_RGBA8, width, height, GL_RGBA, data);
     }
 
-    /**
-     * Uploads image data with specified internal format, width, height and
-     * image format.
-     *
-     * @param internalFormat Internal format of the image data
-     * @param width          Width of the image
-     * @param height         Height of the image
-     * @param format         Format of the image data
-     * @param data           Pixel data of the image
-     */
     public void uploadData(int internalFormat, int width, int height, int format, ByteBuffer data) {
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     }

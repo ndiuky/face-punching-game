@@ -38,11 +38,6 @@ import static org.lwjgl.opengl.GL30C.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
-/**
- * This class is performing the rendering process.
- *
- * @author Heiko Brumme
- */
 public class TextRenderer {
 
     private static final int MAX_TEXT_BLOCKS = 4096;
@@ -51,20 +46,18 @@ public class TextRenderer {
 
     private static final int VERTEX_SIZE = 8;
 
-    private static int vaoID = -1;
     private static int vboID = -1;
-    private static final Shader shader = AssetPool.getShader("asset/shader/fontShader.glsl");
+    private static final Shader shader = AssetPool.getShaderByName("fontShader");
 
-    //    private static FloatBuffer vertices;
     private static final float[] vertices = new float[MAX_TEXT_BLOCKS * VERTICES_PER_QUAD * 2];
     private static final List<Text> contentToRender = new ArrayList<>(MAX_TEXT_BLOCKS);
     private static int numVertices = 0;
-    private static int numElements = 0;
 
     private static boolean started;
 
     private static void start() {
-        vaoID = glGenVertexArrays();
+        int vaoID = glGenVertexArrays();
+
         glBindVertexArray(vaoID);
 
         vboID = glGenBuffers();
@@ -83,12 +76,11 @@ public class TextRenderer {
 
         for (int i = 0; i < contentToRender.size(); i++) {
             if (contentToRender.get(i).beginFrame() < 0) {
-                numElements -= contentToRender.remove(i--).getTextSize();
+                contentToRender.remove(i--).getTextSize();
             }
         }
 
         glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
-//        setupShaderProgram();
         glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
     }
 
@@ -112,8 +104,6 @@ public class TextRenderer {
                 Vector2f pos = positions.get(i);
                 Glyph glyph = content.get(i);
 
-//                    drawTextureRegion(Font.getTexture(), pos.x, pos.y, glyph.x, glyph.y, glyph.width, glyph.height, color);
-
                 float x1 = pos.x;
                 float y1 = pos.y;
                 float x2 = x1 + glyph.width;
@@ -124,13 +114,10 @@ public class TextRenderer {
                 float s2 = (glyph.x + glyph.width) / (float) width;
                 float t2 = (glyph.y + glyph.height) / (float) height;
 
-//                    drawTextureRegion(x1, y1, x2, y2, s1, t1, s2, t2, c);
-
                 //TODO: вернуть логику предварительного рендера батча
-//                    if (vertices.remaining() < VERTEX_SIZE * VERTICES_PER_QUAD) {
-//                        /* We need more space in the buffer, so flush it */
-//                        draw();
-//                    }
+//                if (vertices.remaining() < VERTEX_SIZE * VERTICES_PER_QUAD) {
+//                    draw();
+//                }
 
                 float r = color.r;
                 float g = color.g;
@@ -195,29 +182,18 @@ public class TextRenderer {
                 vertices[numVertices + 46] = s2;
                 vertices[numVertices + 47] = t1;
 
-//                    offset += VERTEX_SIZE * VERTICES_PER_QUAD;
                 numVertices += VERTICES_PER_QUAD * VERTEX_SIZE;
-
-//                    vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1);
-//                    vertices.put(x1).put(y2).put(r).put(g).put(b).put(a).put(s1).put(t2);
-//                    vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2);
-//
-//                    vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1);
-//                    vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2);
-//                    vertices.put(x2).put(y1).put(r).put(g).put(b).put(a).put(s2).put(t1);
-//
-//                    numVertices += 6;
             }
         }
 
 
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        float[] data = Arrays.copyOfRange(vertices, 0, numVertices);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, data);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertices, 0, numVertices));
 
         shader.use();
         enableVertexAttributes();
 
+        //TODO: брать окно из Window
         long window = GLFW.glfwGetCurrentContext();
         int width, height;
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -238,6 +214,7 @@ public class TextRenderer {
                 new Matrix4f()
         );
 
+        //TODO: брать матрицу проекции из камеры
         shader.setUniform(shader.getUniformLocation("projection"),
 //                    Window.getCurrentScene().getCamera().getProjectionMatrix()
                 new Matrix4f(
@@ -261,7 +238,7 @@ public class TextRenderer {
 
     }
 
-    public static void drawText(String text, float x, float y) {
+    public static void add(String text, float x, float y) {
         Font.drawText(text, x, y);
     }
 
@@ -276,100 +253,13 @@ public class TextRenderer {
         }
     }
 
-    public static void drawTextureRegion(Texture texture, float x, float y, float regX, float regY, float regWidth, float regHeight, Color c) {
-//        /* Vertex positions */
-//        float x1 = x;
-//        float y1 = y;
-//        float x2 = x + regWidth;
-//        float y2 = y + regHeight;
-//
-//        //TODO: заранее вычислить все текстурные координаты
-//        float s1 = regX / texture.getWidth();
-//        float t1 = regY / texture.getHeight();
-//        float s2 = (regX + regWidth) / texture.getWidth();
-//        float t2 = (regY + regHeight) / texture.getHeight();
-//
-//        drawTextureRegion(x1, y1, x2, y2, s1, t1, s2, t2, c);
-    }
-
-    public static void drawTextureRegion(float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Color c) {
-//        if (vertices.remaining() < 8 * 6) {
-//            /* We need more space in the buffer, so flush it */
-//            draw();
-//        }
-//
-//        float r = c.r;
-//        float g = c.g;
-//        float b = c.b;
-//        float a = c.a;
-//
-//        vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1);
-//        vertices.put(x1).put(y2).put(r).put(g).put(b).put(a).put(s1).put(t2);
-//        vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2);
-//
-//        vertices.put(x1).put(y1).put(r).put(g).put(b).put(a).put(s1).put(t1);
-//        vertices.put(x2).put(y2).put(r).put(g).put(b).put(a).put(s2).put(t2);
-//        vertices.put(x2).put(y1).put(r).put(g).put(b).put(a).put(s2).put(t1);
-//
-//        numVertices += 6;
-    }
-
     public static void drawFullText(Text text) {
         contentToRender.add(text);
-        numElements += text.getTextSize();
-
-//        int textSize = text.getTextSize();
-//        Color color = text.getColor();
-//        List<Glyph> content = text.getContent();
-//        List<Vector2f> positions = text.getPositions();
-//
-//        for (int i = 0; i < textSize; i++) {
-//            Vector2f pos = positions.get(i);
-//            Glyph glyph = content.get(i);
-//            drawTextureRegion(Font.getTexture(), pos.x, pos.y, glyph.x, glyph.y, glyph.width, glyph.height, color);
-//        }
     }
 
-    /**
-     * Dispose renderer and clean up its used data.
-     */
-//    public void dispose() {
-//        MemoryUtil.memFree(vertices);
-//
-//        if (vaoID != -1) {
-//            glDeleteVertexArrays(vaoID);
-//        }
-//        glDeleteBuffers(vboID);
-//        shader.detach();
-//
-//        Font.dispose();
-//    }
-
-    /**
-     * Setups the default shader shader.
-     */
-//    public static void setupShaderProgram() {
-//
-//        /* Create FloatBuffer */
-//        vertices = MemoryUtil.memAllocFloat(4096);
-//
-//        /* Upload null data to allocate storage for the VBO */
-//        long size = vertices.capacity() * Float.BYTES;
-//        glBufferData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
-//
-//        /* Initialize variables */
-//        numVertices = 0;
-//        drawing = false;
-//
-//        glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
-//    }
-
-    /**
-     * Specifies the vertex pointers.
-     */
-//    private void specifyVertexAttributes(boolean enable) {
     private static void enableVertexAttributes() {
 
+        //TODO: переделать на константные значения
         int posAttrib = shader.getAttributeLocation("position");
         int colAttrib = shader.getAttributeLocation("color");
         int texAttrib = shader.getAttributeLocation("texcoord");

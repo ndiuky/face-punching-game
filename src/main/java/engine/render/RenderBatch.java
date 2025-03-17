@@ -1,7 +1,6 @@
 package engine.render;
 
 import engine.component.Component;
-import engine.component.SpriteRenderer;
 
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
@@ -13,6 +12,7 @@ import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
+//TODO: убрать ненужную абстракцию, пусть будет один RenderBatch для всего
 public abstract class RenderBatch<T extends Component> implements Comparable<RenderBatch<T>> {
 
     protected int zIndex;
@@ -53,6 +53,7 @@ public abstract class RenderBatch<T extends Component> implements Comparable<Ren
 
         enableVertexAttribArrays();
     }
+
     public abstract void render();
 
     protected abstract int[] generateIndices();

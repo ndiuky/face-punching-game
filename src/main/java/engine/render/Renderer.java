@@ -2,7 +2,6 @@ package engine.render;
 
 import engine.component.SpriteRenderer;
 import engine.object.GameObject;
-import engine.util.AssetPool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,9 +15,7 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 public class Renderer {
 
     //TODO: объединить в один лист RenderBatch. МОЖЕТ НЕГАТИВНО ПОВЛИЯТЬ НА ПРОИЗВОДИТЕЛЬНОСТЬ!!!!
-    private final List<TextureRenderBatch> textureBatches = new ArrayList<>();
-
-    private final List<TextRenderBatch> textBatches = new ArrayList<>();
+    private final List<TextureRenderBatch> batches = new ArrayList<>();
 
     private static Shader currentShader;
 
@@ -31,7 +28,7 @@ public class Renderer {
 
     private void add(SpriteRenderer sprite) {
         boolean added = false;
-        for (TextureRenderBatch batch : textureBatches) {
+        for (TextureRenderBatch batch : batches) {
             if (batch.hasRoom() && batch.getZIndex() == sprite.gameObject.getZIndex()) {
                 Texture texture = sprite.getTexture();
                 if (texture == null || batch.hasTexture(texture) || batch.hasTextureRoom()) {
@@ -45,62 +42,27 @@ public class Renderer {
         if (!added) {
             TextureRenderBatch newBatch = new TextureRenderBatch(MAX_BATCH_SIZE, sprite.gameObject.getZIndex());
             newBatch.start();
-            textureBatches.add(newBatch);
+            batches.add(newBatch);
             newBatch.addElement(sprite);
-            Collections.sort(textureBatches);
+            Collections.sort(batches);
         }
     }
 
-//    private void add(CTextRenderer textRenderer) {
-//        boolean added = false;
-//        for (RenderBatch batch : batches) {
-//            if (batch.hasRoom() && batch.getZIndex() == textRenderer.gameObject.getZIndex()) {
-//                Text text = textRenderer.getText();
-//                if (batch.hasText(text) || batch.hasTextRoom()) {
-//                    batch.addText(textRenderer);
-//                    added = true;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        if (!added) {
-//            RenderBatch newBatch = new RenderBatch(MAX_BATCH_SIZE, textRenderer.gameObject.getZIndex());
-//            newBatch.start();
-//            batches.add(newBatch);
-//            newBatch.addText(textRenderer);
-//            Collections.sort(batches);
-//        }
-//    }
-
     public void render() {
-
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        for (TextureRenderBatch textureBatch : textureBatches) {
+        for (TextureRenderBatch textureBatch : batches) {
             textureBatch.render();
         }
-
-
-
-//        for (TextRenderBatch textBatch : textBatches) {
-//            textBatch.render();
-//        }
     }
 
     public void destroyGameObject(GameObject go) {
         if (go.getComponent(SpriteRenderer.class) == null) return;
 
-        for (TextureRenderBatch textureBatch : textureBatches) {
+        for (TextureRenderBatch textureBatch : batches) {
             if (textureBatch.destroyIfExists(go)) {
                 return;
             }
         }
-
-//        for (TextRenderBatch textBatch : textBatches) {
-//            if (textBatch.destroyIfExists(go)) {
-//                return;
-//            }
-//        }
     }
 
     public static void bindShader(Shader shader) {

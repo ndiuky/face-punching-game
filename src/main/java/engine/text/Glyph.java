@@ -2,21 +2,10 @@ package engine.text;
 
 public class Glyph {
 
-    public final int width;
-    public final int height;
-    public final int x;
-    public final int y;
+    public final int width, height;
+    public final int x, y;
     public final float advance;
 
-    /**
-     * Creates a font Glyph.
-     *
-     * @param width   Width of the Glyph
-     * @param height  Height of the Glyph
-     * @param x       X coordinate on the font texture
-     * @param y       Y coordinate on the font texture
-     * @param advance Advance width
-     */
     public Glyph(int width, int height, int x, int y, float advance) {
         this.width = width;
         this.height = height;
@@ -24,5 +13,4 @@ public class Glyph {
         this.y = y;
         this.advance = advance;
     }
-
 }

@@ -16,7 +16,7 @@ public class GameObject {
 
     private String name;
 
-    private List<Component> components;
+    private final List<Component> components = new ArrayList<>();
 
     public Transform transform;
 
@@ -30,7 +30,6 @@ public class GameObject {
         this.name = name;
         this.transform = transform;
         this.zIndex = zIndex;
-        components = new ArrayList<>();
 
         uid = idCounter++;
     }
@@ -57,8 +56,7 @@ public class GameObject {
                 try {
                     return componentClass.cast(c);
                 } catch (ClassCastException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("Error: Casting component");
+                    throw new RuntimeException("Error casting component");
                 }
             }
         }
@@ -85,8 +83,7 @@ public class GameObject {
 
     public void destroy() {
         isDead = true;
-        for (int i = 0; i < components.size(); i++) {
-            Component curr = components.get(i);
+        for (Component curr : components) {
             if (curr instanceof Bot) {
                 ((Bot) curr).callForEachGameComponent(GameComponent::stopExecution);
             }

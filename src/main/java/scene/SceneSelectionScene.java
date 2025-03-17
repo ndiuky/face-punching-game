@@ -9,7 +9,6 @@ import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.render.DebugDraw;
-import engine.render.TextRenderer;
 import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Vector2f;
@@ -53,7 +52,7 @@ public class SceneSelectionScene extends Scene {
 
 
     private void loadResources() {
-        AssetPool.getShader("asset/shader/default.glsl");
+        AssetPool.getShaderByName("default");
 
         AssetPool.getTexture("asset/texture/chip-small.png");
 

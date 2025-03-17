@@ -86,13 +86,11 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
 
     @Override
     public void addElement(SpriteRenderer spriteRenderer) {
-        // Get index and add renderObject
         int index = numElements;
         sprites[index] = spriteRenderer;
         numElements++;
 
-        // TODO: 09.06.2024 попробовать переделать лист текстур на сет, возможно получится
-        //  улучшить производительность благодаря быстрому поиску по хешу
+        //TODO: 09.06.2024 попробовать переделать лист текстур на сет, возможно получится улучшить производительность благодаря быстрому поиску по хешу
         if (spriteRenderer.getTexture() != null) {
             if (!hasTexture(spriteRenderer.getTexture())) {
                 textures.add(spriteRenderer.getTexture());
@@ -248,7 +246,6 @@ public class TextureRenderBatch extends RenderBatch<SpriteRenderer>{
         return false;
     }
 
-    //TODO: вынести в родителя
     @Override
     protected int[] generateIndices() {
         int[] elements = new int[6 * maxBatchSize];

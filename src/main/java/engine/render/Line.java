@@ -13,7 +13,7 @@ public class Line {
 
     private Vector4f color;
 
-    // TODO: 22.06.2024 переделать lifetime на float для использования в секундах
+    //TODO: 22.06.2024 переделать lifetime на float для использования в секундах
     private int lifetime;
 
     public Line(Vector2f from, Vector2f to, int zOrder, Vector4f color, int lifetime) {

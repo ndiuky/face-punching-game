@@ -2,7 +2,6 @@ package engine.util.listener;
 
 import engine.event.KeyboardEventListener;
 import engine.event.KeyboardEventProducer;
-import engine.event.MouseEventListener;
 
 import java.util.List;
 
@@ -14,8 +13,6 @@ public class KeyListener implements KeyboardEventProducer {
     private static KeyListener instance;
 
     private final boolean[] keyPressed = new boolean[350];
-
-    private KeyListener() {}
 
     public static KeyListener get() {
         if (instance == null) {

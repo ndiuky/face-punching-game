@@ -4,7 +4,7 @@ import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
-public class Utils {
+public class EngineUtils {
 
     public static void rotateVertex(Vector2f vec, float angleDeg, Vector2f origin) {
         float x = vec.x - origin.x;
@@ -17,7 +17,7 @@ public class Utils {
         vec.y = (x * sin) + (y * cos) + origin.y;
     }
 
-    public static float time(){
+    public static float time() {
         return (float) glfwGetTime();
     }
 }

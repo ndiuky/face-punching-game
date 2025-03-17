@@ -58,7 +58,7 @@ public class TestingScene extends Scene {
     }
 
     private void loadResources() {
-        AssetPool.getShader("asset/shader/default.glsl");
+        AssetPool.getShaderByName("default");
 
         AssetPool.getTexture("asset/texture/chip-small.png");
 

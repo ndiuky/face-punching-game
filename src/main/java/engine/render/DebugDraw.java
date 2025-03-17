@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static engine.util.Utils.rotateVertex;
+import static engine.util.EngineUtils.rotateVertex;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_FLOAT;
@@ -30,14 +30,13 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 public class DebugDraw {
     private static final int MAX_LINES = 2048;
 
-    //TODO: перенести эту переменную и похожие на неё в EnginePreferences
     private static final int INDICES_COUNT = 6;
 
     private static final List<Line> lines = new ArrayList<>(MAX_LINES);
 
     private static final float[] vertices = new float[MAX_LINES * INDICES_COUNT * 2];
 
-    private static final Shader shader = AssetPool.getShader("asset/shader/debugLine.glsl");
+    private static final Shader shader = AssetPool.getShaderByName("debugLine");
 
     private static int vaoID;
 

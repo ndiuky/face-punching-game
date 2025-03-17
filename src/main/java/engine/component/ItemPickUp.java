@@ -1,10 +1,6 @@
 package engine.component;
 
-import engine.render.DebugDraw;
-import engine.util.Color;
-import engine.util.EnginePreferences;
-
-public class ItemPickUp extends Component{
+public class ItemPickUp extends Component {
 
     private float pickUpRadius;
 

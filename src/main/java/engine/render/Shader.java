@@ -24,7 +24,6 @@ import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glCompileShader;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
 import static org.lwjgl.opengl.GL20.glCreateShader;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
@@ -41,10 +40,6 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20C.glGetAttribLocation;
-import static org.lwjgl.opengl.GL20C.glUniform2fv;
-import static org.lwjgl.opengl.GL20C.glUniform3fv;
-import static org.lwjgl.opengl.GL20C.glUniform4fv;
-import static org.lwjgl.opengl.GL20C.glUniformMatrix2fv;
 
 public class Shader {
 
@@ -87,8 +82,7 @@ public class Shader {
             } else {
                 throw new IOException("Unexpected token '" + secondPattern + "'");
             }
-        } catch(IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
             throw new RuntimeException("Error: Could not open file for shader: '" + filepath + "'");
         }
     }
@@ -145,7 +139,6 @@ public class Shader {
 
     public void uploadMat4f(String varName, Matrix4f mat4) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
         mat4.get(matBuffer);
         glUniformMatrix4fv(varLocation, false, matBuffer);
@@ -153,7 +146,6 @@ public class Shader {
 
     public void uploadMat3f(String varName, Matrix3f mat3) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(9);
         mat3.get(matBuffer);
         glUniformMatrix3fv(varLocation, false, matBuffer);
@@ -161,37 +153,31 @@ public class Shader {
 
     public void uploadVec4f(String varName, Vector4f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         glUniform4f(varLocation, vec.x, vec.y, vec.z, vec.w);
     }
 
     public void uploadVec3f(String varName, Vector3f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         glUniform3f(varLocation, vec.x, vec.y, vec.z);
     }
 
     public void uploadVec2f(String varName, Vector2f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         glUniform2f(varLocation, vec.x, vec.y);
     }
 
     public void uploadFloat(String varName, float val) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         glUniform1f(varLocation, val);
     }
 
     public void uploadInt(String varName, int val) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         glUniform1i(varLocation, val);
     }
 
-    public void uploadIntArray(String varName, int[] val){
+    public void uploadIntArray(String varName, int[] val) {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
-//        use();
         glUniform1iv(varLocation, val);
     }
 
@@ -203,13 +189,6 @@ public class Shader {
         return shaderProgramID;
     }
 
-    /**
-     * Gets the location of an attribute variable with specified name.
-     *
-     * @param name Attribute name
-     *
-     * @return Location of the attribute
-     */
     public int getAttributeLocation(CharSequence name) {
         return glGetAttribLocation(shaderProgramID, name);
     }
@@ -218,92 +197,11 @@ public class Shader {
         return glGetUniformLocation(shaderProgramID, name);
     }
 
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value    Value to set
-     */
     public void setUniform(int location, int value) {
         glUniform1i(location, value);
     }
 
-//    /**
-//     * Sets the uniform variable for specified location.
-//     *
-//     * @param location Uniform location
-//     * @param value    Value to set
-//     */
-//    public void setUniform(int location, Vector2f value) {
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            FloatBuffer buffer = stack.mallocFloat(2);
-//            value.toBuffer(buffer);
-//            glUniform2fv(location, buffer);
-//        }
-//    }
-//
-//    /**
-//     * Sets the uniform variable for specified location.
-//     *
-//     * @param location Uniform location
-//     * @param value    Value to set
-//     */
-//    public void setUniform(int location, Vector3f value) {
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            FloatBuffer buffer = stack.mallocFloat(3);
-//            value.toBuffer(buffer);
-//            glUniform3fv(location, buffer);
-//        }
-//    }
-//
-//    /**
-//     * Sets the uniform variable for specified location.
-//     *
-//     * @param location Uniform location
-//     * @param value    Value to set
-//     */
-//    public void setUniform(int location, Vector4f value) {
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            FloatBuffer buffer = stack.mallocFloat(4);
-//            value.toBuffer(buffer);
-//            glUniform4fv(location, buffer);
-//        }
-//    }
-//
-//    /**
-//     * Sets the uniform variable for specified location.
-//     *
-//     * @param location Uniform location
-//     * @param value    Value to set
-//     */
-//    public void setUniform(int location, Matrix2f value) {
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            FloatBuffer buffer = stack.mallocFloat(2 * 2);
-//            value.toBuffer(buffer);
-//            glUniformMatrix2fv(location, false, buffer);
-//        }
-//    }
-//
-//    /**
-//     * Sets the uniform variable for specified location.
-//     *
-//     * @param location Uniform location
-//     * @param value    Value to set
-//     */
-//    public void setUniform(int location, Matrix3f value) {
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            FloatBuffer buffer = stack.mallocFloat(3 * 3);
-//            value.toBuffer(buffer);
-//            glUniformMatrix3fv(location, false, buffer);
-//        }
-//    }
-
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value    Value to set
-     */
+    //TODO: переделать на загрузку обычных массивов
     public void setUniform(int location, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4 * 4);

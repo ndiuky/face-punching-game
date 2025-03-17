@@ -39,19 +39,6 @@ public class CTextRenderer extends Component {
         return this;
     }
 
-//    public Texture getTexture() {
-//        return sprite.getTexture();
-//    }
-//
-//    public CTextRenderer setTexture(Texture texture){
-//        sprite.setTexture(texture);
-//        return this;
-//    }
-//
-//    public Vector2f[] getTextureCoords() {
-//        return sprite.getTexCoords();
-//    }
-
     public boolean getIsDirty() {
         return isDirty;
     }

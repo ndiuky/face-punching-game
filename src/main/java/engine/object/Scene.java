@@ -94,7 +94,7 @@ public abstract class Scene {
             writer.write(gson.toJson(gameObjectsToSerialize));
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -141,7 +141,7 @@ public abstract class Scene {
         return null;
     }
 
-    // TODO: 13.07.2024 возможно добавить в Gameobject переопределённый equals, который сравнивает только id, и вместо листа всех игровых объектов на сцене использовать хешсет либо хешмапу<id, Gameobject>, для ускоренного поиска
+    //TODO: 13.07.2024 возможно добавить в Gameobject переопределённый equals, который сравнивает только id, и вместо листа всех игровых объектов на сцене использовать хешсет либо хешмапу<id, Gameobject>, для ускоренного поиска
     public GameObject getGameObjectById(int id) {
         for (GameObject gameObject : gameObjects) {
             if (gameObject.getUid() == id) {

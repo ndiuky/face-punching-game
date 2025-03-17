@@ -9,9 +9,9 @@ import java.util.List;
 public class Text {
 
     //TODO: мб поменять на ArrayList
-    private List<Glyph> content = new LinkedList<>();
+    private final List<Glyph> content = new LinkedList<>();
 
-    private List<Vector2f> positions = new LinkedList<>();
+    private final List<Vector2f> positions = new LinkedList<>();
 
     private String textContent;
 
@@ -19,7 +19,7 @@ public class Text {
 
     private Color color;
 
-    // TODO: переделать lifetime на float для использования в секундах
+    //TODO: переделать lifetime на float для использования в секундах
     //TODO: прикрутить lifetime к системе рендера, сейчас он всегда изначально равен 1
     private int lifetime = 1;
 

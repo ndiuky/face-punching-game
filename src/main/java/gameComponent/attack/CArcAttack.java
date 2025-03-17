@@ -106,6 +106,7 @@ public class CArcAttack extends AttackGameComponent {
                         float sin = Math.sin(radians);
 
                         dir.normalize();
+                        //TODO: убрать константу '25'
                         ((Knockable) component).onKnockbackApplied(new Vector2f(dir.x * cos + dir.y * -sin, dir.x * sin + dir.y * cos).normalize().mul(fistSpeed / 25));
 
                         break;
@@ -113,6 +114,9 @@ public class CArcAttack extends AttackGameComponent {
                 }
 
                 attackState = RETRACTING;
+
+                System.out.println("пиздюли успешно доставлены");
+
                 return;
             }
 

@@ -77,7 +77,7 @@ public class CForwardAttack extends AttackGameComponent {
 
             attackState = RETRACTING;
 
-            System.out.println("пиздюли успешно получены");
+            System.out.println("пиздюли успешно доставлены");
         } else {
             fistGO.transform.position.add(new Vector2f(dir).normalize().mul(fistSpeed * dt));
         }

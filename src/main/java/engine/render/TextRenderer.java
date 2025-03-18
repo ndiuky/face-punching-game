@@ -44,22 +44,25 @@ public class TextRenderer {
     private static final int VERTEX_SIZE = 8;
 
     private static int vboID = -1;
+
     private static final Shader shader = AssetPool.getShaderByName("fontShader");
 
     private static final float[] vertices = new float[MAX_GLYPHS * VERTICES_PER_QUAD * VERTEX_SIZE];
+
     private static final List<Text> contentToRender = new ArrayList<>();
+
     private static int numVertices = 0;
 
     private static boolean started;
 
-    private static void start() {
+    private static void init() {
         int vaoID = glGenVertexArrays();
 
         glBindVertexArray(vaoID);
 
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
+//        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -67,9 +70,10 @@ public class TextRenderer {
 
     public static void beginFrame() {
         if (!started) {
-            start();
+            init();
             started = true;
         }
+
 
         for (int i = 0; i < contentToRender.size(); i++) {
             if (contentToRender.get(i).beginFrame() < 0) {
@@ -78,7 +82,6 @@ public class TextRenderer {
         }
 
         glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
-        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
     }
 
     public static void draw() {
@@ -185,6 +188,7 @@ public class TextRenderer {
 
 
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferData(GL_ARRAY_BUFFER, numVertices * Float.BYTES, GL_DYNAMIC_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertices, 0, numVertices));
 
         shader.use();
@@ -220,8 +224,7 @@ public class TextRenderer {
 
         numVertices = 0;
 
-        //TODO: возможно здесь нужно вызывать detach() на текстуре
-//        Font.unbind();
+        Font.unbind();
 
         shader.detach();
     }

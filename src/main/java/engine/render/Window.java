@@ -37,7 +37,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
@@ -66,11 +65,13 @@ public class Window implements KeyboardEventListener {
 
     private static int width, height;
 
+    private static int windowedWidth, windowedHeight;
+
     private static float aspectRatio;
 
-    private static boolean fullscreen;
+    private static boolean fullscreen = EnginePreferences.FULLSCREEN_BY_DEFAULT;
 
-    private static boolean isDebugMenuActive = false;
+    private static boolean isDebugMenuActive = EnginePreferences.IS_DEBUG_MENU_ACTIVE_BY_DEFAULT;
 
     private static int windowPosX, windowPosY;
 
@@ -88,7 +89,6 @@ public class Window implements KeyboardEventListener {
 
     public Window() {
         title = "Face punching game idk";
-        fullscreen = false;
     }
 
     public static void changeScene(Class<? extends Scene> sceneClass) {
@@ -104,7 +104,7 @@ public class Window implements KeyboardEventListener {
             throw new RuntimeException("Unable to create new instance of the scene from class " + sceneClass.getName() + ". Message: " + ex.getMessage());
         }
 
-        //TODO: понятия не имею почему это здесь
+        //TODO: понятия не имею почему это ЗДЕСЬ
         KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F11, instance);
         KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F3, instance);
 
@@ -132,8 +132,12 @@ public class Window implements KeyboardEventListener {
 
             primaryMonitor = GLFW.glfwGetPrimaryMonitor();
             vidMode = GLFW.glfwGetVideoMode(primaryMonitor);
+
             width = vidMode.width();
             height = vidMode.height();
+
+            windowedWidth = width / 2;
+            windowedHeight = height / 2;
 
             aspectRatio = (float) width / height;
 
@@ -144,9 +148,6 @@ public class Window implements KeyboardEventListener {
 
         }
 
-        //TODO: запомнить последнюю позицию
-        //TODO: нормально пофиксить кривое положение курсора при запуске окна с первого раза
-        createWindow(true);
         createWindow(fullscreen);
 
         Window.changeScene(SceneSelectionScene.class);
@@ -154,19 +155,26 @@ public class Window implements KeyboardEventListener {
 
     private static void createWindow(boolean fullscreen) {
         if (glfwWindow == NULL) {
-            glfwWindow = glfwCreateWindow(width, height, title, primaryMonitor, 0);
+            if (fullscreen) {
+                glfwWindow = glfwCreateWindow(width, height, title, primaryMonitor, 0);
+            } else {
+                glfwWindow = glfwCreateWindow(windowedWidth, windowedHeight, title, 0, 0);
+            }
+
+            windowPosX = (vidMode.height() - height / 2) / 2;
+            windowPosY = (vidMode.width() - width / 2) / 2;
         }
 
         if (fullscreen) {
-            int[] xpos = new int[1];
-            int[] ypos = new int[1];
-            GLFW.glfwGetWindowPos(glfwWindow, xpos, ypos);
-            windowPosX = xpos[0];
-            windowPosY = ypos[0];
+            int[] xPos = new int[1];
+            int[] yPos = new int[1];
+            GLFW.glfwGetWindowPos(glfwWindow, xPos, yPos);
+            windowPosX = xPos[0];
+            windowPosY = yPos[0];
 
-            GLFW.glfwSetWindowMonitor(glfwWindow, primaryMonitor, 0, 0, vidMode.width(), vidMode.height(), vidMode.refreshRate());
+            GLFW.glfwSetWindowMonitor(glfwWindow, primaryMonitor, 0, 0, width, height, vidMode.refreshRate());
         } else {
-            GLFW.glfwSetWindowMonitor(glfwWindow, 0, windowPosX, windowPosY, width / 2, height / 2, 0);
+            GLFW.glfwSetWindowMonitor(glfwWindow, 0, windowPosX, windowPosY, windowedWidth, windowedHeight, 0);
         }
 
         if (glfwWindow == NULL) {
@@ -175,24 +183,12 @@ public class Window implements KeyboardEventListener {
 
         glfwMakeContextCurrent(glfwWindow);
 
-        if (!fullscreen) {
-            GLFW.glfwSetWindowPos(
-                    glfwWindow,
-                    (vidMode.width() - width / 2) / 2,
-                    (vidMode.height() - height / 2) / 2
-            );
-        }
-
         GLFW.glfwSwapInterval(ENABLE_VSYNK ? 1 : 0);
 
         glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
         glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
         glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
-        glfwSetWindowSizeCallback(glfwWindow, (w, newWidth, newHeight) -> {
-            width = newWidth;
-            height = newHeight;
-        });
 
         glfwShowWindow(glfwWindow);
         createCapabilities();
@@ -200,9 +196,13 @@ public class Window implements KeyboardEventListener {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        pickingTexture = new PickingTexture(width, height);
+        pickingTexture = fullscreen
+                ? new PickingTexture(width, height)
+                : new PickingTexture(windowedWidth, windowedHeight);
 
-        glViewport(0, 0, width, height);
+        glViewport(0, 0,
+                fullscreen ? width : windowedWidth,
+                fullscreen ? height : windowedHeight);
     }
 
     public void loop() {
@@ -220,7 +220,6 @@ public class Window implements KeyboardEventListener {
             glDisable(GL_BLEND);
             pickingTexture.enableWriting();
 
-            glViewport(0, 0, width, height);
             clearColor(Color.TRANSPARENT);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -243,7 +242,9 @@ public class Window implements KeyboardEventListener {
                 DebugDraw.draw();
                 TextRenderer.draw();
 
-                TextRenderer.add("fps: " + (int) (1 / dt), (float) (600 + Math.sin(EngineUtils.time()) * 150), (float) (200 + Math.sin(EngineUtils.time()) * 200));
+                //TODO: перенести рендер текста в компоненты
+                TextRenderer.add("fps: " + (int) (1 / dt), 0, EnginePreferences.FONT_RESOLUTION + 8);
+                TextRenderer.add("mouse pos: " + ((int) MouseListener.getPos().x) + ", " + ((int) MouseListener.getPos().y), 0, 0);
             }
 
             glfwSwapBuffers(glfwWindow);
@@ -305,11 +306,11 @@ public class Window implements KeyboardEventListener {
     }
 
     public static int getWidth() {
-        return width;
+        return fullscreen ? width : windowedWidth;
     }
 
     public static int getHeight() {
-        return height;
+        return fullscreen ? height : windowedHeight;
     }
 
     public static void setWidth(int newWidth) {

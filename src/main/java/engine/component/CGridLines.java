@@ -6,13 +6,13 @@ import engine.util.Color;
 import engine.util.EnginePreferences;
 import org.joml.Vector2f;
 
-public class GridLines extends Component {
+public class CGridLines extends Component {
 
     private final Camera camera;
     //TODO: 14.07.2024 добавить уменьшение/увеличение количества линий при сильном изменении зума
     private final int CLAMP_RATIO = 2;
 
-    public GridLines(Camera camera) {
+    public CGridLines(Camera camera) {
         this.camera = camera;
     }
 

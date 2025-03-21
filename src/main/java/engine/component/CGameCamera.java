@@ -11,7 +11,7 @@ import static engine.event.MouseEventProducer.listenToMouseRelease;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_COMMA;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
 
-public class GameCamera extends Component implements MouseEventListener {
+public class CGameCamera extends Component implements MouseEventListener {
 
     private float dragDebounce = 0.032f;
     private final Camera camera;
@@ -22,7 +22,7 @@ public class GameCamera extends Component implements MouseEventListener {
     private final float scrollSensitivity = 0.1f;
     private boolean isDragging = false;
 
-    public GameCamera(Camera camera) {
+    public CGameCamera(Camera camera) {
         this.camera = camera;
         this.clickOrigin = new Vector2f();
 

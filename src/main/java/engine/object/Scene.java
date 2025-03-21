@@ -65,6 +65,12 @@ public abstract class Scene {
             gameObjects.add(go);
             go.start();
             renderer.add(go);
+//            if (go.getComponent(CSpriteRenderer.class) != null){
+//                renderer.add(go);
+//            }
+//            if (go.getComponent(CTextRenderer.class) != null){
+//                TextRenderer.add();
+//            }
         }
     }
 

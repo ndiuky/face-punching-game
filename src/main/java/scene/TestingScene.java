@@ -3,9 +3,9 @@ package scene;
 import component.Item;
 import component.controls.TestingSceneControls;
 import component.entity.Player;
-import engine.component.GameCamera;
-import engine.component.ItemPickUp;
-import engine.component.SpriteRenderer;
+import engine.component.CGameCamera;
+import engine.component.CItemPickUp;
+import engine.component.CSpriteRenderer;
 import engine.object.GameObject;
 import engine.object.Scene;
 import engine.object.Sprite;
@@ -30,7 +30,7 @@ public class TestingScene extends Scene {
 
         camera = new Camera(new Vector2f(0, 0));
         editorGameobject = new GameObject("random GameObject", new Transform(new Vector2f(0, 0), new Vector2f(50, 50)), 1)
-                .addComponent(new GameCamera(camera))
+                .addComponent(new CGameCamera(camera))
                 .addComponent(new TestingSceneControls());
 
         addGameObjectToScene(editorGameobject);
@@ -39,14 +39,14 @@ public class TestingScene extends Scene {
         GameObject player = new GameObject("player", new Transform(new Vector2f(0, 0), new Vector2f(40, 40)), 5)
 //                .addComponent(new Player().addGameComponent(new CMoveStraight()))
                 .addComponent(new Player().setActionGameComponent(new CMoveArc()))
-                .addComponent(new ItemPickUp(60))
-                .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(0)));
+                .addComponent(new CItemPickUp(60))
+                .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);
 
 
         GameObject item = new GameObject("item", new Transform(new Vector2f(500, 500), new Vector2f(25, 25)), 1)
-                .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/chip-small.png"))))
+                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/chip-small.png"))))
                 .addComponent(new Item());
 
 
@@ -68,8 +68,8 @@ public class TestingScene extends Scene {
                 new SpriteSheet(AssetPool.getTexture("asset/texture/gizmo.png"), 3, 8, 3, 0));
 
         for (GameObject g : gameObjects) {
-            if (g.getComponent(SpriteRenderer.class) != null) {
-                SpriteRenderer spr = g.getComponent(SpriteRenderer.class);
+            if (g.getComponent(CSpriteRenderer.class) != null) {
+                CSpriteRenderer spr = g.getComponent(CSpriteRenderer.class);
                 if (spr.getTexture() != null) {
                     spr.setTexture(AssetPool.getTexture(spr.getTexture().getFilepath()));
                 }

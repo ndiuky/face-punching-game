@@ -1,8 +1,6 @@
 package engine.text;
 
-import engine.render.TextRenderer;
 import engine.render.Texture;
-import engine.util.Color;
 import engine.util.EnginePreferences;
 import org.joml.Vector2f;
 import org.lwjgl.system.MemoryUtil;
@@ -14,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.awt.Font.PLAIN;
@@ -182,41 +181,49 @@ public class Font {
         return height;
     }
 
-    public static void drawText(String textToRender, float x, float y, Color color) {
-        int textHeight = getHeight(textToRender);
+//    public static Text generateText(String textToRender, float x, float y, Color color) {
+//        int textHeight = getHeight(textToRender);
+//
+//        float drawX = x;
+//        float drawY = y;
+//        if (textHeight > fontHeight) {
+//            drawY += textHeight - fontHeight;
+//        }
+//
+//        final List<Glyph> currGlyphs = new ArrayList<>();
+//        final List<Vector2f> currPositions = new ArrayList<>();
+//
+//        for (int i = 0; i < textToRender.length(); i++) {
+//            char ch = textToRender.charAt(i);
+//            if (ch == '\n') {
+//                drawY -= fontHeight;
+//                drawX = x;
+//                continue;
+//            }
+//            if (ch == '\r') {
+//                continue;
+//            }
+//            Glyph g = glyphs.get(ch);
+//            currGlyphs.add(g);
+//            currPositions.add(new Vector2f(drawX, drawY));
+//            drawX += g.width;
+//        }
+//       return Text.builder()
+//                .textContent(textToRender)
+//                .color(color)
+//                .content(currGlyphs)
+//                .positions(currPositions)
+//                .build();
+//
+//
+////        TextRenderer.drawFullText(text);
+//    }
+//
+//    public static Text generateText(String text, float x, float y) {
+//        return generateText(text, x, y, Color.WHITE);
+//    }
 
-        float drawX = x;
-        float drawY = y;
-        if (textHeight > fontHeight) {
-            drawY += textHeight - fontHeight;
-        }
-
-        Text text = new Text();
-        text.setTextContent(textToRender);
-        text.setColor(color);
-
-        for (int i = 0; i < textToRender.length(); i++) {
-            char ch = textToRender.charAt(i);
-            if (ch == '\n') {
-                drawY -= fontHeight;
-                drawX = x;
-                continue;
-            }
-            if (ch == '\r') {
-                continue;
-            }
-            Glyph g = glyphs.get(ch);
-            text.addGlyph(g, new Vector2f(drawX, drawY));
-            drawX += g.width;
-        }
-        TextRenderer.drawFullText(text);
-    }
-
-    public static void drawText(String text, float x, float y) {
-        drawText(text, x, y, Color.WHITE);
-    }
-
-    public static void bind(){
+    public static void bind() {
         texture.bind();
     }
 
@@ -226,5 +233,59 @@ public class Font {
 
     public static Texture getTexture() {
         return texture;
+    }
+
+    public static void fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent, float xPos, float yPos) {
+        int textHeight = getHeight(textContent);
+
+        float drawX = xPos;
+        float drawY = yPos;
+        if (textHeight > fontHeight) {
+            drawY += textHeight - fontHeight;
+        }
+
+        for (int i = 0; i < textContent.length(); i++) {
+            char ch = textContent.charAt(i);
+            if (ch == '\n') {
+                drawY -= fontHeight;
+                drawX = xPos;
+
+                continue;
+            }
+            if (ch == '\r') {
+                continue;
+            }
+            Glyph g = glyphs.get(ch);
+            content.add(g);
+            positions.add(new Vector2f(drawX, drawY));
+            drawX += g.width;
+        }
+    }
+
+    public static void fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent) {
+        int textHeight = getHeight(textContent);
+
+        float drawX = 0;
+        float drawY = 0;
+        if (textHeight > fontHeight) {
+            drawY += textHeight - fontHeight;
+        }
+
+        for (char ch : textContent.toCharArray()) {
+            if (ch == '\n') {
+                drawY -= fontHeight;
+                drawX = 0;
+
+                continue;
+            }
+            if (ch == '\r') {
+                continue;
+            }
+            Glyph g = glyphs.get(ch);
+            content.add(g);
+            positions.add(new Vector2f(drawX, drawY));
+            drawX += g.width;
+
+        }
     }
 }

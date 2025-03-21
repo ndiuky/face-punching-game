@@ -28,7 +28,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -230,7 +229,7 @@ public class Window implements KeyboardEventListener {
             glEnable(GL_BLEND);
 
             DebugDraw.beginFrame();
-            TextRenderer.beginFrame();
+//            TextRenderBatch.beginFrame();
 
             clearColor(bgColor);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -240,22 +239,29 @@ public class Window implements KeyboardEventListener {
                 renderSceneWithShader(defaultShader);
 
                 DebugDraw.draw();
-                TextRenderer.draw();
+//                TextRenderBatch.draw();
 
                 //TODO: перенести рендер текста в компоненты
-                TextRenderer.add("fps: " + (int) (1 / dt), 0, EnginePreferences.FONT_RESOLUTION + 8);
-                TextRenderer.add("mouse pos: " + ((int) MouseListener.getPos().x) + ", " + ((int) MouseListener.getPos().y), 0, 0);
+//                Text fpsText = Text.builder()
+//                        .textContent("fps: " + (int) (1 / dt))
+//                        .position(0, EnginePreferences.FONT_RESOLUTION + 8)
+//                        .build();
+//                TextRenderer.add(fpsText);
+//
+//                Text mousePosText = Text.builder()
+//                        .textContent("mouse pos: " + ((int) MouseListener.getPos().x) + ", " + ((int) MouseListener.getPos().y))
+//                        .position(0, 0)
+//                        .build();
+//                TextRenderer.add(mousePosText);
             }
 
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
 
-            endTime = (float) glfwGetTime();
+            endTime = EngineUtils.time();
             dt = endTime - beginTime;
             beginTime = endTime;
-
         }
-
     }
 
     private void renderSceneWithShader(Shader shader) {

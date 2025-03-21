@@ -1,7 +1,9 @@
 package engine.render;
 
-import engine.component.SpriteRenderer;
+import engine.component.CSpriteRenderer;
+import engine.component.CTextRenderer;
 import engine.object.GameObject;
+import engine.text.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,24 +17,32 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 public class Renderer {
 
     //TODO: объединить в один лист RenderBatch. МОЖЕТ НЕГАТИВНО ПОВЛИЯТЬ НА ПРОИЗВОДИТЕЛЬНОСТЬ!!!!
-    private final List<RenderBatch> batches = new ArrayList<>();
+    private final List<TextureRenderBatch> textureBatches = new ArrayList<>();
+
+    private final List<TextRenderBatch> textBatches = new ArrayList<>();
 
     private static Shader currentShader;
 
     public void add(GameObject go) {
-        SpriteRenderer spr = go.getComponent(SpriteRenderer.class);
-        if (spr != null) {
-            add(spr);
+        CSpriteRenderer spriteRenderer = go.getComponent(CSpriteRenderer.class);
+        if (spriteRenderer != null) {
+            add(spriteRenderer);
+        }
+
+        CTextRenderer textRenderer = go.getComponent(CTextRenderer.class);
+        if (textRenderer != null){
+            add(textRenderer);
         }
     }
 
-    private void add(SpriteRenderer sprite) {
+    private void add(CTextRenderer textRenderer) {
         boolean added = false;
-        for (RenderBatch batch : batches) {
-            if (batch.hasRoom() && batch.getZIndex() == sprite.gameObject.getZIndex()) {
-                Texture texture = sprite.getTexture();
-                if (texture == null || batch.hasTexture(texture) || batch.hasTextureRoom()) {
-                    batch.addElement(sprite);
+        for (TextRenderBatch batch : textBatches) {
+            if (batch.hasRoom() && batch.getZIndex() == textRenderer.gameObject.getZIndex()) {
+                Text text = textRenderer.getText();
+                //TODO: возможно проверка на null не нужна
+                if (text == null || batch.hasText(text) || batch.hasTextRoom()) {
+                    batch.addElement(textRenderer);
                     added = true;
                     break;
                 }
@@ -40,25 +50,53 @@ public class Renderer {
         }
 
         if (!added) {
-            RenderBatch newBatch = new RenderBatch(MAX_BATCH_SIZE, sprite.gameObject.getZIndex());
+            TextRenderBatch newBatch = new TextRenderBatch(MAX_BATCH_SIZE, textRenderer.gameObject.getZIndex());
             newBatch.start();
-            batches.add(newBatch);
-            newBatch.addElement(sprite);
-            Collections.sort(batches);
+            textBatches.add(newBatch);
+            newBatch.addElement(textRenderer);
+            Collections.sort(textBatches);
+        }
+    }
+
+    private void add(CSpriteRenderer spriteRenderer) {
+        boolean added = false;
+        for (TextureRenderBatch batch : textureBatches) {
+            if (batch.hasRoom() && batch.getZIndex() == spriteRenderer.gameObject.getZIndex()) {
+                Texture texture = spriteRenderer.getTexture();
+                //TODO: возможно проверка на null не нужна
+                if (texture == null || batch.hasTexture(texture) || batch.hasTextureRoom()) {
+                    batch.addElement(spriteRenderer);
+                    added = true;
+                    break;
+                }
+            }
+        }
+
+        if (!added) {
+            TextureRenderBatch newBatch = new TextureRenderBatch(MAX_BATCH_SIZE, spriteRenderer.gameObject.getZIndex());
+            newBatch.start();
+            textureBatches.add(newBatch);
+            newBatch.addElement(spriteRenderer);
+            Collections.sort(textureBatches);
         }
     }
 
     public void render() {
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        for (RenderBatch batch : batches) {
-            batch.render();
+        for (TextureRenderBatch textureBatch : textureBatches) {
+            textureBatch.render();
+        }
+        for (TextRenderBatch textBatch : textBatches) {
+            textBatch.render();
         }
     }
 
     public void destroyGameObject(GameObject go) {
-        if (go.getComponent(SpriteRenderer.class) == null) return;
+        if (go.getComponent(CSpriteRenderer.class) == null){
+            return;
+        }
 
-        for (RenderBatch batch : batches) {
+        for (TextureRenderBatch batch : textureBatches) {
             if (batch.destroyIfExists(go)) {
                 return;
             }

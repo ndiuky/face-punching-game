@@ -3,15 +3,17 @@ package scene;
 import component.controls.RingControls;
 import component.entity.Dummy;
 import component.entity.Player;
-import engine.component.GameCamera;
-import engine.component.ItemPickUp;
-import engine.component.SpriteRenderer;
+import engine.component.CGameCamera;
+import engine.component.CItemPickUp;
+import engine.component.CSpriteRenderer;
+import engine.component.CTextRenderer;
 import engine.object.GameObject;
 import engine.object.Scene;
 import engine.object.Sprite;
 import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
+import engine.text.Text;
 import engine.util.AssetPool;
 import gameComponent.attack.CArcAttack;
 import gameComponent.move.CMoveStraight;
@@ -33,14 +35,14 @@ public class BoxingRingScene extends Scene {
 
         camera = new Camera(new Vector2f(0, 0));
         GameObject cameraGO = new GameObject("camera", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), 1)
-                .addComponent(new GameCamera(camera))
+                .addComponent(new CGameCamera(camera))
                 .addComponent(new RingControls());
 
         addGameObjectToScene(cameraGO);
 
         boxingRing = new GameObject("boxingRing", new Transform(new Vector2f(0, 0), new Vector2f(512, 512)), -1)
-                .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/boxing-ring.png"))
-                ));
+//                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/boxing-ring.png"))))
+                ;
 
         addGameObjectToScene(boxingRing);
 
@@ -51,14 +53,15 @@ public class BoxingRingScene extends Scene {
 //                                .setActionGameComponent(new CForwardAttack())
                                 .setActionGameComponent(new CArcAttack())
                 )
-                .addComponent(new ItemPickUp(60))
-                .addComponent(new SpriteRenderer().setSprite(sprites.getSprite(0)));
+                .addComponent(new CItemPickUp(60))
+                .addComponent(new CTextRenderer().setText(Text.builder().textContent("p").build()))
+                .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);
 
         GameObject dummy = new GameObject("dummy", new Transform(new Vector2f(0, 128), new Vector2f(50, 50)), 4)
                 .addComponent(new Dummy())
-                .addComponent(new SpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/dummy.png"))));
+                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/dummy.png"))));
 
         addGameObjectToScene(dummy);
     }
@@ -74,8 +77,8 @@ public class BoxingRingScene extends Scene {
                 new SpriteSheet(AssetPool.getTexture("asset/texture/gizmo.png"), 3, 8, 3, 0));
 
         for (GameObject g : gameObjects) {
-            if (g.getComponent(SpriteRenderer.class) != null) {
-                SpriteRenderer spr = g.getComponent(SpriteRenderer.class);
+            if (g.getComponent(CSpriteRenderer.class) != null) {
+                CSpriteRenderer spr = g.getComponent(CSpriteRenderer.class);
                 if (spr.getTexture() != null) {
                     spr.setTexture(AssetPool.getTexture(spr.getTexture().getFilepath()));
                 }

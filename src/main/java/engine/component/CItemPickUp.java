@@ -1,10 +1,10 @@
 package engine.component;
 
-public class ItemPickUp extends Component {
+public class CItemPickUp extends Component {
 
     private float pickUpRadius;
 
-    public ItemPickUp(float pickUpRadius) {
+    public CItemPickUp(float pickUpRadius) {
         this.pickUpRadius = pickUpRadius;
     }
 
@@ -13,7 +13,7 @@ public class ItemPickUp extends Component {
 //        DebugDraw.drawCircle(gameObject.transform.position, pickUpRadius, -1, Color.BLUE, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
     }
 
-    public ItemPickUp setPickUpRadius(float pickUpRadius) {
+    public CItemPickUp setPickUpRadius(float pickUpRadius) {
         this.pickUpRadius = pickUpRadius;
         return this;
     }

@@ -1,6 +1,6 @@
 package engine.render;
 
-import engine.component.SpriteRenderer;
+import engine.component.CSpriteRenderer;
 import engine.object.GameObject;
 import engine.util.Color;
 import org.joml.Matrix4f;
@@ -10,6 +10,7 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
+import static engine.util.EnginePreferences.DEFAULT_QUAD_VERTICES_AMOUNT;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
@@ -31,7 +32,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //TODO: создать класс для помощи в работе с OpenGL
-public class RenderBatch implements Comparable<RenderBatch> {
+public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
 
     private static final int POS_SIZE = 2;
 
@@ -59,7 +60,7 @@ public class RenderBatch implements Comparable<RenderBatch> {
 
     private static final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
-    private final SpriteRenderer[] sprites;
+    private final CSpriteRenderer[] spriteRenderers;
 
     private final List<Texture> textures = new ArrayList<>();
 
@@ -77,12 +78,12 @@ public class RenderBatch implements Comparable<RenderBatch> {
 
     private int vaoID, vboID;
 
-    public RenderBatch(int maxBatchSize, int zIndex) {
+    public TextureRenderBatch(int maxBatchSize, int zIndex) {
         this.zIndex = zIndex;
         this.maxBatchSize = maxBatchSize;
 
         vertices = new float[maxBatchSize * REDUCED_EBO_VALUE * VERTEX_SIZE];
-        sprites = new SpriteRenderer[maxBatchSize];
+        spriteRenderers = new CSpriteRenderer[maxBatchSize];
     }
 
     public void start() {
@@ -105,10 +106,10 @@ public class RenderBatch implements Comparable<RenderBatch> {
     public void render() {
         boolean rebufferData = false;
         for (int i = 0; i < numElements; i++) {
-            SpriteRenderer spr = sprites[i];
-            if (spr.getIsDirty()) {
+            CSpriteRenderer spriteRenderer = spriteRenderers[i];
+            if (spriteRenderer.getIsDirty()) {
                 loadVertexProperties(i);
-                spr.setIsDirty();
+                spriteRenderer.setIsDirty();
                 rebufferData = true;
             }
         }
@@ -134,7 +135,7 @@ public class RenderBatch implements Comparable<RenderBatch> {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 
-        glDrawElements(GL_TRIANGLES, this.numElements * 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, numElements * DEFAULT_QUAD_VERTICES_AMOUNT, GL_UNSIGNED_INT, 0);
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
@@ -164,8 +165,8 @@ public class RenderBatch implements Comparable<RenderBatch> {
         glEnableVertexAttribArray(4);
     }
 
-    public void addElement(SpriteRenderer spriteRenderer) {
-        sprites[numElements] = spriteRenderer;
+    public void addElement(CSpriteRenderer spriteRenderer) {
+        spriteRenderers[numElements] = spriteRenderer;
 
         //TODO: 09.06.2024 попробовать переделать лист текстур на сет, возможно получится улучшить производительность благодаря быстрому поиску по хешу
         if (spriteRenderer.getTexture() != null) {
@@ -182,7 +183,7 @@ public class RenderBatch implements Comparable<RenderBatch> {
     }
 
     private void loadVertexProperties(int index) {
-        SpriteRenderer sprite = sprites[index];
+        CSpriteRenderer sprite = spriteRenderers[index];
 
         int offset = index * REDUCED_EBO_VALUE * VERTEX_SIZE;
 
@@ -251,7 +252,7 @@ public class RenderBatch implements Comparable<RenderBatch> {
     }
 
     private void loadElementIndices(int[] elements, int index) {
-        int offsetArrayIndex = 6 * index;
+        int offsetArrayIndex = DEFAULT_QUAD_VERTICES_AMOUNT * index;
         int offset = REDUCED_EBO_VALUE * index;
 
         elements[offsetArrayIndex] = offset + 3;
@@ -264,7 +265,7 @@ public class RenderBatch implements Comparable<RenderBatch> {
     }
 
     private int[] generateIndices() {
-        int[] elements = new int[maxBatchSize * 6];
+        int[] elements = new int[maxBatchSize * DEFAULT_QUAD_VERTICES_AMOUNT];
         for (int i = 0; i < maxBatchSize; i++) {
             loadElementIndices(elements, i);
         }
@@ -274,13 +275,13 @@ public class RenderBatch implements Comparable<RenderBatch> {
 
 
     public boolean destroyIfExists(GameObject go) {
-        SpriteRenderer sprite = go.getComponent(SpriteRenderer.class);
+        CSpriteRenderer sprite = go.getComponent(CSpriteRenderer.class);
         for (int i = 0; i < numElements; i++) {
-            if (sprites[i] == sprite) {
+            if (spriteRenderers[i] == sprite) {
                 for (int j = i; j < numElements - 1; j++) {
-                    sprites[j] = sprites[j + 1];
+                    spriteRenderers[j] = spriteRenderers[j + 1];
                     //TODO: есть подозрение, что нужно сначала выставлять флаг, а уже потом приравнивать
-                    sprites[j].setIsDirty();
+                    spriteRenderers[j].setIsDirty();
                 }
                 numElements--;
 
@@ -308,7 +309,7 @@ public class RenderBatch implements Comparable<RenderBatch> {
     }
 
     @Override
-    public int compareTo(RenderBatch o) {
+    public int compareTo(TextureRenderBatch o) {
         return Integer.compare(zIndex, o.getZIndex());
     }
 }

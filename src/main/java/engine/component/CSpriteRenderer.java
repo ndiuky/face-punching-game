@@ -5,9 +5,8 @@ import engine.object.Transform;
 import engine.render.Texture;
 import engine.util.Color;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
-public class SpriteRenderer extends Component {
+public class CSpriteRenderer extends Component {
 
     private Color color = Color.WHITE;
 
@@ -34,7 +33,7 @@ public class SpriteRenderer extends Component {
         return color;
     }
 
-    public SpriteRenderer setColor(Color color) {
+    public CSpriteRenderer setColor(Color color) {
         if (!this.color.equals(color)) {
             this.color = color;
             isDirty = true;
@@ -47,7 +46,7 @@ public class SpriteRenderer extends Component {
         return sprite.getTexture();
     }
 
-    public SpriteRenderer setTexture(Texture texture){
+    public CSpriteRenderer setTexture(Texture texture){
         sprite.setTexture(texture);
 
         return this;
@@ -61,13 +60,13 @@ public class SpriteRenderer extends Component {
         return isDirty;
     }
 
-    public SpriteRenderer setIsDirty() {
+    public CSpriteRenderer setIsDirty() {
         isDirty = false;
 
         return this;
     }
 
-    public SpriteRenderer setSprite(Sprite sprite) {
+    public CSpriteRenderer setSprite(Sprite sprite) {
         this.sprite = sprite;
         isDirty = true;
 

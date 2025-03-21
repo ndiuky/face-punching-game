@@ -1,22 +1,20 @@
 #type vertex
 #version 330 core
 
-in vec2 position;
-in vec4 color;
-in vec2 texcoord;
+layout (location=0) in vec2 aPos;
+layout (location=1) in vec4 aColor;
+layout (location=2) in vec2 aTextureCoords;
 
 out vec4 vertexColor;
 out vec2 textureCoord;
 
-uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
 
 void main() {
-    vertexColor = color;
-    textureCoord = texcoord;
-    mat4 mvp = uProjection * uView * uModel;
-    gl_Position = mvp * vec4(position, 0.0, 1.0);
+    vertexColor = aColor;
+    textureCoord = aTextureCoords;
+    gl_Position = uProjection * uView * vec4(aPos, 0.0, 1.0);
 }
 
 #type fragment

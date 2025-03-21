@@ -2,21 +2,24 @@ package engine.component;
 
 import engine.object.Transform;
 import engine.text.Text;
-import engine.util.Color;
 
 public class CTextRenderer extends Component {
 
-    private Color color = Color.WHITE;
-
-    private Text text = new Text();
+    private Text text;
 
     private transient Transform lastTransform;
 
     private transient boolean isDirty = true;
 
+
     @Override
     public void start() {
         lastTransform = gameObject.transform.copy();
+        if (text == null) {
+            text = Text.builder().build();
+        }
+//        text.fillInMetadata(gameObject.transform.position.x, gameObject.transform.position.y);
+        text.fillInMetadata();
     }
 
     @Override
@@ -25,18 +28,6 @@ public class CTextRenderer extends Component {
             gameObject.transform.copy(lastTransform);
             isDirty = true;
         }
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public CTextRenderer setColor(Color color) {
-        if (!this.color.equals(color)) {
-            this.color = color;
-            isDirty = true;
-        }
-        return this;
     }
 
     public boolean getIsDirty() {
@@ -57,4 +48,5 @@ public class CTextRenderer extends Component {
     public Text getText() {
         return text;
     }
+
 }

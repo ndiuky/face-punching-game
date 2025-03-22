@@ -43,7 +43,7 @@ public class Camera {
     }
 
     public Matrix4f getProjectionMatrix() {
-        return  projectionMatrix;
+        return projectionMatrix;
     }
 
     public Vector2f getProjectionSize() {

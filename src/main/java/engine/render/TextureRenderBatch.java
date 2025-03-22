@@ -38,7 +38,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
 
     private static final int COLOR_SIZE = 4;
 
-    private static final int REDUCED_EBO_VALUE = 4;
+    private static final int EBO_QUAD_VERTICES_AMOUNT = 4;
 
     private static final int TEXTURE_COORDS_SIZE = 2;
 
@@ -82,7 +82,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
         this.zIndex = zIndex;
         this.maxBatchSize = maxBatchSize;
 
-        vertices = new float[maxBatchSize * REDUCED_EBO_VALUE * VERTEX_SIZE];
+        vertices = new float[maxBatchSize * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE];
         spriteRenderers = new CSpriteRenderer[maxBatchSize];
     }
 
@@ -185,7 +185,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
     private void loadVertexProperties(int index) {
         CSpriteRenderer sprite = spriteRenderers[index];
 
-        int offset = index * REDUCED_EBO_VALUE * VERTEX_SIZE;
+        int offset = index * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;
 
         Color color = sprite.getColor();
         Vector2f[] textureCoords = sprite.getTextureCoords();
@@ -214,7 +214,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
 
         float xAdd = 0.5f;
         float yAdd = 0.5f;
-        for (int i = 0; i < REDUCED_EBO_VALUE; i++) {
+        for (int i = 0; i < EBO_QUAD_VERTICES_AMOUNT; i++) {
             if (i == 1) {
                 yAdd = -0.5f;
             } else if (i == 2) {
@@ -253,7 +253,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
 
     private void loadElementIndices(int[] elements, int index) {
         int offsetArrayIndex = DEFAULT_QUAD_VERTICES_AMOUNT * index;
-        int offset = REDUCED_EBO_VALUE * index;
+        int offset = EBO_QUAD_VERTICES_AMOUNT * index;
 
         elements[offsetArrayIndex] = offset + 3;
         elements[offsetArrayIndex + 1] = offset + 2;

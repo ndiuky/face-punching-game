@@ -13,6 +13,8 @@ public class Text {
 
     private final List<Vector2f> positions = new ArrayList<>();
 
+    private TextProperties properties;
+
     private String textContent;
 
     //TODO: нигде не используется, добавить
@@ -31,9 +33,8 @@ public class Text {
         this.lifetime = lifetime;
     }
 
-    //    public void fillInMetadata(float xPos, float yPos) {
     public void fillInMetadata() {
-        Font.fillInTextMetadata(content, positions, textContent);
+        properties = Font.fillInTextMetadata(content, positions, textContent);
     }
 
     public static TextBuilder builder() {
@@ -76,6 +77,10 @@ public class Text {
         this.textContent = textContent;
     }
 
+    public TextProperties getProperties() {
+        return properties;
+    }
+
     public int beginFrame() {
         return --lifetime;
     }
@@ -90,6 +95,36 @@ public class Text {
     @Override
     public int hashCode() {
         return Objects.hash(textContent, sizeModifier, color);
+    }
+
+    public static class TextProperties{
+
+        private float width, height;
+
+        private float middleX, middleY;
+
+        public TextProperties(float width, float height, float middleX, float middleY) {
+            this.width = width;
+            this.height = height;
+            this.middleX = middleX;
+            this.middleY = middleY;
+        }
+
+        public float getWidth() {
+            return width;
+        }
+
+        public float getHeight() {
+            return height;
+        }
+
+        public float getMiddleX() {
+            return middleX;
+        }
+
+        public float getMiddleY() {
+            return middleY;
+        }
     }
 
     public static class TextBuilder {

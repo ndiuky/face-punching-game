@@ -1,5 +1,6 @@
 package engine.text;
 
+import engine.render.DebugDraw;
 import engine.render.Texture;
 import engine.util.EnginePreferences;
 import org.joml.Vector2f;
@@ -181,48 +182,6 @@ public class Font {
         return height;
     }
 
-//    public static Text generateText(String textToRender, float x, float y, Color color) {
-//        int textHeight = getHeight(textToRender);
-//
-//        float drawX = x;
-//        float drawY = y;
-//        if (textHeight > fontHeight) {
-//            drawY += textHeight - fontHeight;
-//        }
-//
-//        final List<Glyph> currGlyphs = new ArrayList<>();
-//        final List<Vector2f> currPositions = new ArrayList<>();
-//
-//        for (int i = 0; i < textToRender.length(); i++) {
-//            char ch = textToRender.charAt(i);
-//            if (ch == '\n') {
-//                drawY -= fontHeight;
-//                drawX = x;
-//                continue;
-//            }
-//            if (ch == '\r') {
-//                continue;
-//            }
-//            Glyph g = glyphs.get(ch);
-//            currGlyphs.add(g);
-//            currPositions.add(new Vector2f(drawX, drawY));
-//            drawX += g.width;
-//        }
-//       return Text.builder()
-//                .textContent(textToRender)
-//                .color(color)
-//                .content(currGlyphs)
-//                .positions(currPositions)
-//                .build();
-//
-//
-////        TextRenderer.drawFullText(text);
-//    }
-//
-//    public static Text generateText(String text, float x, float y) {
-//        return generateText(text, x, y, Color.WHITE);
-//    }
-
     public static void bind() {
         texture.bind();
     }
@@ -262,7 +221,7 @@ public class Font {
         }
     }
 
-    public static void fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent) {
+    public static Text.TextProperties fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent) {
         int textHeight = getHeight(textContent);
 
         float drawX = 0;
@@ -271,10 +230,22 @@ public class Font {
             drawY += textHeight - fontHeight;
         }
 
+        //TODO: переделать алгоритм вычисления общей ширины, он отвратителен
+        float fullHeight = fontHeight;
+        float lineWidth = 0;
+        float fullWidth = 0;
+
         for (char ch : textContent.toCharArray()) {
             if (ch == '\n') {
                 drawY -= fontHeight;
+                fullHeight += fontHeight;
                 drawX = 0;
+
+                if (lineWidth > fullWidth){
+                    fullWidth = lineWidth;
+                }
+
+                lineWidth = 0;
 
                 continue;
             }
@@ -285,7 +256,14 @@ public class Font {
             content.add(g);
             positions.add(new Vector2f(drawX, drawY));
             drawX += g.width;
-
+            lineWidth += g.width;
         }
+
+        if (fullWidth == 0){
+            fullWidth = lineWidth;
+        }
+
+
+        return new Text.TextProperties(fullWidth, fullHeight, fullWidth / 2, fullHeight / 2);
     }
 }

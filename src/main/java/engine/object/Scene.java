@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import engine.component.Component;
 import engine.render.Camera;
 import engine.render.Renderer;
+import engine.util.EnginePreferences;
 import engine.util.serializer.ComponentSerializer;
 import engine.util.serializer.GameObjectSerializer;
 
@@ -97,6 +98,10 @@ public abstract class Scene {
     }
 
     public void saveSceneData() {
+        if (!EnginePreferences.ENABLE_DATA_SAVING){
+            return;
+        }
+
         try {
             FileWriter writer = new FileWriter(SAVE_FILE_NAME);
             List<GameObject> gameObjectsToSerialize = new ArrayList<>();

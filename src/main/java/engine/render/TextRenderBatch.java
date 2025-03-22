@@ -63,6 +63,8 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
     private int vboID = -1;
 
+    private int vaoID = -1;
+
     private final Shader shader = AssetPool.getShaderByName("fontShader");
 
     private final float[] vertices;
@@ -88,7 +90,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
     }
 
     public void start() {
-        int vaoID = glGenVertexArrays();
+        vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
 
         vboID = glGenBuffers();
@@ -97,7 +99,8 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //TODO: мб можно перенести вызов enableVertexAttributes сюда, и вызывать его только один раз
+
+        enableVertexAttributes();
     }
 
     public void beginFrame() {
@@ -136,6 +139,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             }
         }
 
+        //TODO: вернуть функционал ребафферинга
 //        if (rebufferData){
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
         glBufferData(GL_ARRAY_BUFFER, numVertices * Float.BYTES, GL_DYNAMIC_DRAW);
@@ -143,30 +147,49 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 //        }
 
         shader.use();
-        enableVertexAttributes();
 
         shader.setUniform(shader.getUniformLocation("uTexture"), 0);
 
-        //TODO: брать view матрицу из камеры
-        shader.setUniform(shader.getUniformLocation("uView"),
-                new Matrix4f()
-//                Window.getCurrentScene().getCamera().getViewMatrix()
+        shader.setUniform(shader.getUniformLocation("uProjection"),
+                new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix())
+                        .m30(0)
+                        .m31(0)
+//                        .m32(0)
+                        .m03(-1)
+                        .m13(-1)
+                        .m22(-1)
+//                new Matrix4f(
+//                        2f / Window.getWidth(), 0f, 0f, -1f,
+//                        0f, 2f / Window.getHeight(), 0f, -1f,
+//                        0f, 0f, -1f, 0f,
+//                        0f, 0f, 0f, 1f
+//                )
         );
 
-        //TODO: брать матрицу проекции из камеры
-        shader.setUniform(shader.getUniformLocation("uProjection"),
-//                    Window.getCurrentScene().getCamera().getProjectionMatrix()
-                new Matrix4f(
-                        2f / Window.getWidth(), 0f, 0f, -1f,
-                        0f, 2f / Window.getHeight(), 0f, -1f,
-                        0f, 0f, -1f, 0f,
-                        0f, 0f, 0f, 1f
-                )
+        shader.setUniform(shader.getUniformLocation("uView"),
+//                new Matrix4f(Window.getCurrentScene().getCamera().getViewMatrix())
+                new Matrix4f()
         );
+
+        System.out.println(
+                new Matrix4f().m00(00).m01(01).m02(02).m03(03).m10(10).m11(11).m12(12).m13(13).m20(20).m21(21).m22(22).m23(23).m30(30).m31(31).m32(32).m33(33) + "\n" +
+                        new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix()) + "\n" +
+                        new Matrix4f(
+                                2f / Window.getWidth(), 0f, 0f, -1f,
+                                0f, 2f / Window.getHeight(), 0f, -1f,
+                                0f, 0f, -1f, 0f,
+                                0f, 0f, 0f, 1f
+                        )
+        );
+
+        //TODO: скорее всего это не нужно
+        glBindVertexArray(vaoID);
+        enableVertexAttributes();
 
         glDrawArrays(GL_TRIANGLES, 0, numVertices);
 
         disableVertexAttributes();
+
         glBindBuffer(0, GL_ARRAY_BUFFER);
         glBindVertexArray(0);
 
@@ -209,15 +232,13 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                     isRotated ?
                             new Vector4f(xAdd, yAdd, 0, 1).mul(transformMatrix)
                             : new Vector4f(
-                            textRenderer.gameObject.transform.position.x + textRenderer.gameObject.transform.scale.x,
+                            xAdd + textRenderer.gameObject.transform.scale.x,
                             textRenderer.gameObject.transform.position.y + textRenderer.gameObject.transform.scale.y,
                             0, 1)
             );
 
-            float x1 = pos.x + xAdd;
-            float y1 = pos.y + yAdd;
-//                float x1 = currentPos.x + xAdd + pos.x;
-//                float y1 = currentPos.y + yAdd + pos.y;
+            float x1 = currentPos.x + pos.x;
+            float y1 = currentPos.y + pos.y;
             float x2 = x1 + glyph.width;
             float y2 = y1 + glyph.height;
 
@@ -230,15 +251,6 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             float g = color.g;
             float b = color.b;
             float a = color.a;
-
-            System.out.println("x1 = " + x1);
-            System.out.println("y1 = " + y1);
-            System.out.println("x2 = " + x2);
-            System.out.println("y2 = " + y2);
-            System.out.println("s1 = " + s1);
-            System.out.println("t1 = " + t1);
-            System.out.println("s2 = " + s2);
-            System.out.println("t2 = " + t2);
 
             //TODO: добавить ebo, в теории увеличит производительность рендера текста на ~30%
             //TODO: перетащить в fori

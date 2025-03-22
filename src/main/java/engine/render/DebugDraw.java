@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class DebugDraw {
-    private static final int MAX_LINES = 2048;
+    private static final int MAX_LINES = 4096;
 
     private static final int INDICES_COUNT = 6;
 

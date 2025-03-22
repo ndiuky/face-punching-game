@@ -1,7 +1,11 @@
 package engine.component;
 
 import engine.object.Transform;
+import engine.render.DebugDraw;
+import engine.text.Glyph;
 import engine.text.Text;
+import engine.util.Color;
+import org.joml.Vector2f;
 
 public class CTextRenderer extends Component {
 
@@ -27,6 +31,14 @@ public class CTextRenderer extends Component {
         if (!lastTransform.equals(gameObject.transform)) {
             gameObject.transform.copy(lastTransform);
             isDirty = true;
+        }
+        DebugDraw.drawCircle(new Vector2f(text.getProperties().getMiddleX() + gameObject.transform.position.x, text.getProperties().getMiddleY() + gameObject.transform.position.y), 5, 1, engine.util.Color.WHITE);
+        DebugDraw.drawLine(gameObject.transform.position, text.getPositions().getFirst(), 1);
+
+        for (int i = 0; i < text.getTextSize(); i++) {
+            Glyph glyph = text.getContent().get(i);
+            Vector2f pos = text.getPositions().get(i);
+            DebugDraw.drawBox(new Vector2f(pos).add(new Vector2f(glyph.width/2f, glyph.height/2f)), new Vector2f(glyph.width, glyph.height), 1, 0, Color.BLUE);
         }
     }
 

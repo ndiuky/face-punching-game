@@ -10,6 +10,7 @@ import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.render.DebugDraw;
+import engine.text.Font;
 import engine.text.Text;
 import engine.util.AssetPool;
 import engine.util.Color;
@@ -43,6 +44,11 @@ public class SceneSelectionScene extends Scene {
                 .addComponent(new CTextRenderer().setText(Text.builder().textContent("selection scene text").build()));
 
         addGameObjectToScene(textGO);
+
+        GameObject fontGO = new GameObject("fontGO", new Transform(new Vector2f(700, 550), new Vector2f(1500, 64)), -1)
+                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(Font.getTexture())));
+
+        addGameObjectToScene(fontGO);
 
 //        GameObject textGO = new GameObject("textGO", new Transform(new Vector2f(100, 100), new Vector2f(128, 128)), -1)
 //                .addComponent(TextRenderer.get().setText("penis.").setPos(100, 100));

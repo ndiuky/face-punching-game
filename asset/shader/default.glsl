@@ -1,5 +1,6 @@
 #type vertex
 #version 330 core
+
 layout (location=0) in vec3 aPos;
 layout (location=1) in vec4 aColor;
 layout (location=2) in vec2 aTextureCoords;
@@ -12,14 +13,14 @@ out vec4 fColor;
 out vec2 fTextureCoords;
 out float fTextureId;
 
-void main()
-{
+void main() {
     fColor = aColor;
     fTextureCoords = aTextureCoords;
     fTextureId = aTextureId;
 
     gl_Position = uProjection * uView * vec4(aPos, 1.0);
 }
+
 
 #type fragment
 #version 330 core
@@ -32,8 +33,7 @@ uniform sampler2D uTextures[8];
 
 out vec4 color;
 
-void main()
-{
+void main() {
     if (fTextureId > 0) {
         int id = int(fTextureId);
         color = fColor * texture(uTextures[id], fTextureCoords);

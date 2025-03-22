@@ -54,7 +54,7 @@ public class BoxingRingScene extends Scene {
                                 .setActionGameComponent(new CArcAttack())
                 )
                 .addComponent(new CItemPickUp(60))
-                .addComponent(new CTextRenderer().setText(Text.builder().textContent("p").build()))
+                .addComponent(new CTextRenderer().setText(Text.builder().textContent("peniiiiiiiiis!!!!").build()))
                 .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);

@@ -38,7 +38,7 @@ public class CTextRenderer extends Component {
         for (int i = 0; i < text.getTextSize(); i++) {
             Glyph glyph = text.getContent().get(i);
             Vector2f pos = text.getPositions().get(i);
-            DebugDraw.drawBox(new Vector2f(pos).add(new Vector2f(glyph.width/2f, glyph.height/2f)), new Vector2f(glyph.width, glyph.height), 1, 0, Color.BLUE);
+            DebugDraw.drawBox(new Vector2f(pos).add(new Vector2f(glyph.width/2f, glyph.height/2f)).add(gameObject.transform.position), new Vector2f(glyph.width, glyph.height), 1, 0, Color.BLUE);
         }
     }
 

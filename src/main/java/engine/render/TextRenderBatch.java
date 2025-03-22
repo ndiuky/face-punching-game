@@ -8,12 +8,14 @@ import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static engine.util.EngineUtils.time;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -150,30 +152,42 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
         shader.setUniform(shader.getUniformLocation("uTexture"), 0);
 
+
+        Matrix4f matrix = Window.getCurrentScene().getCamera().getProjectionMatrix();
         shader.setUniform(shader.getUniformLocation("uProjection"),
-                new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix())
+                new Matrix4f(matrix)
                         .m30(0)
                         .m31(0)
-//                        .m32(0)
+//                        .m03(Window.getWidth() * 0.01f * ((float) Math.sin(time())))
+//                        .m13(Window.getHeight() * 0.01f * ((float) Math.sin(time())))
+
                         .m03(-1)
                         .m13(-1)
-                        .m22(-1)
+
 //                new Matrix4f(
-//                        2f / Window.getWidth(), 0f, 0f, -1f,
-//                        0f, 2f / Window.getHeight(), 0f, -1f,
+//                        2f / Window.getWidth(), 0f, 0f, 0f,
+//                        0f, 2f / Window.getHeight(), 0f, 0f,
 //                        0f, 0f, -1f, 0f,
 //                        0f, 0f, 0f, 1f
 //                )
         );
-
+        Matrix4f view = Window.getCurrentScene().getCamera().getViewMatrix();
         shader.setUniform(shader.getUniformLocation("uView"),
 //                new Matrix4f(Window.getCurrentScene().getCamera().getViewMatrix())
                 new Matrix4f()
+                        .m03(view.m30())
+                        .m13(view.m31())
         );
 
         System.out.println(
                 new Matrix4f().m00(00).m01(01).m02(02).m03(03).m10(10).m11(11).m12(12).m13(13).m20(20).m21(21).m22(22).m23(23).m30(30).m31(31).m32(32).m33(33) + "\n" +
-                        new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix()) + "\n" +
+//                        new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix()) + "\n" +
+                        new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix())
+//                                .m30(0)
+//                                .m31(0)
+//                                .m03(-1)
+//                                .m13(-1)
+                        + "\n" +
                         new Matrix4f(
                                 2f / Window.getWidth(), 0f, 0f, -1f,
                                 0f, 2f / Window.getHeight(), 0f, -1f,
@@ -224,16 +238,16 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                         textRenderer.gameObject.transform.position.y, 0f);
                 transformMatrix.rotate((float) Math.toRadians(textRenderer.gameObject.transform.rotation),
                         0, 0, 1);
-                transformMatrix.scale(textRenderer.gameObject.transform.scale.x,
-                        textRenderer.gameObject.transform.scale.y, 1);
+//                transformMatrix.scale(textRenderer.gameObject.transform.scale.x,
+//                        textRenderer.gameObject.transform.scale.y, 1);
             }
 
             Vector4f currentPos = new Vector4f(
                     isRotated ?
                             new Vector4f(xAdd, yAdd, 0, 1).mul(transformMatrix)
                             : new Vector4f(
-                            xAdd + textRenderer.gameObject.transform.scale.x,
-                            textRenderer.gameObject.transform.position.y + textRenderer.gameObject.transform.scale.y,
+                            xAdd,// + textRenderer.gameObject.transform.scale.x,
+                            yAdd,// + textRenderer.gameObject.transform.scale.y,
                             0, 1)
             );
 

@@ -13,6 +13,8 @@ public class Text {
 
     private final List<Vector2f> positions = new ArrayList<>();
 
+    private float scale = 1;
+
     private TextProperties properties;
 
     private String textContent;

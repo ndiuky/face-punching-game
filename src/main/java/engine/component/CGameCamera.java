@@ -60,11 +60,11 @@ public class CGameCamera extends Component implements MouseEventListener {
         if (reset) {
             camera.position.lerp(new Vector2f(), lerpTime);
             camera.setZoom(this.camera.getZoom() + ((1.0f - camera.getZoom()) * lerpTime));
-            this.lerpTime += 0.1f * dt;
+            this.lerpTime += 0.01f * dt;
 
-            if (Math.abs(camera.position.x) <= 1.0f &&
-                    Math.abs(camera.position.y) <= 1.0f &&
-                    Math.abs(camera.getZoom() - 1) <= 0.01f) {
+            if (Math.abs(camera.position.x) <= 0.0001f &&
+                    Math.abs(camera.position.y) <= 0.0001f &&
+                    Math.abs(camera.getZoom() - 1) <= 0.0001f) {
                 lerpTime = 0.0f;
                 camera.position.set(0f, 0f);
                 camera.setZoom(1.0f);

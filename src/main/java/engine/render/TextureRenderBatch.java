@@ -34,11 +34,11 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 //TODO: создать класс для помощи в работе с OpenGL
 public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
 
+    private static final int EBO_QUAD_VERTICES_AMOUNT = 4;
+
     private static final int POS_SIZE = 2;
 
     private static final int COLOR_SIZE = 4;
-
-    private static final int EBO_QUAD_VERTICES_AMOUNT = 4;
 
     private static final int TEXTURE_COORDS_SIZE = 2;
 

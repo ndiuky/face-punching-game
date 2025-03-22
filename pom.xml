@@ -110,29 +110,6 @@
         </dependency>
     </dependencies>
 
-    <!--    <build>-->
-    <!--        <plugins>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.apache.maven.plugins</groupId>-->
-    <!--                <artifactId>maven-compiler-plugin</artifactId>-->
-    <!--                <version>3.8.1</version>-->
-    <!--                <configuration>-->
-    <!--                        <annotationProcessorPaths>-->
-    <!--                            <path>-->
-    <!--                                <groupId>engineGroup</groupId>-->
-    <!--                                <artifactId>VectorVibeEngine</artifactId>-->
-    <!--                                <version>0.0.1</version>-->
-    <!--                            </path>-->
-    <!--                        </annotationProcessorPaths>-->
-    <!--                    <compilerArgs>-->
-    <!--                        <arg>-processor</arg>-->
-    <!--                        <arg>annotation.AnnotationValidator</arg>-->
-    <!--                    </compilerArgs>-->
-    <!--                </configuration>-->
-    <!--            </plugin>-->
-    <!--        </plugins>-->
-    <!--    </build>-->
-
     <repositories>
         <repository>
             <id>central</id>

@@ -8,26 +8,29 @@ import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL15;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static engine.util.EngineUtils.time;
+import static engine.util.EnginePreferences.DEFAULT_QUAD_VERTICES_AMOUNT;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15C.glBufferData;
@@ -40,6 +43,8 @@ import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
 public class TextRenderBatch implements Comparable<TextRenderBatch> {
+
+    private static final int EBO_QUAD_VERTICES_AMOUNT = 4;
 
     private static final int POS_SIZE = 2;
 
@@ -77,7 +82,9 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
     private int numVertices = 0;
 
-    private int numElements = 0;
+    private int numTextBlocks = 0;
+
+    private int numGlyphs = 0;
 
     private boolean hasRoom = true;
 
@@ -97,28 +104,17 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-//        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
+
+        int eboID = glGenBuffers();
+        int[] indices = generateIndices();
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+        GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         enableVertexAttributes();
-    }
-
-    public void beginFrame() {
-        if (!started) {
-            start();
-            started = true;
-        }
-
-
-//        for (int i = 0; i < contentToRender.size(); i++) {
-//            if (contentToRender.get(i).beginFrame() < 0) {
-//                contentToRender.remove(i--).getTextSize();
-//            }
-//        }
-
-//        glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
     }
 
     public void render() {
@@ -132,7 +128,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
         Font.bind();
 
         boolean rebufferData = false;
-        for (int i = 0; i < numElements; i++) {
+        for (int i = 0; i < numTextBlocks; i++) {
             CTextRenderer textRenderer = textRenderers[i];
             if (textRenderer.getIsDirty()) {
                 loadVertexProperties(i, textRenderer);
@@ -153,61 +149,30 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
         shader.setUniform(shader.getUniformLocation("uTexture"), 0);
 
 
-        Matrix4f matrix = Window.getCurrentScene().getCamera().getProjectionMatrix();
         shader.setUniform(shader.getUniformLocation("uProjection"),
-                new Matrix4f(matrix)
+                new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix())
                         .m30(0)
                         .m31(0)
-//                        .m03(Window.getWidth() * 0.01f * ((float) Math.sin(time())))
-//                        .m13(Window.getHeight() * 0.01f * ((float) Math.sin(time())))
-
                         .m03(-1)
                         .m13(-1)
-
-//                new Matrix4f(
-//                        2f / Window.getWidth(), 0f, 0f, 0f,
-//                        0f, 2f / Window.getHeight(), 0f, 0f,
-//                        0f, 0f, -1f, 0f,
-//                        0f, 0f, 0f, 1f
-//                )
         );
-        Matrix4f view = Window.getCurrentScene().getCamera().getViewMatrix();
+
+        final Matrix4f view = Window.getCurrentScene().getCamera().getViewMatrix();
         shader.setUniform(shader.getUniformLocation("uView"),
-//                new Matrix4f(Window.getCurrentScene().getCamera().getViewMatrix())
                 new Matrix4f()
                         .m03(view.m30())
                         .m13(view.m31())
         );
 
-        System.out.println(
-                new Matrix4f().m00(00).m01(01).m02(02).m03(03).m10(10).m11(11).m12(12).m13(13).m20(20).m21(21).m22(22).m23(23).m30(30).m31(31).m32(32).m33(33) + "\n" +
-//                        new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix()) + "\n" +
-                        new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix())
-//                                .m30(0)
-//                                .m31(0)
-//                                .m03(-1)
-//                                .m13(-1)
-                        + "\n" +
-                        new Matrix4f(
-                                2f / Window.getWidth(), 0f, 0f, -1f,
-                                0f, 2f / Window.getHeight(), 0f, -1f,
-                                0f, 0f, -1f, 0f,
-                                0f, 0f, 0f, 1f
-                        )
-        );
-
-        //TODO: скорее всего это не нужно
         glBindVertexArray(vaoID);
         enableVertexAttributes();
 
-        glDrawArrays(GL_TRIANGLES, 0, numVertices);
+        glDrawElements(GL_TRIANGLES, numGlyphs * DEFAULT_QUAD_VERTICES_AMOUNT, GL_UNSIGNED_INT, 0);
 
         disableVertexAttributes();
 
         glBindBuffer(0, GL_ARRAY_BUFFER);
         glBindVertexArray(0);
-
-//        numVertices = 0;
 
         Font.unbind();
 
@@ -215,10 +180,11 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
     }
 
     private void loadVertexProperties(int index, CTextRenderer textRenderer) {
-        int offset = index * VERTICES_PER_QUAD * VERTEX_SIZE;
+        int offset = index * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;
+
         Text text = textRenderer.getText();
-        float xAdd = textRenderer.gameObject.transform.position.x;
-        float yAdd = textRenderer.gameObject.transform.position.y;
+        float fullTextXAdd = textRenderer.gameObject.transform.position.x;
+        float fullTextYAdd = textRenderer.gameObject.transform.position.y;
 
         int textSize = text.getTextSize();
         Color color = text.getColor();
@@ -231,6 +197,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             Vector2f pos = positions.get(i);
             Glyph glyph = content.get(i);
 
+
             boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
             Matrix4f transformMatrix = new Matrix4f().identity();
             if (isRotated) {
@@ -238,16 +205,28 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                         textRenderer.gameObject.transform.position.y, 0f);
                 transformMatrix.rotate((float) Math.toRadians(textRenderer.gameObject.transform.rotation),
                         0, 0, 1);
-//                transformMatrix.scale(textRenderer.gameObject.transform.scale.x,
-//                        textRenderer.gameObject.transform.scale.y, 1);
+                transformMatrix.scale(textRenderer.gameObject.transform.scale.x,
+                        textRenderer.gameObject.transform.scale.y, 1);
             }
+
+//            float xAdd = 0.5f;
+//            float yAdd = 0.5f;
+//            for (int j = 0; j < EBO_QUAD_VERTICES_AMOUNT; j++) {
+//                if (i == 1) {
+//                    yAdd = -0.5f;
+//                } else if (i == 2) {
+//                    xAdd = -0.5f;
+//                } else if (i == 3) {
+//                    yAdd = 0.5f;
+//                }
 
             Vector4f currentPos = new Vector4f(
                     isRotated ?
-                            new Vector4f(xAdd, yAdd, 0, 1).mul(transformMatrix)
+                            new Vector4f(fullTextXAdd, fullTextYAdd, 0, 1).mul(transformMatrix)
                             : new Vector4f(
-                            xAdd,// + textRenderer.gameObject.transform.scale.x,
-                            yAdd,// + textRenderer.gameObject.transform.scale.y,
+                            //TODO: пристроить сюда нормальный расчёт скейла с учётом размера текста
+                            fullTextXAdd,// + textRenderer.gameObject.transform.scale.x,
+                            fullTextYAdd,// + textRenderer.gameObject.transform.scale.y,
                             0, 1)
             );
 
@@ -266,10 +245,9 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             float b = color.b;
             float a = color.a;
 
-            //TODO: добавить ebo, в теории увеличит производительность рендера текста на ~30%
             //TODO: перетащить в fori
 
-            vertices[offset] = x1;
+            vertices[offset + 0] = x1;
             vertices[offset + 1] = y1;
             vertices[offset + 2] = r;
             vertices[offset + 3] = g;
@@ -296,39 +274,23 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             vertices[offset + 22] = s2;
             vertices[offset + 23] = t2;
 
-            vertices[offset + 24] = x1;
+            vertices[offset + 24] = x2;
             vertices[offset + 25] = y1;
             vertices[offset + 26] = r;
             vertices[offset + 27] = g;
             vertices[offset + 28] = b;
             vertices[offset + 29] = a;
-            vertices[offset + 30] = s1;
+            vertices[offset + 30] = s2;
             vertices[offset + 31] = t1;
 
-            vertices[offset + 32] = x2;
-            vertices[offset + 33] = y2;
-            vertices[offset + 34] = r;
-            vertices[offset + 35] = g;
-            vertices[offset + 36] = b;
-            vertices[offset + 37] = a;
-            vertices[offset + 38] = s2;
-            vertices[offset + 39] = t2;
-
-            vertices[offset + 40] = x2;
-            vertices[offset + 41] = y1;
-            vertices[offset + 42] = r;
-            vertices[offset + 43] = g;
-            vertices[offset + 44] = b;
-            vertices[offset + 45] = a;
-            vertices[offset + 46] = s2;
-            vertices[offset + 47] = t1;
-
-            offset += VERTICES_PER_QUAD * VERTEX_SIZE;
+            offset += EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;
         }
+//        }
+
     }
 
     public void addElement(CTextRenderer textRenderer) {
-        textRenderers[numElements] = textRenderer;
+        textRenderers[numTextBlocks] = textRenderer;
 
         if (textRenderer.getText() != null) {
             if (!hasText(textRenderer.getText())) {
@@ -337,9 +299,10 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
         }
         numVertices += textRenderer.getText().getTextSize() * VERTEX_SIZE * VERTICES_PER_QUAD;
 
-        loadVertexProperties(numElements++, textRenderer);
+        loadVertexProperties(numTextBlocks++, textRenderer);
+        numGlyphs += textRenderer.getText().getTextSize();
 
-        if (numElements >= maxBatchSize) {
+        if (numGlyphs >= maxBatchSize) {
             hasRoom = false;
         }
     }
@@ -347,12 +310,37 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
     //TODO: ВРЕМЕННЫЙ МЕТОД, ПЕРЕДЕЛАТЬ ПОД УДАЛЕНИЕ ПО ID ТЕКСТА!!!
     public void removeText(String textToDelete) {
         for (int i = 0; i < contentToRender.size(); i++) {
-            if (contentToRender.get(i).getTextContent().equals(textToDelete)) {
+            Text currText = contentToRender.get(i);
+            if (currText.getTextContent().equals(textToDelete)) {
                 contentToRender.remove(i);
+                numTextBlocks--;
+                numGlyphs -= currText.getTextSize();
 
                 return;
             }
         }
+    }
+
+    private int[] generateIndices() {
+        int[] elements = new int[maxBatchSize * DEFAULT_QUAD_VERTICES_AMOUNT];
+        for (int i = 0; i < maxBatchSize; i++) {
+            loadElementIndices(elements, i);
+        }
+
+        return elements;
+    }
+
+    private void loadElementIndices(int[] elements, int index) {
+        int offsetArrayIndex = DEFAULT_QUAD_VERTICES_AMOUNT * index;
+        int offset = EBO_QUAD_VERTICES_AMOUNT * index;
+
+        elements[offsetArrayIndex] = offset + 3;
+        elements[offsetArrayIndex + 1] = offset + 2;
+        elements[offsetArrayIndex + 2] = offset;
+
+        elements[offsetArrayIndex + 3] = offset;
+        elements[offsetArrayIndex + 4] = offset + 2;
+        elements[offsetArrayIndex + 5] = offset + 1;
     }
 
     private void enableVertexAttributes() {

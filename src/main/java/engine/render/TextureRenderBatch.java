@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static engine.util.EnginePreferences.DEFAULT_QUAD_VERTICES_AMOUNT;
+import static engine.util.EnginePreferences.EBO_QUAD_VERTICES_AMOUNT;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
@@ -33,8 +34,6 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //TODO: создать класс для помощи в работе с OpenGL
 public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
-
-    private static final int EBO_QUAD_VERTICES_AMOUNT = 4;
 
     private static final int POS_SIZE = 2;
 

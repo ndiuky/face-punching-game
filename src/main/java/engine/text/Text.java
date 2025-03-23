@@ -1,5 +1,6 @@
 package engine.text;
 
+import engine.util.Alignment;
 import engine.util.Color;
 import org.joml.Vector2f;
 
@@ -13,10 +14,6 @@ public class Text {
 
     private final List<Vector2f> positions = new ArrayList<>();
 
-    private float scale = 1;
-
-    private TextProperties properties;
-
     private String textContent;
 
     //TODO: нигде не используется, добавить
@@ -24,23 +21,30 @@ public class Text {
 
     private Color color;
 
-    //TODO: переделать lifetime на float для использования в секундах
-    //TODO: прикрутить lifetime к системе рендера, сейчас он всегда изначально равен 1
-    private int lifetime = 1;
+    private float width, height;
 
-    private Text(String textContent, float sizeModifier, Color color, int lifetime) {
+    private Alignment alignment = Alignment.CENTER;
+
+    private Text(String textContent, float sizeModifier, Color color) {
         this.textContent = textContent;
         this.sizeModifier = sizeModifier;
         this.color = color;
-        this.lifetime = lifetime;
+    }
+
+    public Text(String textContent) {
+        this(textContent, 1, Color.WHITE);
+    }
+
+    public Text() {
     }
 
     public void fillInMetadata() {
-        properties = Font.fillInTextMetadata(content, positions, textContent);
-    }
+        content.clear();
+        positions.clear();
 
-    public static TextBuilder builder() {
-        return new TextBuilder();
+        Vector2f dimensions = Font.fillInTextMetadata(content, positions, textContent);
+        width = dimensions.x;
+        height = dimensions.y;
     }
 
     public void setColor(Color color) {
@@ -76,15 +80,48 @@ public class Text {
     }
 
     public void setTextContent(String textContent) {
+        if (Objects.equals(this.textContent, textContent)) {
+            return;
+        }
+
+//        float previousWidth = width;
+//        float previousHeight = height;
+
         this.textContent = textContent;
+        fillInMetadata();
+
+        //TODO: пофикси
+//        if (previousWidth != width || previousHeight != height) {
+            updateAlignment();
+//        }
     }
 
-    public TextProperties getProperties() {
-        return properties;
+    public Alignment getAlignment() {
+        return alignment;
     }
 
-    public int beginFrame() {
-        return --lifetime;
+    public Text setAlignment(Alignment alignment) {
+        this.alignment = alignment;
+        return this;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void updateAlignment() {
+        positions.clear();
+
+        float totalX = alignment.x * width;
+        float y = alignment.y * height;
+        for (Glyph glyph : content) {
+            positions.add(new Vector2f(totalX, y));
+            totalX += glyph.width;
+        }
     }
 
     @Override
@@ -97,80 +134,5 @@ public class Text {
     @Override
     public int hashCode() {
         return Objects.hash(textContent, sizeModifier, color);
-    }
-
-    public static class TextProperties{
-
-        private float width, height;
-
-        private float middleX, middleY;
-
-        public TextProperties(float width, float height, float middleX, float middleY) {
-            this.width = width;
-            this.height = height;
-            this.middleX = middleX;
-            this.middleY = middleY;
-        }
-
-        public float getWidth() {
-            return width;
-        }
-
-        public float getHeight() {
-            return height;
-        }
-
-        public float getMiddleX() {
-            return middleX;
-        }
-
-        public float getMiddleY() {
-            return middleY;
-        }
-    }
-
-    public static class TextBuilder {
-
-        private String textContent = "";
-
-        private float xPos, yPos;
-
-        private float sizeModifier = 1;
-
-        private Color color = Color.WHITE;
-
-        private int lifetime = 1;
-
-
-        public Text build() {
-            return new Text(textContent, sizeModifier, color, lifetime);
-        }
-
-        public TextBuilder textContent(String textContent) {
-            this.textContent = textContent;
-            return this;
-        }
-
-        public TextBuilder position(float x, float y) {
-            this.xPos = x;
-            this.yPos = y;
-            return this;
-        }
-
-        public TextBuilder sizeModifier(float sizeModifier) {
-            this.sizeModifier = sizeModifier;
-            return this;
-        }
-
-        public TextBuilder color(Color color) {
-            this.color = color;
-            return this;
-        }
-
-        public TextBuilder lifetime(int lifetime) {
-            this.lifetime = lifetime;
-            return this;
-        }
-
     }
 }

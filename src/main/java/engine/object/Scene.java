@@ -196,4 +196,7 @@ public abstract class Scene {
         throw new RuntimeException("Scene with id=" + sceneId + " does not exist");
     }
 
+    public boolean isRunning() {
+        return isRunning;
+    }
 }

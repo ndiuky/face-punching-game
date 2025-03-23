@@ -6,7 +6,7 @@ import component.entity.Player;
 import engine.component.CGameCamera;
 import engine.component.CItemPickUp;
 import engine.component.CSpriteRenderer;
-import engine.component.CTextRenderer;
+import engine.component.ui.CTextRenderer;
 import engine.object.GameObject;
 import engine.object.Scene;
 import engine.object.Sprite;
@@ -41,7 +41,7 @@ public class BoxingRingScene extends Scene {
         addGameObjectToScene(cameraGO);
 
         boxingRing = new GameObject("boxingRing", new Transform(new Vector2f(0, 0), new Vector2f(512, 512)), -1)
-//                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/boxing-ring.png"))))
+                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/boxing-ring.png"))))
                 ;
 
         addGameObjectToScene(boxingRing);
@@ -54,7 +54,7 @@ public class BoxingRingScene extends Scene {
                                 .setActionGameComponent(new CArcAttack())
                 )
                 .addComponent(new CItemPickUp(60))
-                .addComponent(new CTextRenderer().setText(Text.builder().textContent("peniiiiiiiiis!!!!").build()))
+                .addComponent(new CTextRenderer().setText(new Text("player's text")))
                 .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);

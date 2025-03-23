@@ -1,7 +1,7 @@
 package engine.render;
 
 import engine.component.CSpriteRenderer;
-import engine.component.CTextRenderer;
+import engine.component.ui.CTextRenderer;
 import engine.object.GameObject;
 import engine.text.Text;
 
@@ -30,7 +30,7 @@ public class Renderer {
         }
 
         CTextRenderer textRenderer = go.getComponent(CTextRenderer.class);
-        if (textRenderer != null){
+        if (textRenderer != null) {
             add(textRenderer);
         }
     }
@@ -92,13 +92,21 @@ public class Renderer {
     }
 
     public void destroyGameObject(GameObject go) {
-        if (go.getComponent(CSpriteRenderer.class) == null){
-            return;
+        CSpriteRenderer sr = go.getComponent(CSpriteRenderer.class);
+        if (sr != null) {
+            for (TextureRenderBatch textureBatch : textureBatches) {
+                if (textureBatch.destroyIfExists(go)) {
+                    break;
+                }
+            }
         }
 
-        for (TextureRenderBatch batch : textureBatches) {
-            if (batch.destroyIfExists(go)) {
-                return;
+        CTextRenderer tr = go.getComponent(CTextRenderer.class);
+        if (tr != null) {
+            for (TextRenderBatch textBatch : textBatches) {
+                if (textBatch.destroyIfExists(go)) {
+                    break;
+                }
             }
         }
     }

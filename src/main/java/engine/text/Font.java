@@ -1,6 +1,5 @@
 package engine.text;
 
-import engine.render.DebugDraw;
 import engine.render.Texture;
 import engine.util.EnginePreferences;
 import org.joml.Vector2f;
@@ -27,7 +26,7 @@ public class Font {
 
     static {
         try {
-            texture = createFontTexture(java.awt.Font.createFont(TRUETYPE_FONT, new FileInputStream("asset/font/Roboto-Bold.ttf")).deriveFont(PLAIN, EnginePreferences.FONT_RESOLUTION), true);
+            texture = createFontTexture(java.awt.Font.createFont(TRUETYPE_FONT, new FileInputStream("asset/font/Roboto-Bold.ttf")).deriveFont(PLAIN, EnginePreferences.FONT_RESOLUTION));
         } catch (Exception ex) {
             throw new RuntimeException("Unable to create font texture: " + ex.getMessage());
         }
@@ -36,7 +35,7 @@ public class Font {
     private static int fontHeight;
 
     //TODO: переделать текстуру шрифта с длинной полоски на что-то ближе к квадрату
-    private static Texture createFontTexture(java.awt.Font font, boolean antiAlias) {
+    private static Texture createFontTexture(java.awt.Font font) {
 
         int imageWidth = 0;
         int imageHeight = 0;
@@ -46,7 +45,7 @@ public class Font {
                 continue;
             }
             char c = (char) i;
-            BufferedImage ch = createCharImage(font, c, antiAlias);
+            BufferedImage ch = createCharImage(font, c);
             if (ch == null) {
                 continue;
             }
@@ -68,7 +67,7 @@ public class Font {
             }
 
             char c = (char) i;
-            BufferedImage charImage = createCharImage(font, c, antiAlias);
+            BufferedImage charImage = createCharImage(font, c);
 
             if (charImage == null) {
                 continue;
@@ -113,12 +112,9 @@ public class Font {
         return fontTexture;
     }
 
-    private static BufferedImage createCharImage(java.awt.Font font, char c, boolean antiAlias) {
+    private static BufferedImage createCharImage(java.awt.Font font, char c) {
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
-        if (antiAlias) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        }
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics();
         g.dispose();
@@ -132,9 +128,6 @@ public class Font {
 
         image = new BufferedImage(charWidth, charHeight, BufferedImage.TYPE_INT_ARGB);
         g = image.createGraphics();
-        if (antiAlias) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        }
         g.setFont(font);
         g.setPaint(java.awt.Color.WHITE);
         g.drawString(String.valueOf(c), 0, metrics.getAscent());
@@ -221,14 +214,14 @@ public class Font {
         }
     }
 
-    public static Text.TextProperties fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent) {
-        int textHeight = getHeight(textContent);
+    public static Vector2f fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent) {
+//        int textHeight = getHeight(textContent);
 
         float drawX = 0;
         float drawY = 0;
-        if (textHeight > fontHeight) {
-            drawY += textHeight - fontHeight;
-        }
+//        if (textHeight > fontHeight) {
+//            drawY += textHeight - fontHeight;
+//        }
 
         //TODO: переделать алгоритм вычисления общей ширины, он отвратителен
         float fullHeight = fontHeight;
@@ -236,22 +229,22 @@ public class Font {
         float fullWidth = 0;
 
         for (char ch : textContent.toCharArray()) {
-            if (ch == '\n') {
-                drawY -= fontHeight;
-                fullHeight += fontHeight;
-                drawX = 0;
-
-                if (lineWidth > fullWidth){
-                    fullWidth = lineWidth;
-                }
-
-                lineWidth = 0;
-
-                continue;
-            }
-            if (ch == '\r') {
-                continue;
-            }
+//            if (ch == '\n') {
+//                drawY -= fontHeight;
+//                fullHeight += fontHeight;
+//                drawX = 0;
+//
+//                if (lineWidth > fullWidth){
+//                    fullWidth = lineWidth;
+//                }
+//
+//                lineWidth = 0;
+//
+//                continue;
+//            }
+//            if (ch == '\r') {
+//                continue;
+//            }
             Glyph g = glyphs.get(ch);
             content.add(g);
             positions.add(new Vector2f(drawX, drawY));
@@ -259,11 +252,10 @@ public class Font {
             lineWidth += g.width;
         }
 
-        if (fullWidth == 0){
+        if (fullWidth == 0) {
             fullWidth = lineWidth;
         }
 
-
-        return new Text.TextProperties(fullWidth, fullHeight, fullWidth / 2, fullHeight / 2);
+        return new Vector2f(fullWidth, fullHeight);
     }
 }

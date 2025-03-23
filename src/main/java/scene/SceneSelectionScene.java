@@ -2,18 +2,14 @@ package scene;
 
 import component.controls.SelectionControls;
 import engine.component.CSpriteRenderer;
-import engine.component.CTextRenderer;
+import engine.component.ui.CFpsCounter;
 import engine.object.GameObject;
 import engine.object.Scene;
 import engine.object.Sprite;
 import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
-import engine.render.DebugDraw;
-import engine.text.Font;
-import engine.text.Text;
 import engine.util.AssetPool;
-import engine.util.Color;
 import org.joml.Vector2f;
 
 public class SceneSelectionScene extends Scene {
@@ -37,27 +33,26 @@ public class SceneSelectionScene extends Scene {
 
         addGameObjectToScene(testingSelectGO);
 
-        DebugDraw.drawBox(new Vector2f(100, 100), new Vector2f(50, 100), -1, 30, Color.WHITE, 1000000);
+        GameObject fpsGO = new GameObject("fpsGO", new Transform(new Vector2f(200, 100), new Vector2f(100, 100)), -1)
+                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_FRAME));
 
+        addGameObjectToScene(fpsGO);
 
-        GameObject textGO = new GameObject("textGO", new Transform(new Vector2f(0, 0), new Vector2f(0, 0)), -1)
-                .addComponent(new CTextRenderer().setText(Text.builder().textContent("selection scene text").build()));
+        GameObject fpsGO1 = new GameObject("fpsGO", new Transform(new Vector2f(200, 164), new Vector2f(100, 100)), -1)
+                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_AVG));
 
-        addGameObjectToScene(textGO);
+        addGameObjectToScene(fpsGO1);
 
-        GameObject fontGO = new GameObject("fontGO", new Transform(new Vector2f(700, 550), new Vector2f(1500, 64)), -1)
-                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(Font.getTexture())));
+        GameObject fpsGO2 = new GameObject("fpsGO", new Transform(new Vector2f(200, 228), new Vector2f(100, 100)), -1)
+                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MIN));
 
-        addGameObjectToScene(fontGO);
+        addGameObjectToScene(fpsGO2);
 
-//        GameObject textGO = new GameObject("textGO", new Transform(new Vector2f(100, 100), new Vector2f(128, 128)), -1)
-//                .addComponent(TextRenderer.get().setText("penis.").setPos(100, 100));
-//
-//        addGameObjectToScene(textGO);
+        GameObject fpsGO3 = new GameObject("fpsGO", new Transform(new Vector2f(200, 294), new Vector2f(100, 100)), -1)
+                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MAX));
 
+        addGameObjectToScene(fpsGO3);
     }
-
-
 
     private void loadResources() {
         AssetPool.getShaderByName("default");

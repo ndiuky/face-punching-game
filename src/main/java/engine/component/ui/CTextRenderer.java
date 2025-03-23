@@ -1,11 +1,12 @@
-package engine.component;
+package engine.component.ui;
 
+import engine.component.Component;
 import engine.object.Transform;
 import engine.render.DebugDraw;
-import engine.text.Glyph;
+import engine.render.Window;
 import engine.text.Text;
+import engine.util.Alignment;
 import engine.util.Color;
-import org.joml.Vector2f;
 
 public class CTextRenderer extends Component {
 
@@ -15,31 +16,28 @@ public class CTextRenderer extends Component {
 
     private transient boolean isDirty = true;
 
-
     @Override
     public void start() {
         lastTransform = gameObject.transform.copy();
         if (text == null) {
-            text = Text.builder().build();
+            text = new Text();
         }
-//        text.fillInMetadata(gameObject.transform.position.x, gameObject.transform.position.y);
         text.fillInMetadata();
+        text.updateAlignment();
     }
 
     @Override
     public void update(float dt) {
+        if (text.getTextSize() == 0) {
+            return;
+        }
+
         if (!lastTransform.equals(gameObject.transform)) {
             gameObject.transform.copy(lastTransform);
             isDirty = true;
         }
-        DebugDraw.drawCircle(new Vector2f(text.getProperties().getMiddleX() + gameObject.transform.position.x, text.getProperties().getMiddleY() + gameObject.transform.position.y), 5, 1, engine.util.Color.WHITE);
-        DebugDraw.drawLine(gameObject.transform.position, text.getPositions().getFirst(), 1);
 
-        for (int i = 0; i < text.getTextSize(); i++) {
-            Glyph glyph = text.getContent().get(i);
-            Vector2f pos = text.getPositions().get(i);
-            DebugDraw.drawBox(new Vector2f(pos).add(new Vector2f(glyph.width/2f, glyph.height/2f)).add(gameObject.transform.position), new Vector2f(glyph.width, glyph.height), 1, 0, Color.BLUE);
-        }
+        DebugDraw.drawCircle(gameObject.transform.position, 10, 1, Color.RED);
     }
 
     public boolean getIsDirty() {
@@ -57,8 +55,27 @@ public class CTextRenderer extends Component {
         return this;
     }
 
+    public CTextRenderer setTextContent(String textContent) {
+        text.setTextContent(textContent);
+        isDirty = true;
+        return this;
+    }
+
+    public CTextRenderer setAlignment(Alignment alignment) {
+        text.setAlignment(alignment);
+        if (Window.getCurrentScene().isRunning()) {
+            text.updateAlignment();
+        }
+        isDirty = true;
+        return this;
+    }
+
     public Text getText() {
         return text;
     }
 
+    @Override
+    public String toString() {
+        return text.getTextContent();
+    }
 }

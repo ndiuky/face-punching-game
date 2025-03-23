@@ -229,7 +229,6 @@ public class Window implements KeyboardEventListener {
             glEnable(GL_BLEND);
 
             DebugDraw.beginFrame();
-//            TextRenderBatch.beginFrame();
 
             clearColor(bgColor);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -239,20 +238,6 @@ public class Window implements KeyboardEventListener {
                 renderSceneWithShader(defaultShader);
 
                 DebugDraw.draw();
-//                TextRenderBatch.draw();
-
-                //TODO: перенести рендер текста в компоненты
-//                Text fpsText = Text.builder()
-//                        .textContent("fps: " + (int) (1 / dt))
-//                        .position(0, EnginePreferences.FONT_RESOLUTION + 8)
-//                        .build();
-//                TextRenderer.add(fpsText);
-//
-//                Text mousePosText = Text.builder()
-//                        .textContent("mouse pos: " + ((int) MouseListener.getPos().x) + ", " + ((int) MouseListener.getPos().y))
-//                        .position(0, 0)
-//                        .build();
-//                TextRenderer.add(mousePosText);
             }
 
             glfwSwapBuffers(glfwWindow);

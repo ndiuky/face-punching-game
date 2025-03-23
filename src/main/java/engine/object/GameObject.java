@@ -3,6 +3,7 @@ package engine.object;
 
 import component.entity.Bot;
 import engine.component.Component;
+import engine.render.Window;
 import gameComponent.GameComponent;
 
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ public class GameObject {
     }
 
     public void start() {
-        for (Component component : components) {
+        for (int i = 0; i < components.size(); i++) {
+            Component component = components.get(i);
             component.start();
         }
     }
@@ -68,6 +70,11 @@ public class GameObject {
         c.generateId();
         components.add(c);
         c.gameObject = this;
+
+        if (Window.getCurrentScene().isLevelLoaded){
+            c.start();
+        }
+
         return this;
     }
 

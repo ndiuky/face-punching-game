@@ -3,6 +3,7 @@ package engine.util;
 public class EnginePreferences {
 
     public static final int DEFAULT_QUAD_VERTICES_AMOUNT = 6;
+    public static final int EBO_QUAD_VERTICES_AMOUNT = 4;
     public static final String SAVE_FILE_NAME = "saveFile.txt";
     public static final int GRID_SIZE = 32;
     public static final int IN_GRID_DIVISIONS = 4;

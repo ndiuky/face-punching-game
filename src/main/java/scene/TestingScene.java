@@ -38,7 +38,7 @@ public class TestingScene extends Scene {
 
         GameObject player = new GameObject("player", new Transform(new Vector2f(0, 0), new Vector2f(40, 40)), 5)
 //                .addComponent(new Player().addGameComponent(new CMoveStraight()))
-                .addComponent(new Player().setActionGameComponent(new CMoveArc()))
+//                .addComponent(new Player().setActionGameComponent(new CMoveArc()))
                 .addComponent(new CItemPickUp(60))
                 .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 

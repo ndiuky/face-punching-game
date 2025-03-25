@@ -52,7 +52,8 @@ public abstract class Scene {
     }
 
     public void start() {
-        for (GameObject go : gameObjects) {
+        for (int i = 0; i < gameObjects.size(); i++) {
+            GameObject go = gameObjects.get(i);
             go.start();
             renderer.add(go);
         }

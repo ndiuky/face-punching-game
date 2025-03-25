@@ -2,6 +2,7 @@ package gameComponent;
 
 import component.entity.Bot;
 
+@Deprecated
 public abstract class GameComponent {
 
     protected Bot bot;

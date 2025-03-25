@@ -27,6 +27,8 @@ public class GameObject {
 
     private boolean doSerialize = true;
 
+    private boolean isInteractableByPlayer;
+
     public GameObject(String name, Transform transform, int zIndex) {
         this.name = name;
         this.transform = transform;
@@ -91,9 +93,9 @@ public class GameObject {
     public void destroy() {
         isDead = true;
         for (Component curr : components) {
-            if (curr instanceof Bot) {
-                ((Bot) curr).callForEachGameComponent(GameComponent::stopExecution);
-            }
+//            if (curr instanceof Bot) {
+//                ((Bot) curr).callForEachGameComponent(GameComponent::stopExecution);
+//            }
             curr.destroy();
         }
     }
@@ -120,6 +122,14 @@ public class GameObject {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isInteractableByPlayer() {
+        return isInteractableByPlayer;
+    }
+
+    public void setInteractableByPlayer(boolean interactableByPlayer) {
+        isInteractableByPlayer = interactableByPlayer;
     }
 
     public boolean isDead() {

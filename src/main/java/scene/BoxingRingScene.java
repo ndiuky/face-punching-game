@@ -4,8 +4,8 @@ import component.controls.RingControls;
 import component.entity.Dummy;
 import component.entity.Player;
 import engine.component.CGameCamera;
-import engine.component.CItemPickUp;
 import engine.component.CSpriteRenderer;
+import engine.component.ui.CFpsCounter;
 import engine.component.ui.CTextRenderer;
 import engine.object.GameObject;
 import engine.object.Scene;
@@ -14,9 +14,9 @@ import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.text.Text;
+import engine.util.Alignment;
 import engine.util.AssetPool;
-import gameComponent.attack.CArcAttack;
-import gameComponent.move.CMoveStraight;
+import gameComponent.CMoveWasd;
 import org.joml.Vector2f;
 
 public class BoxingRingScene extends Scene {
@@ -49,12 +49,13 @@ public class BoxingRingScene extends Scene {
         player = new GameObject("player", new Transform(new Vector2f(0, -128), new Vector2f(40, 40)), 5)
                 .addComponent(new Player()
 //                                .setActionGameComponent(new CMoveArc())
-                                .setActionGameComponent(new CMoveStraight())
+//                                .setActionGameComponent(new CMoveStraight())
 //                                .setActionGameComponent(new CForwardAttack())
-                                .setActionGameComponent(new CArcAttack())
+//                                .setActionGameComponent(new CArcAttack())
                 )
-                .addComponent(new CItemPickUp(60))
-                .addComponent(new CTextRenderer().setText(new Text("player's text")))
+//                .addComponent(new CItemPickUp(60))
+                .addComponent(new CMoveWasd())
+                .addComponent(new CTextRenderer().setText(new Text("player").setAlignment(Alignment.BOTTOM_MIDDLE)))
                 .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);
@@ -64,6 +65,11 @@ public class BoxingRingScene extends Scene {
                 .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/dummy.png"))));
 
         addGameObjectToScene(dummy);
+
+        GameObject fpsGO1 = new GameObject("fpsGO", new Transform(new Vector2f(0, 256), new Vector2f(100, 100)), -1)
+                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_AVG));
+
+        addGameObjectToScene(fpsGO1);
     }
 
     private void loadResources() {

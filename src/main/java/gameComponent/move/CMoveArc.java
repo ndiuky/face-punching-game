@@ -8,6 +8,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 import static util.Utils.calculatePath;
 
+@Deprecated
 public class CMoveArc extends MoveGameComponent {
 
     private ArrayDeque<Vector2f> path = new ArrayDeque<>();

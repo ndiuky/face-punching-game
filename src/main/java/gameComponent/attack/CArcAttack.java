@@ -12,13 +12,14 @@ import org.joml.Vector2f;
 import java.util.ArrayDeque;
 
 import static controllerAttiribute.Knockable.SPEED_REDUCTION_MULTIPLIER;
-import static gameComponent.attack.AttackGameComponent.AttackState.INACTIVE;
-import static gameComponent.attack.AttackGameComponent.AttackState.MOVING_TO_TARGET;
-import static gameComponent.attack.AttackGameComponent.AttackState.RETRACTING;
+import static gameComponent.attack.AttackGameComponent.DEPRECATED_AttackState.INACTIVE;
+import static gameComponent.attack.AttackGameComponent.DEPRECATED_AttackState.MOVING_TO_TARGET;
+import static gameComponent.attack.AttackGameComponent.DEPRECATED_AttackState.RETRACTING;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 import static util.Utils.calculatePath;
 
+@Deprecated
 public class CArcAttack extends AttackGameComponent {
 
     private ArrayDeque<Vector2f> path = new ArrayDeque<>();

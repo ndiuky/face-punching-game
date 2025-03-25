@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
+@Deprecated
 public class CMoveStraight extends MoveGameComponent {
 
     private Vector2f destination;

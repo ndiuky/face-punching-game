@@ -8,10 +8,11 @@ import engine.object.Prefab;
 import engine.render.Window;
 import org.joml.Vector2f;
 
-import static gameComponent.attack.AttackGameComponent.AttackState.INACTIVE;
-import static gameComponent.attack.AttackGameComponent.AttackState.MOVING_TO_TARGET;
-import static gameComponent.attack.AttackGameComponent.AttackState.RETRACTING;
+import static gameComponent.attack.AttackGameComponent.DEPRECATED_AttackState.INACTIVE;
+import static gameComponent.attack.AttackGameComponent.DEPRECATED_AttackState.MOVING_TO_TARGET;
+import static gameComponent.attack.AttackGameComponent.DEPRECATED_AttackState.RETRACTING;
 
+@Deprecated
 public class CForwardAttack extends AttackGameComponent {
 
     private GameObject fistGO;

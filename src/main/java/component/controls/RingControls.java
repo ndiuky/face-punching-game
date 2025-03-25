@@ -40,19 +40,19 @@ public class RingControls extends Component {
         //TODO: переделать на нормальные коллайдеры
         if (player.transform.position.x > boxingRing.transform.scale.x / 2.1f - player.transform.scale.x) {
             player.transform.position.x = boxingRing.transform.scale.x / 2.1f - player.transform.scale.x;
-            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
+//            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
         }
         if (player.transform.position.y > boxingRing.transform.scale.y / 2.1f - player.transform.scale.y) {
             player.transform.position.y = boxingRing.transform.scale.y / 2.1f - player.transform.scale.y;
-            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
+//            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
         }
         if (player.transform.position.x < -boxingRing.transform.scale.x / 2.1f + player.transform.scale.x) {
             player.transform.position.x = -boxingRing.transform.scale.x / 2.1f + player.transform.scale.x;
-            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
+//            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
         }
         if (player.transform.position.y < -boxingRing.transform.scale.y / 2.1f + player.transform.scale.y) {
             player.transform.position.y = -boxingRing.transform.scale.y / 2.1f + player.transform.scale.y;
-            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
+//            player.getComponent(Bot.class).stopExecution(ActionType.MOVE);
         }
     }
 }

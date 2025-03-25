@@ -17,6 +17,38 @@ public class EngineUtils {
         vec.y = (x * sin) + (y * cos) + origin.y;
     }
 
+    public static Vector2f calculateClampedPosition(Vector2f from, Vector2f to, float maxLength) {
+        float distance = from.distance(to);
+
+        if (distance <= maxLength) {
+            return new Vector2f(to);
+        }
+
+        float t = maxLength / distance;
+
+        float newX = from.x + t * (to.x - from.x);
+        float newY = from.y + t * (to.y - from.y);
+
+        return new Vector2f(newX, newY);
+    }
+
+    /**
+     * Эквивалент оригинального метода, но не вычисляет дистанцию, а принимает её извне.
+     * Нужен для сохранения производительности за счёт отсутствия повторного вычисления дистанции
+     */
+    public static Vector2f calculateClampedPosition(Vector2f from, Vector2f to, float maxLength, float distance) {
+        if (distance <= maxLength) {
+            return new Vector2f(to);
+        }
+
+        float t = maxLength / distance;
+
+        float newX = from.x + t * (to.x - from.x);
+        float newY = from.y + t * (to.y - from.y);
+
+        return new Vector2f(newX, newY);
+    }
+
     public static float time() {
         return (float) glfwGetTime();
     }

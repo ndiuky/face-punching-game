@@ -4,6 +4,8 @@ public class Dummy extends Bot {
 
     @Override
     public void start() {
+        gameObject.setInteractableByPlayer(true);
+
     }
 
     @Override

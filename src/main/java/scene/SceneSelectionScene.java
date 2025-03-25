@@ -33,25 +33,25 @@ public class SceneSelectionScene extends Scene {
 
         addGameObjectToScene(testingSelectGO);
 
-        GameObject fpsGO = new GameObject("fpsGO", new Transform(new Vector2f(200, 100), new Vector2f(100, 100)), -1)
-                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_FRAME));
+//        GameObject fpsGO = new GameObject("fpsGO", new Transform(new Vector2f(0, 0), new Vector2f(100, 100)), -1)
+//                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_FRAME));
+//
+//        addGameObjectToScene(fpsGO);
 
-        addGameObjectToScene(fpsGO);
-
-        GameObject fpsGO1 = new GameObject("fpsGO", new Transform(new Vector2f(200, 164), new Vector2f(100, 100)), -1)
+        GameObject fpsGO1 = new GameObject("fpsGO", new Transform(new Vector2f(0, 0), new Vector2f(100, 100)), -1)
                 .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_AVG));
 
         addGameObjectToScene(fpsGO1);
 
-        GameObject fpsGO2 = new GameObject("fpsGO", new Transform(new Vector2f(200, 228), new Vector2f(100, 100)), -1)
-                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MIN));
-
-        addGameObjectToScene(fpsGO2);
-
-        GameObject fpsGO3 = new GameObject("fpsGO", new Transform(new Vector2f(200, 294), new Vector2f(100, 100)), -1)
-                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MAX));
-
-        addGameObjectToScene(fpsGO3);
+//        GameObject fpsGO2 = new GameObject("fpsGO", new Transform(new Vector2f(0, 128), new Vector2f(100, 100)), -1)
+//                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MIN));
+//
+//        addGameObjectToScene(fpsGO2);
+//
+//        GameObject fpsGO3 = new GameObject("fpsGO", new Transform(new Vector2f(0, 194), new Vector2f(100, 100)), -1)
+//                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MAX));
+//
+//        addGameObjectToScene(fpsGO3);
     }
 
     private void loadResources() {

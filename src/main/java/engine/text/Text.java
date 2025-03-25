@@ -1,5 +1,6 @@
 package engine.text;
 
+import engine.component.ui.UIElement;
 import engine.util.Alignment;
 import engine.util.Color;
 import org.joml.Vector2f;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Text {
+public class Text implements UIElement<Text> {
 
     private final List<Glyph> content = new ArrayList<>();
 
@@ -23,7 +24,7 @@ public class Text {
 
     private float width, height;
 
-    private Alignment alignment = Alignment.CENTER;
+    private Alignment alignment = Alignment.BOTTOM_LEFT;
 
     private Text(String textContent, float sizeModifier, Color color) {
         this.textContent = textContent;
@@ -92,17 +93,8 @@ public class Text {
 
         //TODO: пофикси
 //        if (previousWidth != width || previousHeight != height) {
-            updateAlignment();
+        updateAlignment();
 //        }
-    }
-
-    public Alignment getAlignment() {
-        return alignment;
-    }
-
-    public Text setAlignment(Alignment alignment) {
-        this.alignment = alignment;
-        return this;
     }
 
     public float getWidth() {
@@ -113,6 +105,18 @@ public class Text {
         return height;
     }
 
+    @Override
+    public Alignment getAlignment() {
+        return alignment;
+    }
+
+    @Override
+    public Text setAlignment(Alignment alignment) {
+        this.alignment = alignment;
+        return this;
+    }
+
+    @Override
     public void updateAlignment() {
         positions.clear();
 

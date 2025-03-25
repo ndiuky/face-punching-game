@@ -21,15 +21,7 @@ public class CFpsCounter extends Component {
 
     @Override
     public void start() {
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.BOTTOM_LEFT));
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.BOTTOM_MIDDLE));
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.BOTTOM_RIGHT));
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.MIDDLE_LEFT));
-        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.CENTER));
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.MIDDLE_RIGHT));
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.UPPER_LEFT));
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.UPPER_MIDDLE));
-//        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAlignment(Alignment.UPPER_RIGHT));
+        textRenderer = new CTextRenderer().setText(new Text("calculating..."));
         gameObject.addComponent(textRenderer);
     }
 

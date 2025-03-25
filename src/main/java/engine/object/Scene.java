@@ -61,18 +61,11 @@ public abstract class Scene {
     }
 
     public void addGameObjectToScene(GameObject go) {
-        if (!isRunning) {
-            gameObjects.add(go);
-        } else {
-            gameObjects.add(go);
+        gameObjects.add(go);
+
+        if (isRunning) {
             go.start();
             renderer.add(go);
-//            if (go.getComponent(CSpriteRenderer.class) != null){
-//                renderer.add(go);
-//            }
-//            if (go.getComponent(CTextRenderer.class) != null){
-//                TextRenderer.add();
-//            }
         }
     }
 
@@ -99,7 +92,7 @@ public abstract class Scene {
     }
 
     public void saveSceneData() {
-        if (!EnginePreferences.ENABLE_DATA_SAVING){
+        if (!EnginePreferences.ENABLE_DATA_SAVING) {
             return;
         }
 

@@ -1,6 +1,5 @@
 package gameComponent;
 
-import controllerAttiribute.Knockable;
 import engine.component.Component;
 import engine.event.MouseEventListener;
 import engine.object.GameObject;
@@ -8,13 +7,14 @@ import engine.object.Prefab;
 import engine.object.Sprite;
 import engine.render.Window;
 import engine.util.AssetPool;
+import engine.util.Interactable;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
+import util.InteractionType;
 
 import java.util.ArrayDeque;
 import java.util.Random;
 
-import static controllerAttiribute.Knockable.SPEED_REDUCTION_MULTIPLIER;
 import static engine.event.MouseEventProducer.listenToMousePress;
 import static engine.event.MouseEventProducer.listenToMouseRelease;
 import static engine.util.EngineUtils.calculateClampedPosition;
@@ -30,7 +30,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
     private final Sprite FIST_SPRITE = new Sprite().setTexture(AssetPool.getTexture("asset/texture/fist.png"));
 
-    private static final float TIME_BETWEEN_ATTACKS = 0.5f;
+    private static final float TIME_BETWEEN_ATTACKS = 0.25f;
 
     private float timeSinceLastAttack = Float.MAX_VALUE;
 
@@ -117,12 +117,12 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
         attackState = MOVING_TO_TARGET;
 
         targetGameobject = MouseListener.getGameObjectUnderCursor();
-        boolean isObjectPunchable = targetGameobject != null && targetGameobject.isInteractableByPlayer();
-        float distance = isObjectPunchable
+        boolean isObjectInteractable = targetGameobject != null && targetGameobject.isInteractable();
+        float distance = isObjectInteractable
                 ? targetGameobject.transform.position.distance(gameObject.transform.position)
                 : MouseListener.getOrtho().distance(gameObject.transform.position);
 
-        if (isObjectPunchable && distance < maxAttackDistance) {
+        if (isObjectInteractable && distance < maxAttackDistance) {
             targetPos = new Vector2f(targetGameobject.transform.position);
         } else {
             targetPos = calculateClampedPosition(gameObject.transform.position, MouseListener.getOrtho(), maxAttackDistance, distance);
@@ -150,13 +150,25 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
         if (distance == 0f || distance < new Vector2f(dir).normalize().mul(fistSpeed * dt).absolute().length()) {
 
             fistGO.transform.position = new Vector2f(targetPos);
+
             if (targetGameobject != null) {
                 for (Component component : targetGameobject.getAllComponents()) {
-                    if (component instanceof Knockable) {
-                        ((Knockable) component).onKnockbackApplied(dir.normalize().mul(fistSpeed / 25));
+//                        if (component instanceof Knockable) {
+//
+//                            float radians = (float) Math.toRadians(90 * (1 - approachAngle));
+//
+//                            float cos = (float) Math.cos(radians);
+//                            float sin = (float) Math.sin(radians);
+//
+//                            dir.normalize();
+//                            ((Knockable) component).onKnockbackApplied(new Vector2f(dir.x * cos + dir.y * -sin, dir.x * sin + dir.y * cos).normalize().mul(fistSpeed * SPEED_REDUCTION_MULTIPLIER));
+//
+//                            break;
+//                        }
+                    if (component instanceof Interactable) {
+                        ((Interactable) component).onInteraction(InteractionType.ATTACK);
                         break;
                     }
-
                 }
             }
 
@@ -183,16 +195,20 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
                 if (targetGameobject != null) {
                     for (Component component : targetGameobject.getAllComponents()) {
-                        if (component instanceof Knockable) {
-
-                            float radians = (float) Math.toRadians(90 * (1 - approachAngle));
-
-                            float cos = (float) Math.cos(radians);
-                            float sin = (float) Math.sin(radians);
-
-                            dir.normalize();
-                            ((Knockable) component).onKnockbackApplied(new Vector2f(dir.x * cos + dir.y * -sin, dir.x * sin + dir.y * cos).normalize().mul(fistSpeed * SPEED_REDUCTION_MULTIPLIER));
-
+//                        if (component instanceof Knockable) {
+//
+//                            float radians = (float) Math.toRadians(90 * (1 - approachAngle));
+//
+//                            float cos = (float) Math.cos(radians);
+//                            float sin = (float) Math.sin(radians);
+//
+//                            dir.normalize();
+//                            ((Knockable) component).onKnockbackApplied(new Vector2f(dir.x * cos + dir.y * -sin, dir.x * sin + dir.y * cos).normalize().mul(fistSpeed * SPEED_REDUCTION_MULTIPLIER));
+//
+//                            break;
+//                        }
+                        if (component instanceof Interactable) {
+                            ((Interactable) component).onInteraction(InteractionType.ATTACK);
                             break;
                         }
                     }

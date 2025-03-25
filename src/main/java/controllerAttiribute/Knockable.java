@@ -2,6 +2,7 @@ package controllerAttiribute;
 
 import org.joml.Vector2f;
 
+@Deprecated(forRemoval = true)
 public interface Knockable {
     float FLYING_TIME = 0.5f;
     float SPEED_REDUCTION_MULTIPLIER = 0.04f;

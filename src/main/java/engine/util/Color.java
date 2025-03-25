@@ -4,6 +4,7 @@ import org.joml.Vector4f;
 
 public enum Color {
     TRANSPARENT(0, 0, 0, 0),
+    TRANSLUCENT(1, 1, 1, 0.5f),
     WHITE(1, 1, 1, 1),
     BLACK(0, 0, 0, 1),
 

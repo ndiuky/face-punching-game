@@ -3,7 +3,9 @@ package scene;
 import component.controls.RingControls;
 import component.entity.Dummy;
 import component.entity.Player;
+import component.object.Stone;
 import engine.component.CGameCamera;
+import engine.component.CItemPickUp;
 import engine.component.CSpriteRenderer;
 import engine.component.ui.CFpsCounter;
 import engine.component.ui.CTextRenderer;
@@ -18,6 +20,8 @@ import engine.util.Alignment;
 import engine.util.AssetPool;
 import gameComponent.CMoveWasd;
 import org.joml.Vector2f;
+
+import java.util.Random;
 
 public class BoxingRingScene extends Scene {
 
@@ -70,6 +74,13 @@ public class BoxingRingScene extends Scene {
                 .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_AVG));
 
         addGameObjectToScene(fpsGO1);
+
+        for (int i = 0; i < 5; i++) {
+            GameObject stone = new GameObject("stone", new Transform(new Vector2f(new Random().nextInt(-150, 150), new Random().nextInt(-150, 150)), new Vector2f(50, 50)), -1)
+                    .addComponent(new Stone());
+
+            addGameObjectToScene(stone);
+        }
     }
 
     private void loadResources() {

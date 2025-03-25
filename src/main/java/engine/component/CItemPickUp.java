@@ -1,5 +1,9 @@
 package engine.component;
 
+import engine.render.DebugDraw;
+import engine.util.Color;
+import engine.util.EnginePreferences;
+
 public class CItemPickUp extends Component {
 
     private float pickUpRadius;
@@ -10,7 +14,7 @@ public class CItemPickUp extends Component {
 
     @Override
     public void update(float dt) {
-//        DebugDraw.drawCircle(gameObject.transform.position, pickUpRadius, -1, Color.BLUE, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
+        DebugDraw.drawCircle(gameObject.transform.position, pickUpRadius, -1, Color.BLUE, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
     }
 
     public CItemPickUp setPickUpRadius(float pickUpRadius) {

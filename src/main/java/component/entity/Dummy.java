@@ -1,10 +1,15 @@
 package component.entity;
 
-public class Dummy extends Bot {
+import engine.util.Interactable;
+import util.InteractionType;
+
+import java.util.List;
+
+public class Dummy extends Bot implements Interactable {
 
     @Override
     public void start() {
-        gameObject.setInteractableByPlayer(true);
+        gameObject.setInteractable(true);
 
     }
 
@@ -13,5 +18,15 @@ public class Dummy extends Bot {
         if (isKnocked) {
             flyFromKnock(dt);
         }
+    }
+
+    @Override
+    public List<InteractionType> getInteractionTypes() {
+        return List.of(InteractionType.ATTACK);
+    }
+
+    @Override
+    public void onInteraction(InteractionType interactionType) {
+        isKnocked = true;
     }
 }

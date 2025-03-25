@@ -1,10 +1,9 @@
 package engine.object;
 
 
-import component.entity.Bot;
 import engine.component.Component;
 import engine.render.Window;
-import gameComponent.GameComponent;
+import engine.util.Interactable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class GameObject {
 
     private boolean doSerialize = true;
 
-    private boolean isInteractableByPlayer;
+    private boolean isInteractable;
 
     public GameObject(String name, Transform transform, int zIndex) {
         this.name = name;
@@ -73,13 +72,18 @@ public class GameObject {
         components.add(c);
         c.gameObject = this;
 
-        if (Window.getCurrentScene().isLevelLoaded){
+        if (c instanceof Interactable){
+            isInteractable = true;
+        }
+
+        if (Window.getCurrentScene().isLevelLoaded) {
             c.start();
         }
 
         return this;
     }
 
+    //TODO: добавить сюда сброс isInteractable если удаляется соотв. компонент
     public <T extends Component> void removeComponent(Class<T> componentClass) {
         for (int i = 0; i < components.size(); i++) {
             Component c = components.get(i);
@@ -124,12 +128,12 @@ public class GameObject {
         return name;
     }
 
-    public boolean isInteractableByPlayer() {
-        return isInteractableByPlayer;
+    public boolean isInteractable() {
+        return isInteractable;
     }
 
-    public void setInteractableByPlayer(boolean interactableByPlayer) {
-        isInteractableByPlayer = interactableByPlayer;
+    public void setInteractable(boolean interactableByPlayer) {
+        isInteractable = interactableByPlayer;
     }
 
     public boolean isDead() {

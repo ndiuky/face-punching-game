@@ -48,8 +48,9 @@ public class Text implements UIElement<Text> {
         height = dimensions.y;
     }
 
-    public void setColor(Color color) {
+    public Text setColor(Color color) {
         this.color = color;
+        return this;
     }
 
     public int getTextSize() {

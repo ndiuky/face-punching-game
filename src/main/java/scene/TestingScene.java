@@ -2,7 +2,6 @@ package scene;
 
 import component.Item;
 import component.controls.TestingSceneControls;
-import component.entity.Player;
 import engine.component.CGameCamera;
 import engine.component.CItemPickUp;
 import engine.component.CSpriteRenderer;
@@ -13,7 +12,6 @@ import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.util.AssetPool;
-import gameComponent.move.CMoveArc;
 import org.joml.Vector2f;
 
 public class TestingScene extends Scene {

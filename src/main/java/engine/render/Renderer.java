@@ -10,10 +10,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static engine.render.Window.bgColor;
+import static engine.render.Window.clearColor;
 import static engine.util.EnginePreferences.MAX_BATCH_SIZE;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.glClear;
 
 public class Renderer {
 
@@ -87,6 +92,7 @@ public class Renderer {
         for (TextureRenderBatch textureBatch : textureBatches) {
             textureBatch.render();
         }
+
         if (!Renderer.getCurrentShader().equals(AssetPool.getShaderByName("pickingShader"))){
             for (TextRenderBatch textBatch : textBatches) {
                 textBatch.render();

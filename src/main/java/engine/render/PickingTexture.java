@@ -58,7 +58,7 @@ public class PickingTexture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0,
                 GL_RGB, GL_FLOAT, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                this.pickingTextureId, 0);
+                pickingTextureId, 0);
 
         glEnable(GL_TEXTURE_2D);
         depthTexture = glGenTextures();

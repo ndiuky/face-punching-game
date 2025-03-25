@@ -215,7 +215,6 @@ public class Window implements KeyboardEventListener {
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
-
             glDisable(GL_BLEND);
             pickingTexture.enableWriting();
 

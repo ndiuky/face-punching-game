@@ -4,6 +4,7 @@ import engine.component.CSpriteRenderer;
 import engine.component.ui.CTextRenderer;
 import engine.object.GameObject;
 import engine.text.Text;
+import engine.util.AssetPool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,8 +87,10 @@ public class Renderer {
         for (TextureRenderBatch textureBatch : textureBatches) {
             textureBatch.render();
         }
-        for (TextRenderBatch textBatch : textBatches) {
-            textBatch.render();
+        if (!Renderer.getCurrentShader().equals(AssetPool.getShaderByName("pickingShader"))){
+            for (TextRenderBatch textBatch : textBatches) {
+                textBatch.render();
+            }
         }
     }
 

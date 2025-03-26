@@ -14,11 +14,6 @@ public class CInterface extends Component {
     private final List<UIElement> uiElements = new ArrayList<>();
 
     @Override
-    public void start() {
-        super.start();
-    }
-
-    @Override
     public void update(float dt) {
         super.update(dt);
     }

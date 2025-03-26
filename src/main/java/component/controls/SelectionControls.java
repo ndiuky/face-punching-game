@@ -15,11 +15,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class SelectionControls extends Component {
 
     @Override
-    public void start() {
-        super.start();
-    }
-
-    @Override
     public void update(float dt) {
         if (KeyListener.isKeyPressed(GLFW_KEY_BACKSPACE)) {
             System.out.println("exit");

@@ -8,5 +8,5 @@ public interface UIElement<T> {
 
     T setAlignment(Alignment alignment);
 
-    void updateAlignment();
+    void updatePositions();
 }

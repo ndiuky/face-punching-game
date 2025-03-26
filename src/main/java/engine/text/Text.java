@@ -39,11 +39,12 @@ public class Text implements UIElement<Text> {
     public Text() {
     }
 
+    // TODO: нужно как-то разделить логику этого метода, и логику обновления исключительно позиций. Сейчас довольно часто вызываются оба этих метода подряд, по сути перетирая работу друг друга
     public void fillInMetadata() {
         content.clear();
         positions.clear();
 
-        Vector2f dimensions = Font.fillInTextMetadata(content, positions, textContent);
+        Vector2f dimensions = Font.fillInTextMetadata(content, sizeModifier, positions, textContent);
         width = dimensions.x;
         height = dimensions.y;
     }
@@ -67,6 +68,8 @@ public class Text implements UIElement<Text> {
 
     public void setSizeModifier(float sizeModifier) {
         this.sizeModifier = sizeModifier;
+
+        updatePositions();
     }
 
     public float getSizeModifier() {
@@ -94,7 +97,7 @@ public class Text implements UIElement<Text> {
 
         //TODO: пофикси
 //        if (previousWidth != width || previousHeight != height) {
-        updateAlignment();
+        updatePositions();
 //        }
     }
 
@@ -118,14 +121,14 @@ public class Text implements UIElement<Text> {
     }
 
     @Override
-    public void updateAlignment() {
+    public void updatePositions() {
         positions.clear();
 
         float totalX = alignment.x * width;
         float y = alignment.y * height;
         for (Glyph glyph : content) {
             positions.add(new Vector2f(totalX, y));
-            totalX += glyph.width;
+            totalX += glyph.width * sizeModifier;
         }
     }
 

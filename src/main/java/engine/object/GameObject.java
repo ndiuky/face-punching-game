@@ -97,9 +97,6 @@ public class GameObject {
     public void destroy() {
         isDead = true;
         for (Component curr : components) {
-//            if (curr instanceof Bot) {
-//                ((Bot) curr).callForEachGameComponent(GameComponent::stopExecution);
-//            }
             curr.destroy();
         }
     }

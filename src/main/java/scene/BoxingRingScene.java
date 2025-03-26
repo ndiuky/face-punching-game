@@ -88,9 +88,9 @@ public class BoxingRingScene extends Scene {
 
         AssetPool.getTexture("asset/texture/chip-small.png");
 
-        AssetPool.addSpritesheet("asset/texture/test-sprite-sheet.png",
+        AssetPool.addSpriteSheet("asset/texture/test-sprite-sheet.png",
                 new SpriteSheet(AssetPool.getTexture("asset/texture/test-sprite-sheet.png"), 16, 16, 5, 0));
-        AssetPool.addSpritesheet("asset/texture/gizmo.png",
+        AssetPool.addSpriteSheet("asset/texture/gizmo.png",
                 new SpriteSheet(AssetPool.getTexture("asset/texture/gizmo.png"), 3, 8, 3, 0));
 
         for (GameObject g : gameObjects) {

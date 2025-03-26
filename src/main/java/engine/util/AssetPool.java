@@ -40,7 +40,7 @@ public class AssetPool {
         }
     }
 
-    public static void addSpritesheet(String resourceName, SpriteSheet spritesheet) {
+    public static void addSpriteSheet(String resourceName, SpriteSheet spritesheet) {
         if (!spriteSheets.containsKey(resourceName)) {
             spriteSheets.put(resourceName, spritesheet);
         }

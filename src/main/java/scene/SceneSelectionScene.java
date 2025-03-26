@@ -33,25 +33,10 @@ public class SceneSelectionScene extends Scene {
 
         addGameObjectToScene(testingSelectGO);
 
-//        GameObject fpsGO = new GameObject("fpsGO", new Transform(new Vector2f(0, 0), new Vector2f(100, 100)), -1)
-//                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_FRAME));
-//
-//        addGameObjectToScene(fpsGO);
-
         GameObject fpsGO1 = new GameObject("fpsGO", new Transform(new Vector2f(0, 0), new Vector2f(100, 100)), -1)
                 .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_AVG));
 
         addGameObjectToScene(fpsGO1);
-
-//        GameObject fpsGO2 = new GameObject("fpsGO", new Transform(new Vector2f(0, 128), new Vector2f(100, 100)), -1)
-//                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MIN));
-//
-//        addGameObjectToScene(fpsGO2);
-//
-//        GameObject fpsGO3 = new GameObject("fpsGO", new Transform(new Vector2f(0, 194), new Vector2f(100, 100)), -1)
-//                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_MAX));
-//
-//        addGameObjectToScene(fpsGO3);
     }
 
     private void loadResources() {
@@ -59,9 +44,9 @@ public class SceneSelectionScene extends Scene {
 
         AssetPool.getTexture("asset/texture/chip-small.png");
 
-        AssetPool.addSpritesheet("asset/texture/test-sprite-sheet.png",
+        AssetPool.addSpriteSheet("asset/texture/test-sprite-sheet.png",
                 new SpriteSheet(AssetPool.getTexture("asset/texture/test-sprite-sheet.png"), 16, 16, 5, 0));
-        AssetPool.addSpritesheet("asset/texture/gizmo.png",
+        AssetPool.addSpriteSheet("asset/texture/gizmo.png",
                 new SpriteSheet(AssetPool.getTexture("asset/texture/gizmo.png"), 3, 8, 3, 0));
 
         for (GameObject g : gameObjects) {

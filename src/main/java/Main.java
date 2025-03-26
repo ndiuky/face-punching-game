@@ -1,8 +1,14 @@
 import engine.render.Window;
+import engine.util.EnginePreferences;
+
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        //TODO: добавить запуск с флагом -devMode, который меняет некоторые значения в EnginePreferences
+        if (Arrays.asList(args).contains("-devMode")){
+            EnginePreferences.enableDevMode();
+        }
+
         Window.get().run();
     }
 }

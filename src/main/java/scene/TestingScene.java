@@ -35,8 +35,6 @@ public class TestingScene extends Scene {
 
 
         GameObject player = new GameObject("player", new Transform(new Vector2f(0, 0), new Vector2f(40, 40)), 5)
-//                .addComponent(new Player().addGameComponent(new CMoveStraight()))
-//                .addComponent(new Player().setActionGameComponent(new CMoveArc()))
                 .addComponent(new CItemPickUp(60))
                 .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 
@@ -60,9 +58,9 @@ public class TestingScene extends Scene {
 
         AssetPool.getTexture("asset/texture/chip-small.png");
 
-        AssetPool.addSpritesheet("asset/texture/test-sprite-sheet.png",
+        AssetPool.addSpriteSheet("asset/texture/test-sprite-sheet.png",
                 new SpriteSheet(AssetPool.getTexture("asset/texture/test-sprite-sheet.png"), 16, 16, 5, 0));
-        AssetPool.addSpritesheet("asset/texture/gizmo.png",
+        AssetPool.addSpriteSheet("asset/texture/gizmo.png",
                 new SpriteSheet(AssetPool.getTexture("asset/texture/gizmo.png"), 3, 8, 3, 0));
 
         for (GameObject g : gameObjects) {

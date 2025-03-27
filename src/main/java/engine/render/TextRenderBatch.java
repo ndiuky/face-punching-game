@@ -45,6 +45,7 @@ import static org.lwjgl.opengl.GL30C.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
+// TODO: рендер батчей как бы есть, но логики их создания по сути нет. Если одновременно попытаться отрендерить слишком много текста, то просто вылетит эксепшен
 public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
     private static final int POS_SIZE = 2;
@@ -207,8 +208,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             Glyph glyph = content.get(i);
 
             boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
-            // TODO: лучше переделать дорогостоящий вызов scale на что-то более дешёвое, мб напрямую изменять поля матрицы, или вообще напрямую загружать нужные значения в массив вертексов
-            Matrix4f transformMatrix = new Matrix4f().identity().scale(text.getSizeModifier());
+            Matrix4f transformMatrix = new Matrix4f().identity();
             if (isRotated) {
                 transformMatrix.translate(textRenderer.gameObject.transform.position.x,
                         textRenderer.gameObject.transform.position.y, 0f);
@@ -224,7 +224,6 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                 xAdd = 0;
                 yAdd = 0;
                 glyphSizeMod = 1;
-                //TODO: сделать красиво
                 if (j == 2 || j == 3) {
                     xAdd = glyph.width;
                 }
@@ -244,7 +243,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                         isRotated ?
                                 new Vector4f(fullTextXAdd, fullTextYAdd, 0, 1).mul(transformMatrix)
                                 : new Vector4f(
-                                //TODO: пристроить сюда нормальный расчёт скейла с учётом размера текста
+                                //TODO: пристроить сюда нормальный расчёт скейла с учётом размера объекта
                                 fullTextXAdd,// + textRenderer.gameObject.transform.scale.x,
                                 fullTextYAdd,// + textRenderer.gameObject.transform.scale.y,
                                 0, 1)

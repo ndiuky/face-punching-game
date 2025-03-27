@@ -29,6 +29,10 @@ public class MouseListener implements MouseEventProducer {
 
     private static float lastX;
 
+    private static long calculatedValuesAtFrame = -1;
+
+    private static Vector2f cachedOrtho;
+
     //TODO: 14.06.2024 опустить лимит кнопок до 3, зачем кому-то больше нажимать?
     //TODO: возмножно удалить этот массив вообще, и ограничиться ивентами нажатия/отпускания
     private static final boolean[] mouseButtonPressed = new boolean[9];
@@ -117,34 +121,11 @@ public class MouseListener implements MouseEventProducer {
         return getY() * Window.getHeight();
     }
 
-    public static float getOrthoX() {
-        float currentX = (xPos / (float) Window.getWidth()) * 2.0f - 1.0f;
-        Vector4f tmp = new Vector4f(currentX, 0, 0, 1);
-
-        Camera camera = Window.getCurrentScene().getCamera();
-        Matrix4f viewProjection = new Matrix4f();
-        camera.getInverseViewMatrix().mul(camera.getInverseProjectionMatrix(), viewProjection);
-        tmp.mul(viewProjection);
-        currentX = tmp.x;
-
-        return currentX;
-    }
-
-    public static float getOrthoY() {
-        float currentY = -((yPos / (float) Window.getHeight()) * 2.0f - 1.0f);
-        Vector4f tmp = new Vector4f(0, currentY, 0, 1);
-
-        Camera camera = Window.getCurrentScene().getCamera();
-        Matrix4f viewProjection = new Matrix4f();
-        camera.getInverseViewMatrix().mul(camera.getInverseProjectionMatrix(), viewProjection);
-        tmp.mul(viewProjection);
-        currentY = tmp.y;
-
-        return currentY;
-    }
-
-    //TODO: 13.07.2024 добавить кеширование вычисленного значение для каждого кадра, и доставать его при запросе в том же кадре. может повысить производительность, если количество запросов за кадр слишком большое. Возможно стоит применять эту технику только при большом объёме вызовов, в ином случае вычислять заново
     public static Vector2f getOrtho() {
+        if (calculatedValuesAtFrame == Window.getCurrentFrame()){
+            return cachedOrtho;
+        }
+
         float currentX = (xPos / (float) Window.getWidth()) * 2.0f - 1.0f;
         float currentY = -((yPos / (float) Window.getHeight()) * 2.0f - 1.0f);
         Vector4f tmp = new Vector4f(currentX, currentY, 0, 1);
@@ -155,7 +136,10 @@ public class MouseListener implements MouseEventProducer {
 
         tmp.mul(viewProjection);
 
-        return new Vector2f(tmp.x, tmp.y);
+        cachedOrtho = new Vector2f(tmp.x, tmp.y);
+        calculatedValuesAtFrame = Window.getCurrentFrame();
+
+        return new Vector2f(cachedOrtho);
     }
 
     public static boolean mouseButtonDown(int button) {

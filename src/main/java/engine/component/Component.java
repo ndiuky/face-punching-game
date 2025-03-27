@@ -2,6 +2,7 @@ package engine.component;
 
 import engine.object.GameObject;
 
+// TODO: реализовать isActive
 public abstract class Component {
 
     private static int idCounter = 0;

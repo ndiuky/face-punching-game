@@ -8,9 +8,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
-//TODO: сделать
+//TODO: нужен json, который будет содержать в себе все предустановки игрока. Например уровень графики, переназначение клавиш, настройки звука и т.п.. Затем загружать данные с этого json'а в необходимые классы
 public enum KeyMap {
-
 
     MOVE_UP(GLFW_KEY_W),
     MOVE_LEFT(GLFW_KEY_A),
@@ -19,11 +18,7 @@ public enum KeyMap {
 
     ;
 
-    static {
-//        KEY_MAP.put(MOVE_UP.value, )
-    }
-
-    private int value;
+    private final int value;
 
     KeyMap(int value) {
         this.value = value;

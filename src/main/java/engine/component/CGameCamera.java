@@ -11,6 +11,7 @@ import static engine.event.MouseEventProducer.listenToMouseRelease;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_COMMA;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
 
+// TODO: сделать хотя бы базовую камеру, просто чтобы она следила за игроком с небольшой интерполяцией
 public class CGameCamera extends Component implements MouseEventListener {
 
     private float dragDebounce = 0.032f;

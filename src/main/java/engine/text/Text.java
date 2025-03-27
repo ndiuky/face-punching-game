@@ -23,6 +23,7 @@ public class Text implements UIElement<Text> {
 
     private float sizeModifier;
 
+    // TODO: антиалиасинг криво работает с цветами. Возможно проблема связана с прозрачностью, которая на данный момент не настроена
     private Color color;
 
     private float width, height;

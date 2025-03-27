@@ -5,8 +5,11 @@ import engine.event.MouseEventListener;
 import engine.object.GameObject;
 import engine.object.Prefab;
 import engine.object.Sprite;
+import engine.render.DebugDraw;
 import engine.render.Window;
 import engine.util.AssetPool;
+import engine.util.Color;
+import engine.util.EnginePreferences;
 import engine.util.Interactable;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
@@ -79,6 +82,8 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
     @Override
     public void update(float dt) {
+        DebugDraw.drawCircle(gameObject.transform.position, maxAttackDistance, 0, Color.GREY5, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
+
         if (!attackState.equals(INACTIVE)) {
             executeCurrentAttack(dt);
         } else if (isAttemptingToAttack) {

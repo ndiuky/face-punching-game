@@ -8,6 +8,7 @@ import engine.render.Renderer;
 import engine.util.EnginePreferences;
 import engine.util.serializer.ComponentSerializer;
 import engine.util.serializer.GameObjectSerializer;
+import org.joml.Vector2f;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -164,6 +165,19 @@ public abstract class Scene {
         }
 
         return null;
+    }
+
+    //TODO: есть подозрение что этот метод жрёт дохрена ресурсов, нужно протестить производительность
+    public List<GameObject> getAllGameObjectsInRadius(Vector2f origin, float radius){
+        List<GameObject> resultList = new ArrayList<>();
+
+        for (GameObject go : gameObjects) {
+            if (go.transform.position.distance(origin) <= radius){
+                resultList.add(go);
+            }
+        }
+
+        return resultList;
     }
 
     public void destroy() {

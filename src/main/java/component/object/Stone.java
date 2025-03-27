@@ -12,7 +12,6 @@ import engine.util.Alignment;
 import engine.util.AssetPool;
 import engine.util.Color;
 import engine.util.Interactable;
-import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
 import util.InteractionType;
 import util.LootTable;
@@ -20,6 +19,7 @@ import util.LootTable;
 import java.util.List;
 import java.util.Random;
 
+import static engine.util.EngineUtils.inverseLerpUnclamped;
 import static util.InteractionType.ATTACK;
 
 public class Stone extends Component implements Interactable {
@@ -27,6 +27,21 @@ public class Stone extends Component implements Interactable {
     private int hp = 10;
 
     CTextRenderer textRenderer;
+
+    private boolean wasJustHit;
+
+    private float currentHitAnimationTime = 0;
+
+    private static final float HIT_ANIMATION_DURATION = 0.5f;
+
+    private static final float MAX_Y_HIT_ANIMATION_DELTA = 0.6f;
+
+    //TODO: хотел сделать цвет камня белым когда его бьёшь, но чет лень стало это нормально реализовывать, поэтому потом как-нибудь сделай пж
+    private CSpriteRenderer stoneSR;
+
+    private Vector2f originalScale;
+
+    Random random = new Random();
 
     private LootTable lootTable = LootTable.of(
             Item.generateFromTexture("asset/texture/nut-0.png"),
@@ -37,23 +52,23 @@ public class Stone extends Component implements Interactable {
 
     @Override
     public void start() {
+        originalScale = new Vector2f(gameObject.transform.scale);
+
         textRenderer = new CTextRenderer().setText(new Text("").setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
         textRenderer.getText().setSizeModifier(0.5f);
         gameObject.addComponent(textRenderer);
 
         gameObject.addComponent(new CPositionText());
 
-        gameObject.addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/stone.png"))));
-    }
+        stoneSR = new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/stone.png")));
 
-    Random random = new Random();
+        gameObject.addComponent(stoneSR);
+    }
 
     @Override
     public void update(float dt) {
-        textRenderer.setTextContent("gId: " + gameObject.getUid() + ", cId: " + getUid());
-        textRenderer.setTextContent((int) gameObject.transform.position.x + ", " + (int) gameObject.transform.position.y);
-        if (MouseListener.mouseButtonDown(1)) {
-            gameObject.transform.position.add(new Vector2f(random.nextInt(-20, 21) * dt, random.nextInt(-20, 21) * dt));
+        if (wasJustHit) {
+            playHitAnimation(dt);
         }
     }
 
@@ -73,6 +88,19 @@ public class Stone extends Component implements Interactable {
         gameObject.destroy();
     }
 
+    private void playHitAnimation(float dt) {
+        currentHitAnimationTime += dt;
+        float lerpResult = inverseLerpUnclamped(0, HIT_ANIMATION_DURATION, currentHitAnimationTime);
+
+        if (lerpResult >= 1) {
+            gameObject.transform.scale = new Vector2f(originalScale);
+            currentHitAnimationTime = 0;
+            wasJustHit = false;
+        } else {
+            gameObject.transform.scale = new Vector2f(originalScale.x, (float) (originalScale.y + Math.pow(2, -10 * lerpResult) * MAX_Y_HIT_ANIMATION_DELTA));
+        }
+    }
+
     @Override
     public List<InteractionType> getInteractionTypes() {
         return List.of(ATTACK);
@@ -82,6 +110,9 @@ public class Stone extends Component implements Interactable {
     public void onInteraction(InteractionType interactionType) {
         if (interactionType == ATTACK) {
             reduceHp(3);
+
+            currentHitAnimationTime = 0;
+            wasJustHit = true;
         }
     }
 }

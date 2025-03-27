@@ -40,6 +40,11 @@ public class EngineUtils {
         return new Vector2f(newX, newY);
     }
 
+    //TODO: добавь точно такой же метод, но с from=0 по умолчанию, ибо чаще всего такой он и приходит
+    public static float inverseLerpUnclamped(float from, float to, float midPoint) {
+        return from + midPoint / (to - from);
+    }
+
     // TODO: эта штука много где дёргается, стоит кешировать каждый кадр. Возможно также стоит кешировать синус времени, ибо его тоже часто дёргают
     public static float time() {
         return (float) glfwGetTime();

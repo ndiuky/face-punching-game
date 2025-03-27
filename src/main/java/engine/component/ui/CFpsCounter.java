@@ -2,7 +2,6 @@ package engine.component.ui;
 
 import engine.component.Component;
 import engine.text.Text;
-import engine.util.Alignment;
 
 import java.util.LinkedList;
 import java.util.List;

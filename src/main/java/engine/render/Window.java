@@ -16,6 +16,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 import scene.SceneSelectionScene;
 
+import static engine.util.EnginePreferences.ENABLE_SMALLER_WINDOWED_SIZE;
 import static engine.util.EnginePreferences.ENABLE_VSYNK;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
@@ -135,8 +136,8 @@ public class Window implements KeyboardEventListener {
             width = vidMode.width();
             height = vidMode.height();
 
-            windowedWidth = width / 2;
-            windowedHeight = height / 2;
+            windowedWidth = width / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
+            windowedHeight = height / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
 
             aspectRatio = (float) width / height;
 

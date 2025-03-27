@@ -1,5 +1,6 @@
 package engine.text;
 
+// TODO: реализовать sizeModifier, чтобы можно было менять не только размер всего текста, а и размер каждого индивидуального глифа
 public class Glyph {
 
     public final int width, height;
@@ -11,6 +12,7 @@ public class Glyph {
         this.height = height;
         this.x = x;
         this.y = y;
+        // TODO: убрать advance, Эта переменная будет захардкожена, как и полагается любой переменной пещерного человека
         this.advance = advance;
     }
 }

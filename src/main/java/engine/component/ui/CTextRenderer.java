@@ -2,13 +2,11 @@ package engine.component.ui;
 
 import engine.component.Component;
 import engine.object.Transform;
-import engine.render.DebugDraw;
 import engine.render.Window;
 import engine.text.Text;
 import engine.util.Alignment;
-import engine.util.Color;
 
-public class CTextRenderer extends Component{
+public class CTextRenderer extends Component {
 
     private Text text;
 
@@ -23,7 +21,7 @@ public class CTextRenderer extends Component{
             text = new Text();
         }
         text.fillInMetadata();
-        text.updateAlignment();
+        text.updatePositions();
     }
 
     @Override
@@ -36,8 +34,6 @@ public class CTextRenderer extends Component{
             gameObject.transform.copy(lastTransform);
             isDirty = true;
         }
-
-//        DebugDraw.drawCircle(gameObject.transform.position, 10, 1, Color.RED);
     }
 
     public boolean getIsDirty() {
@@ -64,7 +60,7 @@ public class CTextRenderer extends Component{
     public CTextRenderer setAlignment(Alignment alignment) {
         text.setAlignment(alignment);
         if (Window.getCurrentScene().isRunning()) {
-            text.updateAlignment();
+            text.updatePositions();
         }
         isDirty = true;
         return this;

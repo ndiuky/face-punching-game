@@ -50,7 +50,10 @@ public class Font {
                 continue;
             }
 
-            imageWidth += ch.getWidth();
+            // Этот и все последующие '+1', нужны для того, чтобы не допускать ошибок связанных с неточностью чисел с плавающей точкой.
+            // Если располагать каждый гриф вплотную друг к другу, будут появляться артефакты, по сути куски других букв. Мне такого не
+            // надо, поэтому пространство занимаемое каждым глифом было увеличено на 1 пиксель. Сам размер глифа при этом никак не меняется.
+            imageWidth += ch.getWidth() + 1;
             imageHeight = Math.max(imageHeight, ch.getHeight());
         }
 
@@ -78,7 +81,7 @@ public class Font {
 
             Glyph ch = new Glyph(charWidth, charHeight, x, image.getHeight() - charHeight, 0f);
             g.drawImage(charImage, x, 0, null);
-            x += ch.width;
+            x += ch.width + 1;
             glyphs.put(c, ch);
         }
 
@@ -115,6 +118,7 @@ public class Font {
     private static BufferedImage createCharImage(java.awt.Font font, char c) {
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics();
         g.dispose();
@@ -128,6 +132,7 @@ public class Font {
 
         image = new BufferedImage(charWidth, charHeight, BufferedImage.TYPE_INT_ARGB);
         g = image.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setFont(font);
         g.setPaint(java.awt.Color.WHITE);
         g.drawString(String.valueOf(c), 0, metrics.getAscent());
@@ -187,34 +192,7 @@ public class Font {
         return texture;
     }
 
-    public static void fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent, float xPos, float yPos) {
-        int textHeight = getHeight(textContent);
-
-        float drawX = xPos;
-        float drawY = yPos;
-        if (textHeight > fontHeight) {
-            drawY += textHeight - fontHeight;
-        }
-
-        for (int i = 0; i < textContent.length(); i++) {
-            char ch = textContent.charAt(i);
-            if (ch == '\n') {
-                drawY -= fontHeight;
-                drawX = xPos;
-
-                continue;
-            }
-            if (ch == '\r') {
-                continue;
-            }
-            Glyph g = glyphs.get(ch);
-            content.add(g);
-            positions.add(new Vector2f(drawX, drawY));
-            drawX += g.width;
-        }
-    }
-
-    public static Vector2f fillInTextMetadata(final List<Glyph> content, final List<Vector2f> positions, String textContent) {
+    public static Vector2f fillInTextMetadata(final List<Glyph> content, final float sizeModifier, final List<Vector2f> positions, String textContent) {
 //        int textHeight = getHeight(textContent);
 
         float drawX = 0;
@@ -248,8 +226,8 @@ public class Font {
             Glyph g = glyphs.get(ch);
             content.add(g);
             positions.add(new Vector2f(drawX, drawY));
-            drawX += g.width;
-            lineWidth += g.width;
+            drawX += g.width * sizeModifier;
+            lineWidth += g.width * sizeModifier;
         }
 
         if (fullWidth == 0) {

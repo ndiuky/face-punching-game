@@ -206,7 +206,8 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             Glyph glyph = content.get(i);
 
             boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
-            Matrix4f transformMatrix = new Matrix4f().identity();
+            // TODO: лучше переделать дорогостоящий вызов scale на что-то более дешёвое, мб напрямую изменять поля матрицы, или вообще напрямую загружать нужные значения в массив вертексов
+            Matrix4f transformMatrix = new Matrix4f().identity().scale(text.getSizeModifier());
             if (isRotated) {
                 transformMatrix.translate(textRenderer.gameObject.transform.position.x,
                         textRenderer.gameObject.transform.position.y, 0f);
@@ -239,8 +240,8 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                                 0, 1)
                 );
 
-                vertices[offset] = currentPos.x + pos.x + xAdd;
-                vertices[offset + 1] = currentPos.y + pos.y + yAdd;
+                vertices[offset] = currentPos.x + pos.x + xAdd * text.getSizeModifier();
+                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier();
                 vertices[offset + 2] = color.r;
                 vertices[offset + 3] = color.g;
                 vertices[offset + 4] = color.b;

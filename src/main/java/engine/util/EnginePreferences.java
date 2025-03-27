@@ -18,8 +18,9 @@ public class EnginePreferences {
     public static boolean ENABLE_DATA_SAVING = true;
     public static boolean ENABLE_VSYNK = true;
     public static boolean FULLSCREEN_BY_DEFAULT = true;
+    public static boolean ENABLE_SMALLER_WINDOWED_SIZE = true;
     public static boolean IS_DEBUG_MENU_ACTIVE_BY_DEFAULT = false;
-    public static int FONT_RESOLUTION = 32;
+    public static int FONT_RESOLUTION = 64;
     public static int MAX_BATCH_SIZE = 1024;
 
     private static final Map<String, Object> DEV_MODE_MAPPING = Map.ofEntries(
@@ -28,16 +29,16 @@ public class EnginePreferences {
             Map.entry("ENABLE_VSYNK", false),
             Map.entry("FULLSCREEN_BY_DEFAULT", false),
             Map.entry("IS_DEBUG_MENU_ACTIVE_BY_DEFAULT", true),
-            Map.entry("FONT_RESOLUTION", 16)
+            Map.entry("FONT_RESOLUTION", 32)
     );
 
 
     public static void enableDevMode() {
-        DEV_MODE_MAPPING.forEach((key, value) -> {
+        DEV_MODE_MAPPING.forEach((fieldName, fieldValue) -> {
             try {
-                EnginePreferences.class.getDeclaredField(key).set(null, value);
+                EnginePreferences.class.getDeclaredField(fieldName).set(null, fieldValue);
             } catch (IllegalAccessException | NoSuchFieldException ex) {
-                throw new RuntimeException("Exception during dev mode enabling attempt (on variable \"" + key + "\"): " + ex.getMessage());
+                throw new RuntimeException("Exception during dev mode enabling attempt (on variable \"" + fieldName + "\"): " + ex.getMessage());
             }
         });
     }

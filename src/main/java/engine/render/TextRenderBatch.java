@@ -7,6 +7,7 @@ import engine.text.Glyph;
 import engine.text.Text;
 import engine.util.AssetPool;
 import engine.util.Color;
+import engine.util.EngineUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -44,6 +45,7 @@ import static org.lwjgl.opengl.GL30C.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
+// TODO: рендер батчей как бы есть, но логики их создания по сути нет. Если одновременно попытаться отрендерить слишком много текста, то просто вылетит эксепшен
 public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
     private static final int POS_SIZE = 2;
@@ -206,8 +208,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             Glyph glyph = content.get(i);
 
             boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
-            // TODO: лучше переделать дорогостоящий вызов scale на что-то более дешёвое, мб напрямую изменять поля матрицы, или вообще напрямую загружать нужные значения в массив вертексов
-            Matrix4f transformMatrix = new Matrix4f().identity().scale(text.getSizeModifier());
+            Matrix4f transformMatrix = new Matrix4f().identity();
             if (isRotated) {
                 transformMatrix.translate(textRenderer.gameObject.transform.position.x,
                         textRenderer.gameObject.transform.position.y, 0f);
@@ -217,31 +218,39 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                         textRenderer.gameObject.transform.scale.y, 1);
             }
 
+
+            float xAdd, yAdd, glyphSizeMod;
             for (int j = 0; j < EBO_QUAD_VERTICES_AMOUNT; j++) {
-                //TODO: перетащить инициализацию за цикл
-                float xAdd = 0;
-                float yAdd = 0;
-                //TODO: сделать красиво
+                xAdd = 0;
+                yAdd = 0;
+                glyphSizeMod = 1;
                 if (j == 2 || j == 3) {
                     xAdd = glyph.width;
                 }
 
                 if (j == 1 || j == 2) {
                     yAdd = glyph.height;
+                    // TODO: эти формулы кривые как ёб-твою-мать, придумай что-нибудь менее кривовыглядящее
+                    switch (text.getAnimation()) {
+                        case SIZE_WAVING_FORWARDS ->
+                                glyphSizeMod += (float) (Math.sin(EngineUtils.time() * 2 - (i / 2f)) * 0.15f);
+                        case SIZE_WAVING_BACKWARDS ->
+                                glyphSizeMod += (float) (Math.sin(EngineUtils.time() * 2 + (i / 2f)) * 0.15f);
+                    }
                 }
 
                 Vector4f currentPos = new Vector4f(
                         isRotated ?
                                 new Vector4f(fullTextXAdd, fullTextYAdd, 0, 1).mul(transformMatrix)
                                 : new Vector4f(
-                                //TODO: пристроить сюда нормальный расчёт скейла с учётом размера текста
+                                //TODO: пристроить сюда нормальный расчёт скейла с учётом размера объекта
                                 fullTextXAdd,// + textRenderer.gameObject.transform.scale.x,
                                 fullTextYAdd,// + textRenderer.gameObject.transform.scale.y,
                                 0, 1)
                 );
 
                 vertices[offset] = currentPos.x + pos.x + xAdd * text.getSizeModifier();
-                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier();
+                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier() * glyphSizeMod;
                 vertices[offset + 2] = color.r;
                 vertices[offset + 3] = color.g;
                 vertices[offset + 4] = color.b;

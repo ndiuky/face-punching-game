@@ -3,6 +3,7 @@ package scene;
 import component.controls.SelectionControls;
 import engine.component.CSpriteRenderer;
 import engine.component.ui.CFpsCounter;
+import engine.component.ui.CLoadingText;
 import engine.object.GameObject;
 import engine.object.Scene;
 import engine.object.Sprite;
@@ -37,6 +38,11 @@ public class SceneSelectionScene extends Scene {
                 .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_AVG));
 
         addGameObjectToScene(fpsGO1);
+
+        GameObject loadingGO = new GameObject("loadingGO", new Transform(new Vector2f(0, 100), new Vector2f(100, 100)), -1)
+                .addComponent(new CLoadingText());
+
+        addGameObjectToScene(loadingGO);
     }
 
     private void loadResources() {

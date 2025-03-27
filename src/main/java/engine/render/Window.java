@@ -87,6 +87,8 @@ public class Window implements KeyboardEventListener {
 
     private static Window instance;
 
+    private static long currentFrame = 0;
+
     public Window() {
         title = "Face punching game idk";
     }
@@ -243,6 +245,8 @@ public class Window implements KeyboardEventListener {
             glfwSwapBuffers(glfwWindow);
             MouseListener.reset();
 
+            currentFrame++;
+
             endTime = EngineUtils.time();
             dt = endTime - beginTime;
             beginTime = endTime;
@@ -314,6 +318,10 @@ public class Window implements KeyboardEventListener {
 
     public static long getGlfwWindow() {
         return glfwWindow;
+    }
+
+    public static long getCurrentFrame(){
+        return currentFrame;
     }
 
     public static void clearColor(Color color) {

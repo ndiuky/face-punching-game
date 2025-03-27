@@ -20,6 +20,10 @@ public class Camera {
 
     public Vector2f position;
 
+    private static long calculatedValuesAtFrame = -1;
+
+    private static Matrix4f cachedViewMatrix;
+
     private float zoom = 1;
 
     public Camera(Vector2f position) {
@@ -52,6 +56,10 @@ public class Camera {
 
     //TODO: мб кешировать матрицу для каждого кадра
     public Matrix4f getViewMatrix() {
+        if (calculatedValuesAtFrame == Window.getCurrentFrame()) {
+            return cachedViewMatrix;
+        }
+
         Vector3f cameraFront = new Vector3f(0.0f, 0.0f, -1.0f);
         Vector3f cameraUp = new Vector3f(0.0f, 1.0f, 0.0f);
         viewMatrix.identity();
@@ -61,7 +69,10 @@ public class Camera {
 
         viewMatrix.invert(inverseViewMatrix);
 
-        return viewMatrix;
+        cachedViewMatrix = viewMatrix;
+        calculatedValuesAtFrame = Window.getCurrentFrame();
+
+        return cachedViewMatrix;
     }
 
     public Matrix4f getInverseProjectionMatrix() {

@@ -17,25 +17,16 @@ public class EngineUtils {
         vec.y = (x * sin) + (y * cos) + origin.y;
     }
 
+    /**
+     * Эквивалент оригинального метода, но еще и вычисляет дистанцию, а не принимает её извне.
+     * Нужен в случае, если дистанция ранее не вычислялась
+     */
     public static Vector2f calculateClampedPosition(Vector2f from, Vector2f to, float maxLength) {
         float distance = from.distance(to);
 
-        if (distance <= maxLength) {
-            return new Vector2f(to);
-        }
-
-        float t = maxLength / distance;
-
-        float newX = from.x + t * (to.x - from.x);
-        float newY = from.y + t * (to.y - from.y);
-
-        return new Vector2f(newX, newY);
+        return calculateClampedPosition(from, to, maxLength, distance);
     }
 
-    /**
-     * Эквивалент оригинального метода, но не вычисляет дистанцию, а принимает её извне.
-     * Нужен для сохранения производительности за счёт отсутствия повторного вычисления дистанции
-     */
     public static Vector2f calculateClampedPosition(Vector2f from, Vector2f to, float maxLength, float distance) {
         if (distance <= maxLength) {
             return new Vector2f(to);
@@ -49,6 +40,7 @@ public class EngineUtils {
         return new Vector2f(newX, newY);
     }
 
+    // TODO: эта штука много где дёргается, стоит кешировать каждый кадр. Возможно также стоит кешировать синус времени, ибо его тоже часто дёргают
     public static float time() {
         return (float) glfwGetTime();
     }

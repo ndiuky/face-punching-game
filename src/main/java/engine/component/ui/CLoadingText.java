@@ -3,6 +3,7 @@ package engine.component.ui;
 import engine.component.Component;
 import engine.text.Text;
 import engine.util.Alignment;
+import util.TextAnimation;
 
 public class CLoadingText extends Component {
 
@@ -14,7 +15,7 @@ public class CLoadingText extends Component {
 
     @Override
     public void start() {
-        textRenderer = new CTextRenderer().setText(new Text("loading").setAlignment(Alignment.CENTER));
+        textRenderer = new CTextRenderer().setText(new Text("loading").setAlignment(Alignment.MIDDLE_LEFT).setAnimation(TextAnimation.SIZE_WAVING_FORWARDS));
         gameObject.addComponent(textRenderer);
 
         dots += getUid();
@@ -22,8 +23,8 @@ public class CLoadingText extends Component {
 
     @Override
     public void update(float dt) {
-        if (timer > 0.05f) {
-            if (++dots >= 16) {
+        if (timer > 0.1f) {
+            if (++dots >= 31) {
                 dots = 0;
             }
             timer = 0;
@@ -45,6 +46,21 @@ public class CLoadingText extends Component {
                 case 13 -> textRenderer.setTextContent("loading.............");
                 case 14 -> textRenderer.setTextContent("loading..............");
                 case 15 -> textRenderer.setTextContent("loading...............");
+                case 16 -> textRenderer.setTextContent("loading..............");
+                case 17 -> textRenderer.setTextContent("loading.............");
+                case 18 -> textRenderer.setTextContent("loading............");
+                case 19 -> textRenderer.setTextContent("loading...........");
+                case 20 -> textRenderer.setTextContent("loading..........");
+                case 21 -> textRenderer.setTextContent("loading.........");
+                case 22 -> textRenderer.setTextContent("loading........");
+                case 23 -> textRenderer.setTextContent("loading.......");
+                case 24 -> textRenderer.setTextContent("loading......");
+                case 25 -> textRenderer.setTextContent("loading.....");
+                case 26 -> textRenderer.setTextContent("loading....");
+                case 27 -> textRenderer.setTextContent("loading...");
+                case 28 -> textRenderer.setTextContent("loading..");
+                case 29 -> textRenderer.setTextContent("loading.");
+                case 30 -> textRenderer.setTextContent("loading");
             }
         }
 

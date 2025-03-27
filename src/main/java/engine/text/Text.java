@@ -4,10 +4,14 @@ import engine.component.ui.UIElement;
 import engine.util.Alignment;
 import engine.util.Color;
 import org.joml.Vector2f;
+import util.TextAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static engine.util.Alignment.BOTTOM_LEFT;
+import static util.TextAnimation.NONE;
 
 public class Text implements UIElement<Text> {
 
@@ -17,14 +21,15 @@ public class Text implements UIElement<Text> {
 
     private String textContent;
 
-    //TODO: нигде не используется, добавить
     private float sizeModifier;
 
     private Color color;
 
     private float width, height;
 
-    private Alignment alignment = Alignment.BOTTOM_LEFT;
+    private Alignment alignment = BOTTOM_LEFT;
+
+    private TextAnimation animation = NONE;
 
     private Text(String textContent, float sizeModifier, Color color) {
         this.textContent = textContent;
@@ -107,6 +112,16 @@ public class Text implements UIElement<Text> {
 
     public float getHeight() {
         return height;
+    }
+
+    public TextAnimation getAnimation() {
+        return animation;
+    }
+
+    public Text setAnimation(final TextAnimation animation) {
+        this.animation = animation;
+
+        return this;
     }
 
     @Override

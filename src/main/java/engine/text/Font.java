@@ -79,7 +79,7 @@ public class Font {
             int charWidth = charImage.getWidth();
             int charHeight = charImage.getHeight();
 
-            Glyph ch = new Glyph(charWidth, charHeight, x, image.getHeight() - charHeight, 0f);
+            Glyph ch = new Glyph(charWidth, charHeight, x, image.getHeight() - charHeight);
             g.drawImage(charImage, x, 0, null);
             x += ch.width + 1;
             glyphs.put(c, ch);

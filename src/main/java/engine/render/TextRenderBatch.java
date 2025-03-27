@@ -7,6 +7,7 @@ import engine.text.Glyph;
 import engine.text.Text;
 import engine.util.AssetPool;
 import engine.util.Color;
+import engine.util.EngineUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -217,10 +218,12 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                         textRenderer.gameObject.transform.scale.y, 1);
             }
 
+
+            float xAdd, yAdd, glyphSizeMod;
             for (int j = 0; j < EBO_QUAD_VERTICES_AMOUNT; j++) {
-                //TODO: перетащить инициализацию за цикл
-                float xAdd = 0;
-                float yAdd = 0;
+                xAdd = 0;
+                yAdd = 0;
+                glyphSizeMod = 1;
                 //TODO: сделать красиво
                 if (j == 2 || j == 3) {
                     xAdd = glyph.width;
@@ -228,6 +231,13 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
                 if (j == 1 || j == 2) {
                     yAdd = glyph.height;
+                    // TODO: эти формулы кривые как ёб-твою-мать, придумай что-нибудь менее кривовыглядящее
+                    switch (text.getAnimation()) {
+                        case SIZE_WAVING_FORWARDS ->
+                                glyphSizeMod += (float) (Math.sin(EngineUtils.time() * 2 - (i / 2f)) * 0.15f);
+                        case SIZE_WAVING_BACKWARDS ->
+                                glyphSizeMod += (float) (Math.sin(EngineUtils.time() * 2 + (i / 2f)) * 0.15f);
+                    }
                 }
 
                 Vector4f currentPos = new Vector4f(
@@ -241,7 +251,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                 );
 
                 vertices[offset] = currentPos.x + pos.x + xAdd * text.getSizeModifier();
-                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier();
+                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier() * glyphSizeMod;
                 vertices[offset + 2] = color.r;
                 vertices[offset + 3] = color.g;
                 vertices[offset + 4] = color.b;

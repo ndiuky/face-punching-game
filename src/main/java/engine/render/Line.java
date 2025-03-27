@@ -3,6 +3,7 @@ package engine.render;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+//TODO: убрать lifetime, он только проблемы доставляет. Сделать чтобы любые дебаг-рисуночки отображались лишь один кадр
 public class Line {
 
     private Vector2f from;
@@ -13,7 +14,7 @@ public class Line {
 
     private Vector4f color;
 
-    //TODO: 22.06.2024 переделать lifetime на float для использования в секундах
+    @Deprecated(forRemoval = true)
     private int lifetime;
 
     public Line(Vector2f from, Vector2f to, int zOrder, Vector4f color, int lifetime) {

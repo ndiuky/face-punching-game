@@ -41,7 +41,8 @@ public class CTextRenderer extends Component {
     }
 
     public CTextRenderer setIsDirty() {
-        isDirty = false;
+        isDirty = true;
+
         return this;
     }
 

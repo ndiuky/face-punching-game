@@ -48,9 +48,9 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
     private GameObject fistGO;
 
-    private float fistSpeed = 1500;
+    private float fistSpeed = 30;
 
-    private float maxAttackDistance = 200;
+    private float maxAttackDistance = 3;
 
     private float retractingSpeedMultiplier = 0.7f;
 
@@ -135,7 +135,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
             path = calculatePath(gameObject.transform.position, targetPos, false, arcSegments, approachAngle, middlePointDistance);
         }
 
-        fistGO = Prefab.generateSpriteObject(FIST_SPRITE, 15, 15, gameObject.getZIndex() - 1);
+        fistGO = Prefab.generateSpriteObject(FIST_SPRITE, 0.4f, 0.4f, gameObject.getZIndex() - 1);
         fistGO.transform.position = new Vector2f(gameObject.transform.position);
         Window.getCurrentScene().addGameObjectToScene(fistGO);
 
@@ -173,8 +173,6 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
             }
 
             attackState = RETRACTING;
-
-            System.out.println("пиздюли успешно доставлены");
         } else {
             fistGO.transform.position.add(new Vector2f(dir).normalize().mul(fistSpeed * dt));
         }

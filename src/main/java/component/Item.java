@@ -10,13 +10,14 @@ import org.joml.Vector2f;
 
 import java.util.Random;
 
+//TODO: убрать item из рендера в pickingShader
 public class Item extends Component {
 
     private Vector2f initialPos;
 
     private Vector2f initialScale;
 
-    private float sizeDelta = 5f;
+    private float sizeDelta = 0.08f;
 
     private float wobbleOffset = new Random().nextFloat(1);
 
@@ -24,7 +25,7 @@ public class Item extends Component {
 
     private Vector2f slideDir;
 
-    private final float SLIDE_TIME = 0.5f;
+    private final float SLIDE_TIME = 1f;
 
     private float currSlidingTime;
 
@@ -33,7 +34,7 @@ public class Item extends Component {
 
     public static Item generateFromTexture(String textureName) {
         Item item = new Item();
-        Prefab.generateSpriteObject(new Sprite().setTexture(AssetPool.getTexture(textureName)), 25, 25, 1)
+        Prefab.generateSpriteObject(new Sprite().setTexture(AssetPool.getTexture(textureName)), 0.4f, 0.4f, 1)
                 .addComponent(item);
         return item;
     }
@@ -59,7 +60,7 @@ public class Item extends Component {
     }
 
     private void performInitialSlide(float dt) {
-        float factor = currSlidingTime >= SLIDE_TIME ? 1 : (float) (1 - java.lang.Math.pow(2, -50 * currSlidingTime));
+        float factor = currSlidingTime >= SLIDE_TIME ? 1 : (float) (1 - java.lang.Math.pow(2, -25 * currSlidingTime));
 
         gameObject.transform.position = new Vector2f(initialPos).add(new Vector2f(slideDir).mul(factor));
 

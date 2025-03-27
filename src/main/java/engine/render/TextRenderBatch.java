@@ -19,6 +19,7 @@ import java.util.List;
 
 import static engine.util.EnginePreferences.DEFAULT_QUAD_VERTICES_AMOUNT;
 import static engine.util.EnginePreferences.EBO_QUAD_VERTICES_AMOUNT;
+import static engine.util.EnginePreferences.TEXT_BASE_SIZE;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -153,19 +154,15 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
         shader.setUniform(shader.getUniformLocation("uTexture"), 0);
 
-        //TODO: оказалось, что проблемой рендера текста были зеркально отражённые по главной диагонали матрицы.
+        shader.setUniform(shader.getUniformLocation("uProjection"),
+                Window.getCurrentScene().getCamera().getProjectionMatrix()
+        );
+
+        //TODO: оказалось, что проблемой рендера текста была зеркально отражённая по главной диагонали view матрица.
         // Сейчас я выставляю значения координат в матрицы вручную, но нужно это унифицировать.
         // Не хочу чтобы разные рендереры требовали матрицы разного вида.
 
         //vvvvvv
-        shader.setUniform(shader.getUniformLocation("uProjection"),
-                new Matrix4f(Window.getCurrentScene().getCamera().getProjectionMatrix())
-                        .m30(0)
-                        .m31(0)
-                        .m03(-1)
-                        .m13(-1)
-        );
-
         final Matrix4f view = Window.getCurrentScene().getCamera().getViewMatrix();
         shader.setUniform(shader.getUniformLocation("uView"),
                 new Matrix4f()
@@ -189,6 +186,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
         shader.detach();
     }
 
+    //TODO: пожалуй все таки стоит обратно убрать скейл текста в зависимости от объекта. Это просто добавляет ненужные усложнения при инициализации объектов/текста, и не несёт практически никакой выгоды
     private void loadVertexProperties(int index, CTextRenderer textRenderer) {
         int offset = index * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;
 
@@ -204,7 +202,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
         int height = Font.getTexture().getHeight();
 
         for (int i = 0; i < textSize; i++) {
-            Vector2f pos = positions.get(i);
+            Vector2f pos = new Vector2f(positions.get(i)).mul(textRenderer.gameObject.transform.scale);
             Glyph glyph = content.get(i);
 
             boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
@@ -219,11 +217,12 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             }
 
 
-            float xAdd, yAdd, glyphSizeMod;
+            //TODO: переделать это безумие из переменных
+            float xAdd, yAdd, glyphSizeModY;
             for (int j = 0; j < EBO_QUAD_VERTICES_AMOUNT; j++) {
                 xAdd = 0;
                 yAdd = 0;
-                glyphSizeMod = 1;
+                glyphSizeModY = 1;
                 if (j == 2 || j == 3) {
                     xAdd = glyph.width;
                 }
@@ -233,9 +232,9 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                     // TODO: эти формулы кривые как ёб-твою-мать, придумай что-нибудь менее кривовыглядящее
                     switch (text.getAnimation()) {
                         case SIZE_WAVING_FORWARDS ->
-                                glyphSizeMod += (float) (Math.sin(EngineUtils.time() * 2 - (i / 2f)) * 0.15f);
+                                glyphSizeModY += (float) (Math.sin(EngineUtils.time() * 2 - (i / 2f)) * 0.15f);
                         case SIZE_WAVING_BACKWARDS ->
-                                glyphSizeMod += (float) (Math.sin(EngineUtils.time() * 2 + (i / 2f)) * 0.15f);
+                                glyphSizeModY += (float) (Math.sin(EngineUtils.time() * 2 + (i / 2f)) * 0.15f);
                     }
                 }
 
@@ -243,14 +242,13 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                         isRotated ?
                                 new Vector4f(fullTextXAdd, fullTextYAdd, 0, 1).mul(transformMatrix)
                                 : new Vector4f(
-                                //TODO: пристроить сюда нормальный расчёт скейла с учётом размера объекта
-                                fullTextXAdd,// + textRenderer.gameObject.transform.scale.x,
-                                fullTextYAdd,// + textRenderer.gameObject.transform.scale.y,
+                                fullTextXAdd,
+                                fullTextYAdd,
                                 0, 1)
                 );
 
-                vertices[offset] = currentPos.x + pos.x + xAdd * text.getSizeModifier();
-                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier() * glyphSizeMod;
+                vertices[offset] = currentPos.x + pos.x + xAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.x * TEXT_BASE_SIZE;
+                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
                 vertices[offset + 2] = color.r;
                 vertices[offset + 3] = color.g;
                 vertices[offset + 4] = color.b;
@@ -305,22 +303,25 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
     }
 
     public boolean destroyIfExists(GameObject go) {
-        CTextRenderer textRenderer = go.getComponent(CTextRenderer.class);
-        for (int i = 0; i < numTextBlocks; i++) {
-            if (textRenderers[i] == textRenderer) {
-                for (int j = i; j < numTextBlocks - 1; j++) {
-                    textRenderers[j] = textRenderers[j + 1];
-                    //TODO: есть подозрение, что нужно сначала выставлять флаг, а уже потом приравнивать
-                    textRenderers[j].setIsDirty();
-                }
-                numTextBlocks--;
-                numGlyphs -= textRenderer.getText().getTextSize();
+        boolean wasDestroyed = false;
 
-                return true;
+        List<CTextRenderer> fetchedTextRenderers = go.getComponents(CTextRenderer.class);
+        for (CTextRenderer fetchedTextRenderer : fetchedTextRenderers) {
+            for (int i = 0; i < numTextBlocks; i++) {
+                if (textRenderers[i] == fetchedTextRenderer) {
+                    for (int j = i; j < numTextBlocks - 1; j++) {
+                        textRenderers[j].setIsDirty();
+                        textRenderers[j] = textRenderers[j + 1];
+                    }
+                    numTextBlocks--;
+                    numGlyphs -= fetchedTextRenderer.getText().getTextSize();
+
+                    wasDestroyed = true;
+                }
             }
         }
 
-        return false;
+        return wasDestroyed;
     }
 
     private void loadElementIndices(int[] elements, int index) {

@@ -61,7 +61,7 @@ public class CSpriteRenderer extends Component {
     }
 
     public CSpriteRenderer setIsDirty() {
-        isDirty = false;
+        isDirty = true;
 
         return this;
     }

@@ -1,18 +1,18 @@
 package scene;
 
-import component.Item;
 import component.controls.TestingSceneControls;
-import engine.component.CGameCamera;
-import engine.component.CItemPickUp;
+import component.entity.Player;
+import engine.component.CDraggingCamera;
 import engine.component.CSpriteRenderer;
 import engine.object.GameObject;
 import engine.object.Scene;
-import engine.object.Sprite;
 import engine.object.SpriteSheet;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.util.AssetPool;
 import org.joml.Vector2f;
+
+import java.util.List;
 
 public class TestingScene extends Scene {
 
@@ -28,25 +28,17 @@ public class TestingScene extends Scene {
 
         camera = new Camera(new Vector2f(0, 0));
         editorGameobject = new GameObject("random GameObject", new Transform(new Vector2f(0, 0), new Vector2f(50, 50)), 1)
-                .addComponent(new CGameCamera(camera))
+                .addComponent(new CDraggingCamera(camera))
                 .addComponent(new TestingSceneControls());
 
         addGameObjectToScene(editorGameobject);
 
 
-        GameObject player = new GameObject("player", new Transform(new Vector2f(0, 0), new Vector2f(40, 40)), 5)
-                .addComponent(new CItemPickUp(60))
+        GameObject player = new GameObject("player", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), 5)
+                .addComponent(new Player())
                 .addComponent(new CSpriteRenderer().setSprite(sprites.getSprite(0)));
 
         addGameObjectToScene(player);
-
-
-        GameObject item = new GameObject("item", new Transform(new Vector2f(500, 500), new Vector2f(25, 25)), 1)
-                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/chip-small.png"))))
-                .addComponent(new Item());
-
-
-        addGameObjectToScene(item);
 
         if (isLevelLoaded) {
             return;
@@ -64,10 +56,12 @@ public class TestingScene extends Scene {
                 new SpriteSheet(AssetPool.getTexture("asset/texture/gizmo.png"), 3, 8, 3, 0));
 
         for (GameObject g : gameObjects) {
-            if (g.getComponent(CSpriteRenderer.class) != null) {
-                CSpriteRenderer spr = g.getComponent(CSpriteRenderer.class);
-                if (spr.getTexture() != null) {
-                    spr.setTexture(AssetPool.getTexture(spr.getTexture().getFilepath()));
+            if (g.getComponents(CSpriteRenderer.class) != null) {
+                List<CSpriteRenderer> sprites = g.getComponents(CSpriteRenderer.class);
+                for (CSpriteRenderer sprite : sprites) {
+                    if (sprite.getTexture() != null) {
+                        sprite.setTexture(AssetPool.getTexture(sprite.getTexture().getFilepath()));
+                    }
                 }
             }
         }

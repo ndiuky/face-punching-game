@@ -53,18 +53,19 @@ public class GameObject {
         }
     }
 
-    public <T extends Component> T getComponent(Class<T> componentClass) {
+    public <T extends Component> List<T> getComponents(Class<T> componentClass) {
+        List<T> resultingList = new ArrayList<>();
         for (Component c : components) {
             if (componentClass.isAssignableFrom(c.getClass())) {
                 try {
-                    return componentClass.cast(c);
+                    resultingList.add(componentClass.cast(c));
                 } catch (ClassCastException e) {
                     throw new RuntimeException("Error casting component");
                 }
             }
         }
 
-        return null;
+        return resultingList.isEmpty() ? null : resultingList;
     }
 
     public GameObject addComponent(Component c) {
@@ -72,7 +73,7 @@ public class GameObject {
         components.add(c);
         c.gameObject = this;
 
-        if (c instanceof Interactable){
+        if (c instanceof Interactable) {
             isInteractable = true;
         }
 

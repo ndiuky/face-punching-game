@@ -33,6 +33,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //TODO: создать класс для помощи в работе с OpenGL
+//TODO: удалить поддержку SpriteSheet, и всегда использовать по одной текстуре не спрайт (кроме текста). Таким образом можно не передавать текстурные координаты в шейдер, а просто выставлять их там вручную ({0,0},{1,1}). Плюс должны исчезнуть все артефакты связанные с неточностью чисел с плавающей точкой
 public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
 
     private static final int POS_SIZE = 2;
@@ -274,21 +275,24 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
 
 
     public boolean destroyIfExists(GameObject go) {
-        CSpriteRenderer sprite = go.getComponent(CSpriteRenderer.class);
-        for (int i = 0; i < numElements; i++) {
-            if (spriteRenderers[i] == sprite) {
-                for (int j = i; j < numElements - 1; j++) {
-                    spriteRenderers[j] = spriteRenderers[j + 1];
-                    //TODO: есть подозрение, что нужно сначала выставлять флаг, а уже потом приравнивать
-                    spriteRenderers[j].setIsDirty();
-                }
-                numElements--;
+        boolean wasDestroyed = false;
 
-                return true;
+        List<CSpriteRenderer> sprites = go.getComponents(CSpriteRenderer.class);
+        for (CSpriteRenderer sprite : sprites) {
+            for (int i = 0; i < numElements; i++) {
+                if (spriteRenderers[i] == sprite) {
+                    for (int j = i; j < numElements - 1; j++) {
+                        spriteRenderers[j].setIsDirty();
+                        spriteRenderers[j] = spriteRenderers[j + 1];
+                    }
+                    numElements--;
+
+                    wasDestroyed = true;
+                }
             }
         }
 
-        return false;
+        return wasDestroyed;
     }
 
     public boolean hasRoom() {

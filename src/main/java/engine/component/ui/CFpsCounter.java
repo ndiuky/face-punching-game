@@ -23,14 +23,12 @@ public class CFpsCounter extends Component {
 
     @Override
     public void start() {
-        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAnimation(TextAnimation.SIZE_WAVING_BACKWARDS).setColor(Color.GREY5));
+        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAnimation(TextAnimation.SIZE_WAVING_BACKWARDS).setColor(Color.GREY3));
         gameObject.addComponent(textRenderer);
     }
 
     @Override
     public void update(float dt) {
-        textRenderer.getText().setSizeModifier(((float) Math.sin(EngineUtils.time()) + 2));
-
         switch (displayMode) {
             case EVERY_FRAME -> {
                 setNewText((int) (1 / dt));

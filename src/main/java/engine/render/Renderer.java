@@ -10,15 +10,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static engine.render.Window.bgColor;
-import static engine.render.Window.clearColor;
 import static engine.util.EnginePreferences.MAX_BATCH_SIZE;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.glClear;
 
 public class Renderer {
 
@@ -30,60 +25,64 @@ public class Renderer {
     private static Shader currentShader;
 
     public void add(GameObject go) {
-        CSpriteRenderer spriteRenderer = go.getComponent(CSpriteRenderer.class);
-        if (spriteRenderer != null) {
-            add(spriteRenderer);
+        List<CSpriteRenderer> spriteRenderers = go.getComponents(CSpriteRenderer.class);
+        if (spriteRenderers != null) {
+            addSpriteRenderers(spriteRenderers);
         }
 
-        CTextRenderer textRenderer = go.getComponent(CTextRenderer.class);
-        if (textRenderer != null) {
-            add(textRenderer);
-        }
-    }
-
-    private void add(CTextRenderer textRenderer) {
-        boolean added = false;
-        for (TextRenderBatch batch : textBatches) {
-            if (batch.hasRoom() && batch.getZIndex() == textRenderer.gameObject.getZIndex()) {
-                Text text = textRenderer.getText();
-                //TODO: возможно проверка на null не нужна
-                if (text == null || batch.hasText(text) || batch.hasTextRoom()) {
-                    batch.addElement(textRenderer);
-                    added = true;
-                    break;
-                }
-            }
-        }
-
-        if (!added) {
-            TextRenderBatch newBatch = new TextRenderBatch(MAX_BATCH_SIZE, textRenderer.gameObject.getZIndex());
-            newBatch.start();
-            textBatches.add(newBatch);
-            newBatch.addElement(textRenderer);
-            Collections.sort(textBatches);
+        List<CTextRenderer> textRenderers = go.getComponents(CTextRenderer.class);
+        if (textRenderers != null) {
+            addTextRenderers(textRenderers);
         }
     }
 
-    private void add(CSpriteRenderer spriteRenderer) {
-        boolean added = false;
-        for (TextureRenderBatch batch : textureBatches) {
-            if (batch.hasRoom() && batch.getZIndex() == spriteRenderer.gameObject.getZIndex()) {
-                Texture texture = spriteRenderer.getTexture();
-                //TODO: возможно проверка на null не нужна
-                if (texture == null || batch.hasTexture(texture) || batch.hasTextureRoom()) {
-                    batch.addElement(spriteRenderer);
-                    added = true;
-                    break;
+    private void addTextRenderers(List<CTextRenderer> textRenderers) {
+        for (CTextRenderer textRenderer : textRenderers) {
+            boolean added = false;
+            for (TextRenderBatch batch : textBatches) {
+                if (batch.hasRoom() && batch.getZIndex() == textRenderer.gameObject.getZIndex()) {
+                    Text text = textRenderer.getText();
+                    //TODO: возможно проверка на null не нужна
+                    if (text == null || batch.hasText(text) || batch.hasTextRoom()) {
+                        batch.addElement(textRenderer);
+                        added = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (!added) {
-            TextureRenderBatch newBatch = new TextureRenderBatch(MAX_BATCH_SIZE, spriteRenderer.gameObject.getZIndex());
-            newBatch.start();
-            textureBatches.add(newBatch);
-            newBatch.addElement(spriteRenderer);
-            Collections.sort(textureBatches);
+            if (!added) {
+                TextRenderBatch newBatch = new TextRenderBatch(MAX_BATCH_SIZE, textRenderer.gameObject.getZIndex());
+                newBatch.start();
+                textBatches.add(newBatch);
+                newBatch.addElement(textRenderer);
+                Collections.sort(textBatches);
+            }
+        }
+    }
+
+    private void addSpriteRenderers(List<CSpriteRenderer> spriteRenderers) {
+        for (CSpriteRenderer spriteRenderer : spriteRenderers) {
+            boolean added = false;
+            for (TextureRenderBatch batch : textureBatches) {
+                if (batch.hasRoom() && batch.getZIndex() == spriteRenderer.gameObject.getZIndex()) {
+                    Texture texture = spriteRenderer.getTexture();
+                    //TODO: возможно проверка на null не нужна
+                    if (texture == null || batch.hasTexture(texture) || batch.hasTextureRoom()) {
+                        batch.addElement(spriteRenderer);
+                        added = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!added) {
+                TextureRenderBatch newBatch = new TextureRenderBatch(MAX_BATCH_SIZE, spriteRenderer.gameObject.getZIndex());
+                newBatch.start();
+                textureBatches.add(newBatch);
+                newBatch.addElement(spriteRenderer);
+                Collections.sort(textureBatches);
+            }
         }
     }
 
@@ -93,7 +92,7 @@ public class Renderer {
             textureBatch.render();
         }
 
-        if (!Renderer.getCurrentShader().equals(AssetPool.getShaderByName("pickingShader"))){
+        if (!Renderer.getCurrentShader().equals(AssetPool.getShaderByName("pickingShader"))) {
             for (TextRenderBatch textBatch : textBatches) {
                 textBatch.render();
             }
@@ -101,20 +100,24 @@ public class Renderer {
     }
 
     public void destroyGameObject(GameObject go) {
-        CSpriteRenderer sr = go.getComponent(CSpriteRenderer.class);
-        if (sr != null) {
-            for (TextureRenderBatch textureBatch : textureBatches) {
-                if (textureBatch.destroyIfExists(go)) {
-                    break;
+        List<CSpriteRenderer> spriteRenderers = go.getComponents(CSpriteRenderer.class);
+        if (spriteRenderers != null) {
+            for (CSpriteRenderer spriteRenderer : spriteRenderers) {
+                for (TextureRenderBatch textureBatch : textureBatches) {
+                    if (textureBatch.destroyIfExists(go)) {
+                        break;
+                    }
                 }
             }
         }
 
-        CTextRenderer tr = go.getComponent(CTextRenderer.class);
-        if (tr != null) {
-            for (TextRenderBatch textBatch : textBatches) {
-                if (textBatch.destroyIfExists(go)) {
-                    break;
+        List<CTextRenderer> textRenderers = go.getComponents(CTextRenderer.class);
+        if (textRenderers != null) {
+            for (CTextRenderer textRenderer : textRenderers) {
+                for (TextRenderBatch textBatch : textBatches) {
+                    if (textBatch.destroyIfExists(go)) {
+                        break;
+                    }
                 }
             }
         }

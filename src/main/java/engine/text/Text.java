@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static engine.util.Alignment.BOTTOM_LEFT;
+import static engine.util.EnginePreferences.TEXT_BASE_SIZE;
 import static util.TextAnimation.NONE;
 
 public class Text implements UIElement<Text> {
@@ -144,7 +145,7 @@ public class Text implements UIElement<Text> {
         float y = alignment.y * height;
         for (Glyph glyph : content) {
             positions.add(new Vector2f(totalX, y));
-            totalX += glyph.width * sizeModifier;
+            totalX += glyph.width * sizeModifier * TEXT_BASE_SIZE;
         }
     }
 

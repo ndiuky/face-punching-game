@@ -221,7 +221,7 @@ public class Window implements KeyboardEventListener {
             glDisable(GL_BLEND);
             pickingTexture.enableWriting();
 
-            clearColor(Color.TRANSPARENT);
+//            clearColor(Color.TRANSPARENT);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             renderSceneWithShader(pickingShader);
@@ -232,12 +232,13 @@ public class Window implements KeyboardEventListener {
 
             DebugDraw.beginFrame();
 
-            clearColor(bgColor);
+//            clearColor(bgColor);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (dt >= 0) {
                 currentScene.update(dt);
                 renderSceneWithShader(defaultShader);
+//                renderSceneWithShader(pickingShader);
 
                 DebugDraw.draw();
             }
@@ -320,7 +321,7 @@ public class Window implements KeyboardEventListener {
         return glfwWindow;
     }
 
-    public static long getCurrentFrame(){
+    public static long getCurrentFrame() {
         return currentFrame;
     }
 

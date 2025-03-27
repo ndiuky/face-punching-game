@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static engine.util.EnginePreferences.TEXT_BASE_SIZE;
 import static java.awt.Font.PLAIN;
 import static java.awt.Font.TRUETYPE_FONT;
 
@@ -226,8 +227,8 @@ public class Font {
             Glyph g = glyphs.get(ch);
             content.add(g);
             positions.add(new Vector2f(drawX, drawY));
-            drawX += g.width * sizeModifier;
-            lineWidth += g.width * sizeModifier;
+            drawX += g.width * sizeModifier * TEXT_BASE_SIZE;
+            lineWidth += g.width * sizeModifier * TEXT_BASE_SIZE;
         }
 
         if (fullWidth == 0) {

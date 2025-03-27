@@ -6,6 +6,7 @@ import engine.render.Window;
 import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
 import scene.BoxingRingScene;
+import scene.ForestScene;
 import scene.TestingScene;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
@@ -13,7 +14,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class SelectionControls extends Component {
-
     @Override
     public void update(float dt) {
         if (KeyListener.isKeyPressed(GLFW_KEY_BACKSPACE)) {
@@ -26,6 +26,8 @@ public class SelectionControls extends Component {
                     Window.changeScene(BoxingRingScene.class);
                 } else if (go.getName().equals("testing select")) {
                     Window.changeScene(TestingScene.class);
+                } else if (go.getName().equals("stone select")) {
+                    Window.changeScene(ForestScene.class);
                 }
             }
         }

@@ -13,7 +13,7 @@ public class CMoveWasd extends Component {
 
     private Vector2f moveDir = new Vector2f(0, 0);
 
-    private float movenentSpeed = 400;
+    private float movenentSpeed = 10;
 
     private static final float MAGIC_NUMBER = 0.71f;
 

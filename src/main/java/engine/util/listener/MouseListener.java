@@ -11,6 +11,7 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -122,7 +123,7 @@ public class MouseListener implements MouseEventProducer {
     }
 
     public static Vector2f getOrtho() {
-        if (calculatedValuesAtFrame == Window.getCurrentFrame()){
+        if (calculatedValuesAtFrame == Window.getCurrentFrame()) {
             return cachedOrtho;
         }
 

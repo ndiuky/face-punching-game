@@ -133,7 +133,9 @@ public class Window implements KeyboardEventListener {
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
 
-            primaryMonitor = GLFW.glfwGetMonitors().get(EnginePreferences.CREATE_WINDOW_ON_MONITOR);
+            PointerBuffer monitorBuffer = GLFW.glfwGetMonitors();
+
+            primaryMonitor = monitorBuffer.get(Math.min(monitorBuffer.capacity() - 1, Math.max(0, EnginePreferences.CREATE_WINDOW_ON_MONITOR)));
 
             try {
                 vidMode = GLFW.glfwGetVideoMode(primaryMonitor);

@@ -10,6 +10,7 @@ import engine.util.EnginePreferences;
 import engine.util.EngineUtils;
 import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -132,8 +133,16 @@ public class Window implements KeyboardEventListener {
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
 
-            primaryMonitor = GLFW.glfwGetPrimaryMonitor();
-            vidMode = GLFW.glfwGetVideoMode(primaryMonitor);
+            primaryMonitor = GLFW.glfwGetMonitors().get(EnginePreferences.CREATE_WINDOW_ON_MONITOR);
+
+            try {
+                vidMode = GLFW.glfwGetVideoMode(primaryMonitor);
+            } catch (Exception e) {
+                System.err.println("No monitor with ID=" + primaryMonitor);
+
+                primaryMonitor = GLFW.glfwGetPrimaryMonitor();
+                vidMode = GLFW.glfwGetVideoMode(primaryMonitor);
+            }
 
             width = vidMode.width();
             height = vidMode.height();

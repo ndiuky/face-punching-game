@@ -2,7 +2,16 @@ package util;
 
 import org.joml.Vector2f;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static engine.util.EnginePreferences.CONFIG_FILE_COMMENT_CHAR;
 
 public class Utils {
 
@@ -34,5 +43,31 @@ public class Utils {
         }
 
         return path;
+    }
+
+    public static Map<String, String> loadPenisFile(String path) throws IOException {
+        if (!path.endsWith(".penis")) {
+            throw new IOException("Passed file path doesn't have a '.penis' postfix");
+        }
+
+        String source = new String(Files.readAllBytes(Paths.get(path)));
+        List<String> properties = Arrays.stream(source
+                        .replaceAll("\\" + CONFIG_FILE_COMMENT_CHAR + ".*\\" + CONFIG_FILE_COMMENT_CHAR, "")
+                        .split(";"))
+                .map(s -> s.trim().replaceAll("\s", ""))
+                .filter(s -> !s.isBlank())
+                .toList();
+        Map<String, String> resultingMap = new HashMap<>(properties.size());
+
+        properties.forEach(property -> {
+            int separatorIndex = property.indexOf('=');
+
+            resultingMap.put(
+                    property.substring(0, separatorIndex),
+                    property.substring(separatorIndex + 1)
+            );
+        });
+
+        return resultingMap;
     }
 }

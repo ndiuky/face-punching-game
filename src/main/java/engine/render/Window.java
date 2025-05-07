@@ -15,6 +15,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
+import scene.ForestScene;
 import scene.SceneSelectionScene;
 
 import static engine.util.EnginePreferences.ENABLE_SMALLER_WINDOWED_SIZE;
@@ -164,7 +165,8 @@ public class Window implements KeyboardEventListener {
 
         createWindow(fullscreen);
 
-        Window.changeScene(SceneSelectionScene.class);
+//        Window.changeScene(SceneSelectionScene.class);
+        Window.changeScene(ForestScene.class);
     }
 
     private static void createWindow(boolean fullscreen) {
@@ -231,8 +233,9 @@ public class Window implements KeyboardEventListener {
         float dt = -1.0f;
 
         Shader defaultShader = AssetPool.getShader("default");
-//        Shader lightingShader = AssetPool.getShaderByName("lightingShader");
+        Shader uiShader = AssetPool.getShader("uiShader");
         Shader pickingShader = AssetPool.getShader("pickingShader");
+        Shader fontShader = AssetPool.getShader("fontShader");
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
@@ -256,8 +259,8 @@ public class Window implements KeyboardEventListener {
                 // TODO: нужно разделить обновление графики от обновления реального состояния объектов. Это должно увеличить производительность В РАЗЫ
                 currentScene.update(dt);
                 renderSceneWithShader(defaultShader);
-//                renderSceneWithShader(lightingShader);
-//                renderSceneWithShader(pickingShader);
+                renderSceneWithShader(fontShader);
+                renderSceneWithShader(uiShader);
 
                 DebugDraw.draw();
             }
@@ -312,11 +315,6 @@ public class Window implements KeyboardEventListener {
     public static float getAspectRatio() {
         return aspectRatio;
     }
-
-    //TODO: реализовать
-//    public static Vector2f getMiddleWindowPoint(){
-//
-//    }
 
     public static Scene getCurrentScene() {
         return currentScene;

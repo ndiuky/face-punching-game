@@ -35,7 +35,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //TODO: создать класс для помощи в работе с OpenGL
 //TODO: удалить поддержку SpriteSheet, и всегда использовать по одной текстуре не спрайт (кроме текста). Таким образом можно не передавать текстурные координаты в шейдер, а просто выставлять их там вручную ({0,0},{1,1}). Плюс должны исчезнуть все артефакты связанные с неточностью чисел с плавающей точкой
-public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
+public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch {
 
     private static final int POS_SIZE = 2;
 
@@ -104,10 +104,12 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch> {
         enableVertexAttribArrays();
     }
 
+    @Override
     public void render() {
         boolean rebufferData = false;
         for (int i = 0; i < numElements; i++) {
             CSpriteRenderer spriteRenderer = spriteRenderers[i];
+            //TODO: почему-то это условие всегда true
             if (spriteRenderer.getIsDirty()) {
                 loadVertexProperties(i);
                 spriteRenderer.setIsDirty();

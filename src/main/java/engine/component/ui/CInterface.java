@@ -8,22 +8,19 @@ import java.util.List;
 //TODO: сделай удобную систему для UI
 public class CInterface extends Component {
 
-    //TODO: обновлять эти переменные в update каждый кадр
-    private static float worldLeftX, worldRightX, worldBottomY, worldUpperY;
-
-    private final List<UIElement> uiElements = new ArrayList<>();
+    private final List<UiElement> uiElements = new ArrayList<>();
 
     @Override
     public void update(float dt) {
-        super.update(dt);
+
     }
 
-    public CInterface addElement(UIElement element){
+    public CInterface addElement(UiElement element){
         uiElements.add(element);
         return this;
     }
 
-    public CInterface addElements(List<UIElement>elements){
+    public CInterface addElements(List<UiElement>elements){
         uiElements.addAll(elements);
         return this;
     }

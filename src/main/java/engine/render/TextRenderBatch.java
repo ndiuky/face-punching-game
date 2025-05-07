@@ -47,7 +47,7 @@ import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
 // TODO: рендер батчей как бы есть, но логики их создания по сути нет. Если одновременно попытаться отрендерить слишком много текста, то просто вылетит эксепшен
-public class TextRenderBatch implements Comparable<TextRenderBatch> {
+public class TextRenderBatch implements Comparable<TextRenderBatch>, Batch {
 
     private static final int POS_SIZE = 2;
 
@@ -72,8 +72,6 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
     private int vboID = -1;
 
     private int vaoID = -1;
-
-    private final Shader shader = AssetPool.getShader("fontShader");
 
     private final float[] vertices;
 
@@ -117,11 +115,13 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
         enableVertexAttributes();
     }
 
+    @Override
     public void render() {
         if (contentToRender.isEmpty()) {
             return;
         }
 
+        Shader shader = Renderer.getCurrentShader();
         glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
 
         glActiveTexture(GL_TEXTURE0);

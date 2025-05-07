@@ -5,9 +5,13 @@ import engine.component.CInventory;
 import engine.component.CItemPickUp;
 import engine.component.CSpriteRenderer;
 import engine.component.Component;
+import engine.component.ui.Canvas;
+import engine.component.ui.UiTotalItems;
 import engine.event.KeyboardEventListener;
 import engine.event.MouseEventListener;
+import engine.object.GameObject;
 import engine.object.Sprite;
+import engine.object.Transform;
 import engine.render.Window;
 import engine.util.AssetPool;
 import engine.util.listener.MouseListener;
@@ -27,15 +31,19 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 
 public class Player extends Entity implements MouseEventListener, KeyboardEventListener {
 
-    private CInventory inventory = new CInventory(36);
+    private CInventory inventory = new CInventory();
 
     private static final float ITEM_DROP_STRENGTH = 3.5f;
+
+    private final Canvas canvas = new Canvas();
 
     private final List<Component> REQUIRED_COMPONENTS = List.of(new CMoveWasd(),
             new CFistAttackRandom(),
             new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("dummy"))),
             new CItemPickUp(),
-            inventory
+            inventory,
+            canvas
+
     );
 
     @Override
@@ -46,6 +54,9 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
             }
         }
 
+        canvas.addUiElement(new UiTotalItems(canvas, inventory));
+//        Window.getCurrentScene().addGameObjectToScene(new GameObject("player's canvas", new Transform(new Vector2f(0), new Vector2f(1)), 1).addComponent(canvas));
+
         listenToMousePress(GLFW_MOUSE_BUTTON_1, this);
         listenToMousePress(GLFW_MOUSE_BUTTON_2, this);
         listenToKeyboardPress(GLFW_KEY_Q, this);
@@ -55,7 +66,6 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
     public void update(float dt) {
 
     }
-
 
     @Override
     public void onMousePress(int button) {

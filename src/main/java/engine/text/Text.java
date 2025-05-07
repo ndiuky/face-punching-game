@@ -1,6 +1,5 @@
 package engine.text;
 
-import engine.component.ui.UIElement;
 import engine.util.Alignment;
 import engine.util.Color;
 import org.joml.Vector2f;
@@ -14,7 +13,7 @@ import static engine.util.Alignment.BOTTOM_LEFT;
 import static engine.util.EnginePreferences.TEXT_BASE_SIZE;
 import static util.TextAnimation.NONE;
 
-public class Text implements UIElement<Text> {
+public class Text {
 
     private final List<Glyph> content = new ArrayList<>();
 
@@ -129,12 +128,10 @@ public class Text implements UIElement<Text> {
         return this;
     }
 
-    @Override
     public Alignment getAlignment() {
         return alignment;
     }
 
-    @Override
     public Text setAlignment(Alignment alignment) {
         this.alignment = alignment;
 
@@ -151,7 +148,6 @@ public class Text implements UIElement<Text> {
         return this;
     }
 
-    @Override
     public void updatePositions() {
         positions.clear();
 

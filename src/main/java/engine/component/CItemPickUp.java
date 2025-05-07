@@ -1,6 +1,7 @@
 package engine.component;
 
 import component.ItemDrop;
+import engine.component.ui.UiTotalItems;
 import engine.object.GameObject;
 import engine.render.DebugDraw;
 import engine.render.Window;
@@ -30,12 +31,12 @@ public class CItemPickUp extends Component {
     }
 
     public void onPickupComplete(ItemStack pickedItem) {
-        final List<CInventory> components = gameObject.getComponents(CInventory.class);
-        if (components == null){
+        final List<CInventory> objectInventories = gameObject.getComponents(CInventory.class);
+        if (objectInventories == null){
            return;
        }
 
-        components.getFirst().addItemStack(pickedItem);
+        objectInventories.getFirst().addItemStack(pickedItem);
     }
 
     public CItemPickUp setPickUpRadius(float pickUpRadius) {

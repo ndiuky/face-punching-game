@@ -7,17 +7,8 @@ import java.util.EnumMap;
 
 public class CInventory extends Component {
 
-    private final int capacity;
+    private final EnumMap<Item, Integer> contents = new EnumMap<>(Item.class);
 
-    private final EnumMap<Item, Integer> contents;
-
-    public CInventory(final int capacity) {
-        this.capacity = capacity;
-
-        contents = new EnumMap<>(Item.class);
-    }
-
-    // TODO: добавить метод проверки на наличие места в инвентаре
     public void addItemStack(final ItemStack pickedStack) {
         contents.merge(pickedStack.getItem(), pickedStack.getStackSize(), Integer::sum);
     }

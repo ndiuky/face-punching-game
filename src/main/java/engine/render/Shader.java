@@ -217,4 +217,9 @@ public class Shader {
     public String getFilepath() {
         return filepath;
     }
+
+    @Override
+    public String toString() {
+        return filepath.substring(filepath.lastIndexOf('/') + 1, filepath.lastIndexOf('.'));
+    }
 }

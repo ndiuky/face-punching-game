@@ -3,12 +3,14 @@ package engine.object;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import engine.component.Component;
+import engine.component.ui.UiSprite;
 import engine.render.Camera;
 import engine.render.Renderer;
-import engine.util.EnginePreferences;
+import engine.util.AssetPool;
 import engine.util.serializer.ComponentSerializer;
 import engine.util.serializer.GameObjectSerializer;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -59,6 +61,9 @@ public abstract class Scene {
             renderer.add(go);
         }
         isRunning = true;
+
+        //TODO: delete
+//        renderer.addUiElements(List.of(new UiSprite(new Sprite().setTexture(AssetPool.getTexture("long-boi"))).setScreenPos(new Vector4f(0, 0, 1,1))));
     }
 
     public void addGameObjectToScene(GameObject go) {
@@ -164,11 +169,11 @@ public abstract class Scene {
     }
 
     //TODO: есть подозрение что этот метод жрёт дохрена ресурсов, нужно протестить производительность
-    public List<GameObject> getAllGameObjectsInRadius(Vector2f origin, float radius){
+    public List<GameObject> getAllGameObjectsInRadius(Vector2f origin, float radius) {
         List<GameObject> resultList = new ArrayList<>();
 
         for (GameObject go : gameObjects) {
-            if (go.transform.position.distance(origin) <= radius){
+            if (go.transform.position.distance(origin) <= radius) {
                 resultList.add(go);
             }
         }

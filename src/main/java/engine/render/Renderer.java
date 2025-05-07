@@ -2,6 +2,8 @@ package engine.render;
 
 import engine.component.CSpriteRenderer;
 import engine.component.ui.CTextRenderer;
+import engine.component.ui.Canvas;
+import engine.component.ui.UiElement;
 import engine.object.GameObject;
 import engine.text.Text;
 import engine.util.AssetPool;
@@ -9,6 +11,7 @@ import engine.util.AssetPool;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static engine.util.EnginePreferences.MAX_BATCH_SIZE;
 import static org.lwjgl.opengl.GL11.GL_ONE;
@@ -22,6 +25,15 @@ public class Renderer {
 
     private final List<TextRenderBatch> textBatches = new ArrayList<>();
 
+    private final List<UiRenderBatch> uiRenderBatches = new ArrayList<>();
+
+    private final Map<Shader, List<List<? extends Batch>>> shaderBatchesMapping = Map.ofEntries(
+            Map.entry(AssetPool.getShader("default"), List.of(textureBatches)),
+            Map.entry(AssetPool.getShader("pickingShader"), List.of(textureBatches)),
+            Map.entry(AssetPool.getShader("uiShader"), List.of(uiRenderBatches)),
+            Map.entry(AssetPool.getShader("fontShader"), List.of(textBatches))
+    );
+
     private static Shader currentShader;
 
     public void add(GameObject go) {
@@ -33,6 +45,11 @@ public class Renderer {
         List<CTextRenderer> textRenderers = go.getComponents(CTextRenderer.class);
         if (textRenderers != null) {
             addTextRenderers(textRenderers);
+        }
+
+        List<Canvas> canvases = go.getComponents(Canvas.class);
+        if (canvases != null) {
+            addCanvases(canvases);
         }
     }
 
@@ -46,6 +63,7 @@ public class Renderer {
                     if (text == null || batch.hasText(text) || batch.hasTextRoom()) {
                         batch.addElement(textRenderer);
                         added = true;
+
                         break;
                     }
                 }
@@ -71,6 +89,7 @@ public class Renderer {
                     if (texture == null || batch.hasTexture(texture) || batch.hasTextureRoom()) {
                         batch.addElement(spriteRenderer);
                         added = true;
+
                         break;
                     }
                 }
@@ -86,15 +105,27 @@ public class Renderer {
         }
     }
 
+    public void addCanvases(List<Canvas> canvases) {
+        for (Canvas canvas : canvases) {
+            UiRenderBatch newBatch = new UiRenderBatch(canvas);
+            newBatch.start();
+            uiRenderBatches.add(newBatch);
+
+            for (UiElement uiElement : canvas.getUiElements()) {
+                newBatch.addElement(uiElement);
+            }
+
+            //TODO: implement
+//            Collections.sort(uiRenderBatches);
+        }
+    }
+
     public void render() {
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        for (TextureRenderBatch textureBatch : textureBatches) {
-            textureBatch.render();
-        }
 
-        if (!Renderer.getCurrentShader().equals(AssetPool.getShader("pickingShader"))) {
-            for (TextRenderBatch textBatch : textBatches) {
-                textBatch.render();
+        for (List<? extends Batch> batches : shaderBatchesMapping.get(currentShader)) {
+            for (Batch batch : batches) {
+                batch.render();
             }
         }
     }

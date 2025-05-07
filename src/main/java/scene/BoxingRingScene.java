@@ -52,7 +52,7 @@ public class BoxingRingScene extends Scene {
         player = new GameObject("player", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), 5)
                 .addComponent(new Player())
                 .addComponent(new CMoveWasd())
-                .addComponent(new CTextRenderer().setText(new Text("player").setAlignment(Alignment.BOTTOM_MIDDLE)));
+                .addComponent(new CTextRenderer().setText(new Text("player").setAlignment(Alignment.BOTTOM_CENTER)));
 
         addGameObjectToScene(player);
 

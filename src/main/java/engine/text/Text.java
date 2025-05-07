@@ -137,6 +137,7 @@ public class Text implements UIElement<Text> {
     @Override
     public Text setAlignment(Alignment alignment) {
         this.alignment = alignment;
+
         return this;
     }
 
@@ -155,7 +156,7 @@ public class Text implements UIElement<Text> {
         positions.clear();
 
         float totalX = alignment.x * width;
-        float y = alignment.y * height;
+        float y = alignment.y * height * TEXT_BASE_SIZE * sizeModifier;
         for (Glyph glyph : content) {
             positions.add(new Vector2f(totalX, y));
             totalX += glyph.width * sizeModifier * TEXT_BASE_SIZE;

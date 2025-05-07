@@ -2,8 +2,6 @@ package scene;
 
 import component.controls.SelectionControls;
 import engine.component.CSpriteRenderer;
-import engine.component.ui.CFpsCounter;
-import engine.component.ui.CLoadingText;
 import engine.object.GameObject;
 import engine.object.Scene;
 import engine.object.Sprite;
@@ -27,30 +25,11 @@ public class SceneSelectionScene extends Scene {
 
         addGameObjectToScene(sceneManager);
 
-//        GameObject ringSelectGO = new GameObject("ring select", new Transform(new Vector2f(200, 300), new Vector2f(256, 256)), -1)
-//                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("boxing-ring"))));
-//
-//        addGameObjectToScene(ringSelectGO);
-
         GameObject stoneSelectGO = new GameObject("stone select", new Transform(new Vector2f(600, 300), new Vector2f(128, 128)), -1)
                 .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("stone"))));
 
         addGameObjectToScene(stoneSelectGO);
 
-//        GameObject testingSelectGO = new GameObject("testing select", new Transform(new Vector2f(1000, 300), new Vector2f(128, 128)), -1)
-//                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("chip-small"))));
-//
-//        addGameObjectToScene(testingSelectGO);
-
-        GameObject fpsGO1 = new GameObject("fpsGO", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), -1)
-                .addComponent(new CFpsCounter().setDisplayMode(CFpsCounter.DisplayMode.EVERY_SECOND_AVG));
-
-        addGameObjectToScene(fpsGO1);
-
-        GameObject loadingGO = new GameObject("loadingGO", new Transform(new Vector2f(0, 100), new Vector2f(1, 1)), -1)
-                .addComponent(new CLoadingText());
-
-        addGameObjectToScene(loadingGO);
     }
 
     private void loadResources() {

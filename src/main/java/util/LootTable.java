@@ -1,24 +1,33 @@
 package util;
 
 import component.ItemDrop;
+import item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: попереименовывать, и скорее всего вместо ItemDrop юзать обычные Item
 public class LootTable {
 
-    private final List<ItemDrop> itemDrops;
+    private final List<ItemStack> itemStacks;
 
-    private LootTable(List<ItemDrop> itemDrops) {
-        this.itemDrops = itemDrops;
+    private LootTable(List<ItemStack> itemStacks) {
+        this.itemStacks = itemStacks;
     }
 
-    public static LootTable of(ItemDrop... itemDrops) {
-        return new LootTable(List.of(itemDrops));
+    public static LootTable of(ItemStack... itemStacks) {
+        return new LootTable(List.of(itemStacks));
     }
 
-    public List<ItemDrop> getContent() {
-        return new ArrayList<>(itemDrops);
+    public List<ItemStack> getContent() {
+        return new ArrayList<>(itemStacks);
+    }
+
+    public List<ItemDrop> getContentDropped() {
+        List<ItemDrop> result = new ArrayList<>();
+        for (ItemStack itemStack : itemStacks) {
+            result.add(ItemDrop.generateForItemStack(itemStack));
+        }
+
+        return result;
     }
 }

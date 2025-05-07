@@ -8,6 +8,7 @@ import engine.render.Window;
 import engine.util.AssetPool;
 import engine.util.Interactable;
 import item.Item;
+import item.ItemStack;
 import org.joml.Vector2f;
 import util.InteractionType;
 import util.LootTable;
@@ -37,11 +38,9 @@ public class Tree extends Component implements Interactable {
     Random random = new Random();
 
     private LootTable lootTable = LootTable.of(
-            ItemDrop.generateForItem(Item.CHIP),
-            ItemDrop.generateForItem(Item.CHIP),
-            ItemDrop.generateForItem(Item.CHIP),
-            ItemDrop.generateForItem(Item.CHIP),
-            ItemDrop.generateForItem(Item.CHIP)
+            new ItemStack(Item.CHIP, 2),
+            new ItemStack(Item.CHIP, 2),
+            new ItemStack(Item.CHIP)
     );
 
     @Override
@@ -76,7 +75,7 @@ public class Tree extends Component implements Interactable {
     }
 
     private void destroyStone() {
-        for (ItemDrop itemDrop : lootTable.getContent()) {
+        for (ItemDrop itemDrop : lootTable.getContentDropped()) {
             itemDrop.gameObject.transform.position = new Vector2f(gameObject.transform.position);
             itemDrop.applyInitialImpulse(new Vector2f(random.nextFloat(-1, 1), random.nextFloat(-1, 1)));
             Window.getCurrentScene().addGameObjectToScene(itemDrop.gameObject);

@@ -2,7 +2,10 @@ package component;
 
 import engine.component.CItemPickUp;
 import engine.component.Component;
+import engine.component.ui.CTextRenderer;
 import engine.object.Prefab;
+import engine.text.Text;
+import engine.util.Alignment;
 import engine.util.EngineUtils;
 import item.Item;
 import item.ItemStack;
@@ -20,7 +23,9 @@ public class ItemDrop extends Component {
 
     private static final float MAX_SUCKING_ANGLE_DELTA = 45;
 
-    private static final float SIZE_DELTA = 0.08f;
+    private static final float DROP_SIZE_MODIFIER = 0.5f;
+
+    private static final float WOBBLE_SIZE_DELTA = 0.08f;
 
     private static final float SLIDE_TIME = 0.5f;
 
@@ -52,7 +57,7 @@ public class ItemDrop extends Component {
         containingStack = new ItemStack(item);
     }
 
-    public ItemDrop(ItemStack itemStack) {
+    private ItemDrop(ItemStack itemStack) {
         containingStack = itemStack;
     }
 
@@ -64,9 +69,21 @@ public class ItemDrop extends Component {
     }
 
     public static ItemDrop generateForItemStack(ItemStack itemStack) {
+        if (itemStack.getStackSize() == 1) {
+            return generateForItem(itemStack.getItem());
+        }
+
         ItemDrop itemDrop = new ItemDrop(itemStack);
-        Prefab.generateSpriteObject(itemStack.getItem().sprite, 0.5f, 0.5f, 1, itemStack.getItem().name())
-                .addComponent(itemDrop);
+        Prefab.generateSpriteObject(itemStack.getItem().sprite, DROP_SIZE_MODIFIER, DROP_SIZE_MODIFIER, 1, itemStack.getItem().name())
+                .addComponent(itemDrop)
+                .addComponent(
+                        new CTextRenderer()
+                                .setText(
+                                        new Text(String.valueOf(itemStack.getStackSize()))
+                                                .setOffset(new Vector2f(-0.25f * DROP_SIZE_MODIFIER))
+                                )
+                                .setAlignment(Alignment.TOP_LEFT)
+                );
         return itemDrop;
     }
 
@@ -132,7 +149,7 @@ public class ItemDrop extends Component {
     }
 
     private void wobble() {
-        float sizeOffset = Math.sin((EngineUtils.time() + wobbleOffset) * 2) * SIZE_DELTA;
+        float sizeOffset = Math.sin((EngineUtils.time() + wobbleOffset) * 2) * WOBBLE_SIZE_DELTA;
 
         gameObject.transform.scale = new Vector2f(sizeOffset + initialScale.x, sizeOffset + initialScale.y);
     }

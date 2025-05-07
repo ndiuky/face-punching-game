@@ -17,7 +17,7 @@ public class CSpriteRenderer extends Component {
 
     private transient boolean isDirty = true;
 
-//    TODO: добавить boolean переменную, которая будет отвечать за учитывание конкретного спрайта в pickingShader.
+    //    TODO: добавить boolean переменную, которая будет отвечать за учитывание конкретного спрайта в pickingShader.
 //     при false не будет, при true будет
     private boolean isClickable = false;
 
@@ -51,7 +51,7 @@ public class CSpriteRenderer extends Component {
         return sprite.getTexture();
     }
 
-    public CSpriteRenderer setTexture(Texture texture){
+    public CSpriteRenderer setTexture(Texture texture) {
         sprite.setTexture(texture);
 
         return this;
@@ -78,7 +78,7 @@ public class CSpriteRenderer extends Component {
         return this;
     }
 
-    public CSpriteRenderer setIsClickable(boolean value){
+    public CSpriteRenderer setIsClickable(boolean value) {
         isClickable = value;
 
         return this;

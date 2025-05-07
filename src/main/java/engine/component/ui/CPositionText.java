@@ -16,7 +16,7 @@ public class CPositionText extends Component {
                 .setText(new Text("")
                         .setColor(Color.BLUE)
                         .setSizeModifier(0.5f)
-                        .setAlignment(Alignment.BOTTOM_MIDDLE)
+                        .setAlignment(Alignment.BOTTOM_CENTER)
                         .setOffset(new Vector2f(0, -0.75f)));
         gameObject.addComponent(textRenderer);
     }

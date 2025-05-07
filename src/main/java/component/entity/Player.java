@@ -29,7 +29,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private CInventory inventory = new CInventory(36);
 
-    private static final float ITEM_DROP_STRENGTH = 3;
+    private static final float ITEM_DROP_STRENGTH = 3.5f;
 
     private final List<Component> REQUIRED_COMPONENTS = List.of(new CMoveWasd(),
             new CFistAttackRandom(),

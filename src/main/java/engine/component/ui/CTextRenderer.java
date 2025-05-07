@@ -10,6 +10,8 @@ public class CTextRenderer extends Component {
 
     private Text text;
 
+    //TODO: добавить флаг, отвечающий за влияние размера родительского объекта на размер текста
+
     private transient Transform lastTransform;
 
     private transient boolean isDirty = true;
@@ -60,6 +62,7 @@ public class CTextRenderer extends Component {
 
     public CTextRenderer setAlignment(Alignment alignment) {
         text.setAlignment(alignment);
+
         if (Window.getCurrentScene().isRunning()) {
             text.updatePositions();
         }

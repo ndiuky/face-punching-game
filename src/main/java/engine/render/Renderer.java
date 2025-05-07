@@ -92,7 +92,7 @@ public class Renderer {
             textureBatch.render();
         }
 
-        if (!Renderer.getCurrentShader().equals(AssetPool.getShaderByName("pickingShader"))) {
+        if (!Renderer.getCurrentShader().equals(AssetPool.getShader("pickingShader"))) {
             for (TextRenderBatch textBatch : textBatches) {
                 textBatch.render();
             }
@@ -113,6 +113,7 @@ public class Renderer {
 
         List<CTextRenderer> textRenderers = go.getComponents(CTextRenderer.class);
         if (textRenderers != null) {
+            // TODO: textRenderer is not used
             for (CTextRenderer textRenderer : textRenderers) {
                 for (TextRenderBatch textBatch : textBatches) {
                     if (textBatch.destroyIfExists(go)) {

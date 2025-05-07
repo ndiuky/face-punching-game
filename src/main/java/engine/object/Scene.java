@@ -93,10 +93,6 @@ public abstract class Scene {
     }
 
     public void saveSceneData() {
-        if (!EnginePreferences.ENABLE_DATA_SAVING) {
-            return;
-        }
-
         try {
             FileWriter writer = new FileWriter(SAVE_FILE_NAME);
             List<GameObject> gameObjectsToSerialize = new ArrayList<>();

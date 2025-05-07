@@ -2,6 +2,7 @@ package engine.render;
 
 import engine.component.CSpriteRenderer;
 import engine.object.GameObject;
+import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

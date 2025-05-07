@@ -45,7 +45,7 @@ public class Utils {
         return path;
     }
 
-    public static Map<String, String> loadPenisFile(String path) throws IOException {
+    public static Map<String, List<String>> loadPenisFile(String path) throws IOException {
         if (!path.endsWith(".penis")) {
             throw new IOException("Passed file path doesn't have a '.penis' postfix");
         }
@@ -57,15 +57,27 @@ public class Utils {
                 .map(s -> s.trim().replaceAll("\s", ""))
                 .filter(s -> !s.isBlank())
                 .toList();
-        Map<String, String> resultingMap = new HashMap<>(properties.size());
+        Map<String, List<String>> resultingMap = new HashMap<>(properties.size());
 
         properties.forEach(property -> {
             int separatorIndex = property.indexOf('=');
 
-            resultingMap.put(
-                    property.substring(0, separatorIndex),
-                    property.substring(separatorIndex + 1)
-            );
+            // TODO: выглядит как хуйня, переделать
+            if (resultingMap.get(property.substring(0, separatorIndex)) == null) {
+                resultingMap.put(
+                        property.substring(0, separatorIndex),
+                        List.of(property.substring(separatorIndex + 1))
+                );
+            } else {
+                resultingMap.compute(
+                        property.substring(0, separatorIndex),
+                        (k, v) -> {
+                            v.add(property.substring(separatorIndex + 1));
+
+                            return v;
+                        }
+                );
+            }
         });
 
         return resultingMap;

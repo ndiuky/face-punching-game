@@ -12,30 +12,42 @@ public class AssetPool {
 
     private static final String SHADER_PATH_TEMPLATE = "asset/shader/%s.glsl";
 
+    private static final String TEXTURE_PATH_TEMPLATE = "asset/texture/%s.png";
+
     private static final Map<String, Shader> shaders = new HashMap<>();
 
     private static final Map<String, Texture> textures = new HashMap<>();
 
     private static final Map<String, SpriteSheet> spriteSheets = new HashMap<>();
 
-    public static Shader getShaderByName(String shaderName) {
+    private AssetPool() {
+    }
+
+    /**
+     * @param shaderName name of the shader in 'asset/shader' directory without postfix
+     */
+    public static Shader getShader(String shaderName) {
         if (shaders.containsKey(shaderName)) {
             return shaders.get(shaderName);
         } else {
             Shader shader = new Shader(getFullShaderPath(shaderName));
             shader.compile();
             shaders.put(shaderName, shader);
+
             return shader;
         }
     }
 
-    public static Texture getTexture(String resourceName) {
-        if (textures.containsKey(resourceName)) {
-            return textures.get(resourceName);
+    /**
+     * @param textureName name of the texture in 'asset/texture' directory without postfix
+     */
+    public static Texture getTexture(String textureName) {
+        if (textures.containsKey(textureName)) {
+            return textures.get(textureName);
         } else {
-            Texture texture = new Texture()
-                    .init(resourceName);
-            textures.put(resourceName, texture);
+            Texture texture = new Texture().init(getFullTexturePath(textureName));
+            textures.put(textureName, texture);
+
             return texture;
         }
     }
@@ -52,5 +64,9 @@ public class AssetPool {
 
     private static String getFullShaderPath(String shaderName) {
         return String.format(SHADER_PATH_TEMPLATE, shaderName);
+    }
+
+    private static String getFullTexturePath(String textureName) {
+        return String.format(TEXTURE_PATH_TEMPLATE, textureName);
     }
 }

@@ -60,7 +60,7 @@ public class ForestScene extends Scene {
 
 
     private void loadResources() {
-        AssetPool.getShaderByName("default");
+        AssetPool.getShader("default");
 
         for (GameObject g : gameObjects) {
             if (g.getComponents(CSpriteRenderer.class) != null) {

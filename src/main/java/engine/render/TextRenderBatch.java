@@ -73,7 +73,7 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
 
     private int vaoID = -1;
 
-    private final Shader shader = AssetPool.getShaderByName("fontShader");
+    private final Shader shader = AssetPool.getShader("fontShader");
 
     private final float[] vertices;
 
@@ -205,16 +205,17 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
             Vector2f pos = new Vector2f(positions.get(i)).mul(textRenderer.gameObject.transform.scale);
             Glyph glyph = content.get(i);
 
-            boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
-            Matrix4f transformMatrix = new Matrix4f().identity();
-            if (isRotated) {
-                transformMatrix.translate(textRenderer.gameObject.transform.position.x,
-                        textRenderer.gameObject.transform.position.y, 0f);
-                transformMatrix.rotate((float) Math.toRadians(textRenderer.gameObject.transform.rotation),
-                        0, 0, 1);
-                transformMatrix.scale(textRenderer.gameObject.transform.scale.x,
-                        textRenderer.gameObject.transform.scale.y, 1);
-            }
+            // TODO: текст нельзя вращать
+//            boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
+//            Matrix4f transformMatrix = new Matrix4f().identity();
+//            if (isRotated) {
+//                transformMatrix.translate(textRenderer.gameObject.transform.position.x,
+//                        textRenderer.gameObject.transform.position.y, 0f);
+//                transformMatrix.rotate((float) Math.toRadians(textRenderer.gameObject.transform.rotation),
+//                        0, 0, 1);
+//                transformMatrix.scale(textRenderer.gameObject.transform.scale.x,
+//                        textRenderer.gameObject.transform.scale.y, 1);
+//            }
 
 
             //TODO: переделать это безумие из переменных
@@ -239,22 +240,22 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                 }
 
                 Vector4f currentPos = new Vector4f(
-                        isRotated ?
+                        /*isRotated ?
                                 new Vector4f(fullTextXAdd, fullTextYAdd, 0, 1).mul(transformMatrix)
-                                : new Vector4f(
+                                :*/ new Vector4f(
                                 fullTextXAdd,
                                 fullTextYAdd,
                                 0, 1)
                 );
 
-                vertices[offset] = currentPos.x + pos.x + xAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.x * TEXT_BASE_SIZE;
-                vertices[offset + 1] = currentPos.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
+                vertices[offset] = text.getOffset().x + currentPos.x + pos.x + xAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.x * TEXT_BASE_SIZE;
+                vertices[offset + 1] = text.getOffset().y +currentPos.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
                 vertices[offset + 2] = color.r;
                 vertices[offset + 3] = color.g;
                 vertices[offset + 4] = color.b;
                 vertices[offset + 5] = color.a;
-                vertices[offset + 6] = (glyph.x + xAdd) / (float) width;
-                vertices[offset + 7] = (glyph.y + yAdd) / (float) height;
+                vertices[offset + 6] = (glyph.x + xAdd) / width;
+                vertices[offset + 7] = (glyph.y + yAdd) / height;
 
                 offset += VERTEX_SIZE;
             }

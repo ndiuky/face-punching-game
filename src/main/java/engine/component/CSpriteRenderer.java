@@ -6,6 +6,7 @@ import engine.render.Texture;
 import engine.util.Color;
 import org.joml.Vector2f;
 
+// TODO: перетащить привязку спрайта в конструктор
 public class CSpriteRenderer extends Component {
 
     private Color color = Color.WHITE;
@@ -15,6 +16,10 @@ public class CSpriteRenderer extends Component {
     private transient Transform lastTransform;
 
     private transient boolean isDirty = true;
+
+//    TODO: добавить boolean переменную, которая будет отвечать за учитывание конкретного спрайта в pickingShader.
+//     при false не будет, при true будет
+    private boolean isClickable = false;
 
     @Override
     public void start() {
@@ -71,5 +76,15 @@ public class CSpriteRenderer extends Component {
         isDirty = true;
 
         return this;
+    }
+
+    public CSpriteRenderer setIsClickable(boolean value){
+        isClickable = value;
+
+        return this;
+    }
+
+    public boolean isClickable() {
+        return isClickable;
     }
 }

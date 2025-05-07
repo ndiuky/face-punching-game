@@ -3,7 +3,7 @@ package component.entity;
 import engine.component.Component;
 import org.joml.Vector2f;
 
-public abstract class Bot extends Component {
+public abstract class Entity extends Component {
 
     //TODO: добавить коллайдер
     protected float knockbackResistance = 0.8f;

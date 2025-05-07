@@ -5,7 +5,7 @@ import util.InteractionType;
 
 import java.util.List;
 
-public class Dummy extends Bot implements Interactable {
+public class Dummy extends Entity implements Interactable {
 
     @Override
     public void start() {

@@ -4,7 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-//TODO: размер мир и объектов зависит от разрешения окна игры. Исправляется фиксированным значением projectionSize, но это еще нужно правильно реализовать.
+//TODO: размер мира и объектов зависит от разрешения окна игры. Исправляется фиксированным значением projectionSize, но это еще нужно правильно реализовать.
 public class Camera {
 
     private final Matrix4f projectionMatrix;

@@ -214,4 +214,7 @@ public class Shader {
         }
     }
 
+    public String getFilepath() {
+        return filepath;
+    }
 }

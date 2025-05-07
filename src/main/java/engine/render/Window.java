@@ -20,6 +20,7 @@ import scene.SceneSelectionScene;
 import static engine.util.EnginePreferences.ENABLE_SMALLER_WINDOWED_SIZE;
 import static engine.util.EnginePreferences.ENABLE_VSYNK;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.GLFW_DONT_CARE;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F3;
@@ -135,7 +136,7 @@ public class Window implements KeyboardEventListener {
 
             PointerBuffer monitorBuffer = GLFW.glfwGetMonitors();
 
-            primaryMonitor = monitorBuffer.get(Math.min(monitorBuffer.capacity() - 1, Math.max(0, EnginePreferences.CREATE_WINDOW_ON_MONITOR)));
+            primaryMonitor = monitorBuffer.get(Math.clamp(EnginePreferences.CREATE_WINDOW_ON_MONITOR, 0, monitorBuffer.capacity() - 1));
 
             try {
                 vidMode = GLFW.glfwGetVideoMode(primaryMonitor);
@@ -174,8 +175,18 @@ public class Window implements KeyboardEventListener {
                 glfwWindow = glfwCreateWindow(windowedWidth, windowedHeight, title, 0, 0);
             }
 
-            windowPosX = (vidMode.height() - height / 2) / 2;
-            windowPosY = (vidMode.width() - width / 2) / 2;
+            windowPosX = (vidMode.width() - height / 2) / 2;
+            windowPosY = (vidMode.height() - width / 2) / 2;
+
+            PointerBuffer monitorBuffer = GLFW.glfwGetMonitors();
+
+            int xOffset = 0;
+            for (int i = 0; i < Math.clamp(EnginePreferences.CREATE_WINDOW_ON_MONITOR, 0, primaryMonitor); i++) {
+                xOffset += GLFW.glfwGetVideoMode(monitorBuffer.get(i)).width();
+            }
+
+            windowPosX = vidMode.width() / 2 + xOffset;
+            windowPosY = (int) (vidMode.height() / 2.2f);
         }
 
         if (fullscreen) {
@@ -187,7 +198,7 @@ public class Window implements KeyboardEventListener {
 
             GLFW.glfwSetWindowMonitor(glfwWindow, primaryMonitor, 0, 0, width, height, vidMode.refreshRate());
         } else {
-            GLFW.glfwSetWindowMonitor(glfwWindow, 0, windowPosX, windowPosY, windowedWidth, windowedHeight, 0);
+            GLFW.glfwSetWindowMonitor(glfwWindow, NULL, windowPosX, windowPosY, windowedWidth, windowedHeight, GLFW_DONT_CARE);
         }
 
         if (glfwWindow == NULL) {
@@ -209,13 +220,9 @@ public class Window implements KeyboardEventListener {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        pickingTexture = fullscreen
-                ? new PickingTexture(width, height)
-                : new PickingTexture(windowedWidth, windowedHeight);
+        pickingTexture = new PickingTexture(getWidth(), getHeight());
 
-        glViewport(0, 0,
-                fullscreen ? width : windowedWidth,
-                fullscreen ? height : windowedHeight);
+        glViewport(0, 0, getWidth(), getHeight());
     }
 
     public void loop() {
@@ -223,8 +230,9 @@ public class Window implements KeyboardEventListener {
         float endTime;
         float dt = -1.0f;
 
-        Shader defaultShader = AssetPool.getShaderByName("default");
-        Shader pickingShader = AssetPool.getShaderByName("pickingShader");
+        Shader defaultShader = AssetPool.getShader("default");
+//        Shader lightingShader = AssetPool.getShaderByName("lightingShader");
+        Shader pickingShader = AssetPool.getShader("pickingShader");
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
@@ -232,7 +240,6 @@ public class Window implements KeyboardEventListener {
             glDisable(GL_BLEND);
             pickingTexture.enableWriting();
 
-//            clearColor(Color.TRANSPARENT);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             renderSceneWithShader(pickingShader);
@@ -243,12 +250,13 @@ public class Window implements KeyboardEventListener {
 
             DebugDraw.beginFrame();
 
-//            clearColor(bgColor);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if (dt >= 0) {
+                // TODO: нужно разделить обновление графики от обновления реального состояния объектов. Это должно увеличить производительность В РАЗЫ
                 currentScene.update(dt);
                 renderSceneWithShader(defaultShader);
+//                renderSceneWithShader(lightingShader);
 //                renderSceneWithShader(pickingShader);
 
                 DebugDraw.draw();
@@ -271,7 +279,9 @@ public class Window implements KeyboardEventListener {
     }
 
     private void clear() {
-        currentScene.saveSceneData();
+        if (EnginePreferences.ENABLE_DATA_SAVING) {
+            currentScene.saveSceneData();
+        }
 
         glfwFreeCallbacks(glfwWindow);
         glfwDestroyWindow(glfwWindow);

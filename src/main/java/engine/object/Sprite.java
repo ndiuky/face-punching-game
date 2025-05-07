@@ -1,6 +1,7 @@
 package engine.object;
 
 import engine.render.Texture;
+import engine.util.AssetPool;
 import org.joml.Vector2f;
 
 public class Sprite {

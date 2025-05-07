@@ -35,7 +35,7 @@ public class BoxingRingScene extends Scene {
     public void init() {
         loadResources();
 
-        sprites = AssetPool.getSpritesheet("asset/texture/test-sprite-sheet.png");
+        sprites = AssetPool.getSpritesheet("test-sprite-sheet");
 
         camera = new Camera(new Vector2f(0, 0));
         GameObject cameraGO = new GameObject("camera", new Transform(new Vector2f(0, 0), new Vector2f(1, 1)), 1)
@@ -45,8 +45,7 @@ public class BoxingRingScene extends Scene {
         addGameObjectToScene(cameraGO);
 
         boxingRing = new GameObject("boxingRing", new Transform(new Vector2f(0, 0), new Vector2f(12.5f, 12.5f)), -1)
-                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/boxing-ring.png"))))
-        ;
+                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("boxing-ring"))));
 
         addGameObjectToScene(boxingRing);
 
@@ -59,7 +58,7 @@ public class BoxingRingScene extends Scene {
 
         GameObject dummy = new GameObject("dummy", new Transform(new Vector2f(0, 128), new Vector2f(50, 50)), 4)
                 .addComponent(new Dummy())
-                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/dummy.png"))));
+                .addComponent(new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("dummy"))));
 
         addGameObjectToScene(dummy);
 
@@ -77,14 +76,14 @@ public class BoxingRingScene extends Scene {
     }
 
     private void loadResources() {
-        AssetPool.getShaderByName("default");
+        AssetPool.getShader("default");
 
-        AssetPool.getTexture("asset/texture/chip-small.png");
+        AssetPool.getTexture("chip-small");
 
-        AssetPool.addSpriteSheet("asset/texture/test-sprite-sheet.png",
-                new SpriteSheet(AssetPool.getTexture("asset/texture/test-sprite-sheet.png"), 16, 16, 5, 0));
-        AssetPool.addSpriteSheet("asset/texture/gizmo.png",
-                new SpriteSheet(AssetPool.getTexture("asset/texture/gizmo.png"), 3, 8, 3, 0));
+        AssetPool.addSpriteSheet("test-sprite-sheet",
+                new SpriteSheet(AssetPool.getTexture("test-sprite-sheet"), 16, 16, 5, 0));
+        AssetPool.addSpriteSheet("gizmo",
+                new SpriteSheet(AssetPool.getTexture("gizmo"), 3, 8, 3, 0));
 
         for (GameObject g : gameObjects) {
             if (g.getComponents(CSpriteRenderer.class) != null) {

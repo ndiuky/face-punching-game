@@ -36,7 +36,7 @@ public class DebugDraw {
 
     private static final float[] vertices = new float[MAX_LINES * INDICES_COUNT * 2];
 
-    private static final Shader shader = AssetPool.getShaderByName("debugLine");
+    private static final Shader shader = AssetPool.getShader("debugLine");
 
     private static int vaoID;
 

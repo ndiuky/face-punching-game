@@ -1,14 +1,14 @@
 package gameComponent;
 
-import component.entity.Bot;
+import component.entity.Entity;
 
 @Deprecated
 public abstract class GameComponent {
 
-    protected Bot bot;
+    protected Entity entity;
 
-    public void init(Bot bot){
-        this.bot = bot;
+    public void init(Entity entity){
+        this.entity = entity;
     }
 
     public void update(float dt) {

@@ -1,11 +1,13 @@
 package engine.component;
 
-import component.Item;
+import component.ItemDrop;
 import engine.object.GameObject;
 import engine.render.DebugDraw;
 import engine.render.Window;
 import engine.util.Color;
 import engine.util.EnginePreferences;
+import item.Item;
+import item.ItemStack;
 
 import java.util.List;
 
@@ -20,12 +22,21 @@ public class CItemPickUp extends Component {
 
         for (GameObject go : allGameObjectsInRadius) {
             for (Component component : go.getAllComponents()) {
-                if (component instanceof Item item){
-                    item.setIsBeingPickedUp(gameObject.transform.position);
+                if (component instanceof ItemDrop itemDrop && !itemDrop.isBeingPickedUp()) {
+                    itemDrop.setIsBeingPickedUp(this);
                 }
             }
         }
+    }
 
+    // TODO: заменить на ItemStack
+    public void onPickupComplete(ItemStack pickedItem) {
+        final List<CInventory> components = gameObject.getComponents(CInventory.class);
+        if (components == null){
+           return;
+       }
+
+        components.getFirst().addItemStack(pickedItem);
     }
 
     public CItemPickUp setPickUpRadius(float pickUpRadius) {

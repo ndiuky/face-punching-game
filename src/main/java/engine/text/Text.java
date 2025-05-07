@@ -20,6 +20,8 @@ public class Text implements UIElement<Text> {
 
     private final List<Vector2f> positions = new ArrayList<>();
 
+    private Vector2f offset = new Vector2f(0);
+
     private String textContent;
 
     private float sizeModifier;
@@ -73,10 +75,11 @@ public class Text implements UIElement<Text> {
         return positions;
     }
 
-    public void setSizeModifier(float sizeModifier) {
+    public Text setSizeModifier(float sizeModifier) {
         this.sizeModifier = sizeModifier;
 
         updatePositions();
+        return this;
     }
 
     public float getSizeModifier() {
@@ -134,6 +137,16 @@ public class Text implements UIElement<Text> {
     @Override
     public Text setAlignment(Alignment alignment) {
         this.alignment = alignment;
+        return this;
+    }
+
+    public Vector2f getOffset() {
+        return offset;
+    }
+
+    public Text setOffset(final Vector2f offset) {
+        this.offset = offset;
+
         return this;
     }
 

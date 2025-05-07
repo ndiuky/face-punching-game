@@ -1,6 +1,6 @@
 package component.object;
 
-import component.Item;
+import component.ItemDrop;
 import engine.component.CSpriteRenderer;
 import engine.component.Component;
 import engine.component.ui.CPositionText;
@@ -12,6 +12,8 @@ import engine.util.Alignment;
 import engine.util.AssetPool;
 import engine.util.Color;
 import engine.util.Interactable;
+import item.Item;
+import item.ItemStack;
 import org.joml.Vector2f;
 import util.InteractionType;
 import util.LootTable;
@@ -44,23 +46,22 @@ public class Stone extends Component implements Interactable {
     Random random = new Random();
 
     private LootTable lootTable = LootTable.of(
-            Item.generateFromTexture("asset/texture/nut-0.png"),
-            Item.generateFromTexture("asset/texture/nut-1.png"),
-            Item.generateFromTexture("asset/texture/screw-0.png"),
-            Item.generateFromTexture("asset/texture/screw-1.png")
+            ItemDrop.generateForItemStack(new ItemStack(Item.STONE_PEBBLE, 2)),
+            ItemDrop.generateForItem(Item.SCREW),
+            ItemDrop.generateForItem(Item.NUT)
     );
 
     @Override
     public void start() {
         originalScale = new Vector2f(gameObject.transform.scale);
 
-        textRenderer = new CTextRenderer().setText(new Text("").setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
-        textRenderer.getText().setSizeModifier(0.5f);
-        gameObject.addComponent(textRenderer);
+//        textRenderer = new CTextRenderer().setText(new Text(gameObject.getName()).setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
+//        textRenderer.getText().setSizeModifier(0.5f);
+//        gameObject.addComponent(textRenderer);
 
-        gameObject.addComponent(new CPositionText());
-
-        stoneSR = new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("asset/texture/stone.png")));
+        stoneSR = new CSpriteRenderer()
+                .setSprite(new Sprite().setTexture(AssetPool.getTexture("stone")))
+                .setIsClickable(true);
 
         gameObject.addComponent(stoneSR);
     }
@@ -80,10 +81,10 @@ public class Stone extends Component implements Interactable {
     }
 
     private void destroyStone() {
-        for (Item item : lootTable.getContent()) {
-            item.gameObject.transform.position = new Vector2f(gameObject.transform.position);
-            item.applyInitialImpulse(new Vector2f(random.nextFloat(-1, 1), random.nextFloat(-1, 1)));
-            Window.getCurrentScene().addGameObjectToScene(item.gameObject);
+        for (ItemDrop itemDrop : lootTable.getContent()) {
+            itemDrop.gameObject.transform.position = new Vector2f(gameObject.transform.position);
+            itemDrop.applyInitialImpulse(new Vector2f(random.nextFloat(-1, 1), random.nextFloat(-1, 1)));
+            Window.getCurrentScene().addGameObjectToScene(itemDrop.gameObject);
         }
         gameObject.destroy();
     }

@@ -124,7 +124,7 @@ public class MouseListener implements MouseEventProducer {
 
     public static Vector2f getOrtho() {
         if (calculatedValuesAtFrame == Window.getCurrentFrame()) {
-            return cachedOrtho;
+            return new Vector2f(cachedOrtho);
         }
 
         float currentX = (xPos / (float) Window.getWidth()) * 2.0f - 1.0f;

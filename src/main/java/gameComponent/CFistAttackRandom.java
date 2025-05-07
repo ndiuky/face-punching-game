@@ -31,7 +31,7 @@ import static util.Utils.calculatePath;
 
 public class CFistAttackRandom extends Component implements MouseEventListener {
 
-    private final Sprite FIST_SPRITE = new Sprite().setTexture(AssetPool.getTexture("asset/texture/fist.png"));
+    private final Sprite FIST_SPRITE = new Sprite().setTexture(AssetPool.getTexture("fist"));
 
     private static final float TIME_BETWEEN_ATTACKS = 0.25f;
 

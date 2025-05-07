@@ -11,7 +11,6 @@ import static engine.event.MouseEventProducer.listenToMouseRelease;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_COMMA;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
 
-// TODO: сделать хотя бы базовую камеру, просто чтобы она следила за игроком с небольшой интерполяцией
 public class CDraggingCamera extends Component implements MouseEventListener {
 
     private float dragDebounce = 0.032f;
@@ -64,8 +63,8 @@ public class CDraggingCamera extends Component implements MouseEventListener {
             this.lerpTime += 0.01f * dt;
 
             if (Math.abs(camera.position.x) <= 0.01f &&
-                    Math.abs(camera.position.y) <= 0.01f &&
-                    Math.abs(camera.getZoom() - 1) <= 0.01f) {
+                Math.abs(camera.position.y) <= 0.01f &&
+                Math.abs(camera.getZoom() - 1) <= 0.01f) {
                 lerpTime = 0.0f;
                 camera.position.set(0f, 0f);
                 camera.setZoom(1.0f);

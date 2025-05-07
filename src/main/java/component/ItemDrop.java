@@ -122,8 +122,6 @@ public class ItemDrop extends Component {
         gameObject.transform.position = new Vector2f(initialPos).add(new Vector2f(slideDir).mul(factor));
         gameObject.transform.rotation = rotationFactor * MAX_SUCKING_ANGLE_DELTA;
 
-        System.out.println(gameObject.transform.rotation);
-
         currSlidingTime += dt;
 
         if (factor == 1 && rotationFactor == 1) {

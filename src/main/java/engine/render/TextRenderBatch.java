@@ -243,13 +243,13 @@ public class TextRenderBatch implements Comparable<TextRenderBatch> {
                         /*isRotated ?
                                 new Vector4f(fullTextXAdd, fullTextYAdd, 0, 1).mul(transformMatrix)
                                 :*/ new Vector4f(
-                                fullTextXAdd,
-                                fullTextYAdd,
-                                0, 1)
+                        fullTextXAdd,
+                        fullTextYAdd,
+                        0, 1)
                 );
 
                 vertices[offset] = text.getOffset().x + currentPos.x + pos.x + xAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.x * TEXT_BASE_SIZE;
-                vertices[offset + 1] = text.getOffset().y +currentPos.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
+                vertices[offset + 1] = text.getOffset().y + currentPos.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
                 vertices[offset + 2] = color.r;
                 vertices[offset + 3] = color.g;
                 vertices[offset + 4] = color.b;

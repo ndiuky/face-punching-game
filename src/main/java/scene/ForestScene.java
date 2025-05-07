@@ -3,12 +3,15 @@ package scene;
 import component.controls.TestingSceneControls;
 import component.entity.Player;
 import component.object.Stone;
+import component.object.Tree;
 import engine.component.CGameCamera;
 import engine.component.CSpriteRenderer;
 import engine.component.ui.CFpsCounter;
 import engine.component.ui.CPositionText;
 import engine.object.GameObject;
+import engine.object.Prefab;
 import engine.object.Scene;
+import engine.object.Sprite;
 import engine.object.Transform;
 import engine.render.Camera;
 import engine.util.AssetPool;
@@ -45,17 +48,7 @@ public class ForestScene extends Scene {
 
         addGameObjectToScene(fpsGO1);
 
-        Random random = new Random();
-
-
-        for (int i = 0; i < 50; i++) {
-            float x = random.nextFloat(0.8f, 1.2f);
-            GameObject stone = new GameObject("stone", new Transform(new Vector2f(random.nextInt(-14, 15), random.nextInt(-14, 15)), new Vector2f(x, x)), -1)
-                    .addComponent(new Stone())
-                    .addComponent(new CPositionText());
-
-            addGameObjectToScene(stone);
-        }
+        generateWorld();
     }
 
 
@@ -72,5 +65,40 @@ public class ForestScene extends Scene {
                 }
             }
         }
+    }
+
+    private void generateWorld() {
+        Random random = new Random();
+
+//        addGameObjectToScene(new GameObject("pis'ka", new Transform(new Vector2f(0), new Vector2f(1)), -1).addComponent(new CTextRenderer().setText(new Text("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))));
+
+        //stones
+        for (int i = 0; i < 50; i++) {
+            float x = random.nextFloat(0.8f, 1.2f);
+            GameObject stone = new GameObject("stone", new Transform(new Vector2f(random.nextInt(-14, 15), random.nextInt(-14, 15)), new Vector2f(x)), -1)
+                    .addComponent(new Stone());
+
+            addGameObjectToScene(stone);
+        }
+
+        //trees
+        for (int i = 0; i < 25; i++) {
+            float x = random.nextFloat(0.8f, 1.2f);
+            GameObject stone = new GameObject("tree", new Transform(new Vector2f(random.nextInt(-14, 15) + 0.5f, random.nextInt(-14, 15) + 0.5f), new Vector2f(x)), -1)
+                    .addComponent(new Tree());
+
+            addGameObjectToScene(stone);
+        }
+
+        //floor tiles
+        Sprite grassFloor = new Sprite().setTexture(AssetPool.getTexture("grass-0"));
+        for (int i = -25; i < 25; i++) {
+            for (int j = -25; j < 25; j++) {
+                GameObject go = Prefab.generateSpriteObject(grassFloor, 1, 1, -5);
+                go.transform.position = new Vector2f(i, j);
+                addGameObjectToScene(go);
+            }
+        }
+
     }
 }

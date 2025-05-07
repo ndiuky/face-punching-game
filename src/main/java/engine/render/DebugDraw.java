@@ -58,7 +58,7 @@ public class DebugDraw {
         glVertexAttribPointer(1, 3, GL_FLOAT, false, INDICES_COUNT * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
 
-        glLineWidth(2.0f);
+        glLineWidth(1.0f);
     }
 
     public static void beginFrame() {
@@ -67,11 +67,7 @@ public class DebugDraw {
             started = true;
         }
 
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).beginFrame() < 0) {
-                lines.remove(i--);
-            }
-        }
+        lines.clear();
     }
 
 
@@ -119,19 +115,15 @@ public class DebugDraw {
     }
 
     public static void drawLine(Vector2f from, Vector2f to, int zOrder) {
-        drawLine(from, to, zOrder, Color.GREEN, 1);
+        drawLine(from, to, zOrder, Color.GREEN);
     }
 
     public static void drawLine(Vector2f from, Vector2f to, int zOrder, Color color) {
-        drawLine(from, to, zOrder, color, 1);
-    }
-
-    public static void drawLine(Vector2f from, Vector2f to, int zOrder, Color color, int lifetime) {
         if (lines.size() >= MAX_LINES) {
             return;
         }
 
-        lines.add(new Line(from, to, zOrder, color.asVector(), lifetime));
+        lines.add(new Line(from, to, zOrder, color.asVector()));
     }
 
     public static void drawBox(Vector2f center, Vector2f size, int zOrder, float rotation) {
@@ -158,10 +150,10 @@ public class DebugDraw {
             }
         }
 
-        drawLine(vertices[0], vertices[1], zOrder, color, lifetime);
-        drawLine(vertices[1], vertices[2], zOrder, color, lifetime);
-        drawLine(vertices[2], vertices[3], zOrder, color, lifetime);
-        drawLine(vertices[3], vertices[0], zOrder, color, lifetime);
+        drawLine(vertices[0], vertices[1], zOrder, color);
+        drawLine(vertices[1], vertices[2], zOrder, color);
+        drawLine(vertices[2], vertices[3], zOrder, color);
+        drawLine(vertices[3], vertices[0], zOrder, color);
     }
 
     public static void drawCircle(Vector2f center, float radius, int zOrder) {
@@ -187,12 +179,12 @@ public class DebugDraw {
             points[i] = new Vector2f(tmp).add(center);
 
             if (i > 0) {
-                drawLine(points[i - 1], points[i], zOrder, color, lifetime);
+                drawLine(points[i - 1], points[i], zOrder, color);
             }
             currentAngle += increment;
         }
 
-        drawLine(points[points.length - 1], points[0], zOrder, color, lifetime);
+        drawLine(points[points.length - 1], points[0], zOrder, color);
     }
 
     public static void drawPath(Vector2f[] path) {
@@ -203,7 +195,7 @@ public class DebugDraw {
 
     public static void drawPath(Vector2f[] path, int lifetime) {
         for (int i = 0; i < path.length - 1; i++) {
-            drawLine(path[i], path[i + 1], -1, Color.GREEN, lifetime);
+            drawLine(path[i], path[i + 1], -1, Color.GREEN);
         }
     }
 }

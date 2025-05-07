@@ -28,8 +28,6 @@ public class Stone extends Component implements Interactable {
 
     private int hp = 10;
 
-    CTextRenderer textRenderer;
-
     private boolean wasJustHit;
 
     private float currentHitAnimationTime = 0;
@@ -54,10 +52,6 @@ public class Stone extends Component implements Interactable {
     @Override
     public void start() {
         originalScale = new Vector2f(gameObject.transform.scale);
-
-//        textRenderer = new CTextRenderer().setText(new Text(gameObject.getName()).setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
-//        textRenderer.getText().setSizeModifier(0.5f);
-//        gameObject.addComponent(textRenderer);
 
         stoneSR = new CSpriteRenderer()
                 .setSprite(new Sprite().setTexture(AssetPool.getTexture("stone")))

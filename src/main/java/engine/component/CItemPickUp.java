@@ -29,7 +29,6 @@ public class CItemPickUp extends Component {
         }
     }
 
-    // TODO: заменить на ItemStack
     public void onPickupComplete(ItemStack pickedItem) {
         final List<CInventory> components = gameObject.getComponents(CInventory.class);
         if (components == null){

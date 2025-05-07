@@ -37,9 +37,9 @@ public class GameObject {
         this.transform = transform;
         this.zIndex = zIndex;
 
-        CTextRenderer textRenderer = new CTextRenderer().setText(new Text(name).setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
-        textRenderer.getText().setSizeModifier(0.5f);
-        addComponent(textRenderer);
+//        CTextRenderer textRenderer = new CTextRenderer().setText(new Text(name).setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
+//        textRenderer.getText().setSizeModifier(0.5f);
+//        addComponent(textRenderer);
 
         uid = idCounter++;
     }

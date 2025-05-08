@@ -42,7 +42,7 @@ out vec4 color;
 
 void main(){
     if (fTextureId > 0) {
-        color = fColor * texture(uTextures[int(fTextureId)], fTextureCoords) + 0.5f;
+        color = fColor * texture(uTextures[int(fTextureId)], fTextureCoords);
     } else {
         color = fColor;
     }

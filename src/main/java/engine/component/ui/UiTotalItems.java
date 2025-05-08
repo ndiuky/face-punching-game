@@ -1,7 +1,10 @@
 package engine.component.ui;
 
 import engine.component.CInventory;
+import engine.render.DebugDraw;
+import engine.util.EngineUtils;
 import item.Item;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.EnumMap;
@@ -20,7 +23,6 @@ public class UiTotalItems extends UiElement {
 
         this.connectedInventory = connectedInventory;
     }
-
     @Override
     public void update() {
 //TODO: УБРАТЬ ОТСЮДА НАХУЙ!!!!!!!!

@@ -70,24 +70,30 @@ public abstract class UiElement {
     public Vector4f getScreenPosWithKeptProportions(float widthToHeightCoefficient) {
         float aspectRatio = Window.getAspectRatio();
 
-        if (widthToHeightCoefficient < aspectRatio) {
-            float coefficient = (1 - widthToHeightCoefficient / aspectRatio) * 0.5f;
+        float currentWidth = screenPos.z - screenPos.x;
+        float currentHeight = screenPos.w - screenPos.y;
+        float desiredNormalizedRatio = widthToHeightCoefficient / aspectRatio;
+        float currentNormalizedRatio = currentWidth / currentHeight;
+        float centerX = (screenPos.x + screenPos.z) * 0.5f;
+        float centerY = (screenPos.y + screenPos.w) * 0.5f;
 
+        if (currentNormalizedRatio > desiredNormalizedRatio) {
+
+            float newWidth = currentHeight * desiredNormalizedRatio * 0.5f;
             return new Vector4f(
-                    screenPos.x + coefficient,
+                    centerX - newWidth,
                     screenPos.y,
-                    screenPos.z - coefficient,
+                    centerX + newWidth,
                     screenPos.w
             );
         }
 
-        float coefficient = 1 - (aspectRatio / widthToHeightCoefficient) * 0.5f;
-
+        float newHeight = currentWidth / desiredNormalizedRatio * 0.5f;
         return new Vector4f(
                 screenPos.x,
-                screenPos.y + coefficient,
+                centerY - newHeight,
                 screenPos.z,
-                screenPos.w - coefficient
+                centerY + newHeight
         );
     }
 

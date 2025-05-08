@@ -24,6 +24,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_DONT_CARE;
 import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F3;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 import static org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
@@ -112,6 +113,7 @@ public class Window implements KeyboardEventListener {
         //TODO: понятия не имею почему это ЗДЕСЬ
         KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F11, instance);
         KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F3, instance);
+        KeyboardEventProducer.listenToKeyboardPress(GLFW_KEY_F5, instance);
 
         if (EnginePreferences.ENABLE_DATA_LOADING) {
             currentScene.loadSceneData();
@@ -188,6 +190,8 @@ public class Window implements KeyboardEventListener {
 
             windowPosX = vidMode.width() / 2 + xOffset;
             windowPosY = (int) (vidMode.height() / 2.2f);
+        } else{
+            currentScene.getCamera().updateProjectionSize();
         }
 
         if (fullscreen) {
@@ -346,11 +350,12 @@ public class Window implements KeyboardEventListener {
             toggleFullscreen();
         } else if (key == GLFW_KEY_F3) {
             toggleDebugMenu();
+        } else if (key == GLFW_KEY_F5){
+            changeScene(ForestScene.class);
         }
     }
 
     @Override
     public void onKeyRelease(int key) {
-
     }
 }

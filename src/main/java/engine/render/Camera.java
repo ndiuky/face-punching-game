@@ -4,12 +4,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-//TODO: размер мира и объектов зависит от разрешения окна игры. Исправляется фиксированным значением projectionSize, но это еще нужно правильно реализовать.
 public class Camera {
 
     private final Matrix4f projectionMatrix;
 
-    private final Vector2f projectionSize;
+    private Vector2f projectionSize;
 
     private final Matrix4f viewMatrix;
 
@@ -31,7 +30,7 @@ public class Camera {
         viewMatrix = new Matrix4f();
         inverseProjectionMatrix = new Matrix4f();
         inverseViewMatrix = new Matrix4f();
-        projectionSize = new Vector2f(Window.getWidth(), Window.getHeight());
+        updateProjectionSize();
 
         adjustProjection();
     }
@@ -101,5 +100,9 @@ public class Camera {
         this.zoom = zoom;
 
         return this;
+    }
+
+    public void updateProjectionSize(){
+        projectionSize = new Vector2f(Window.getWidth(), Window.getHeight());
     }
 }

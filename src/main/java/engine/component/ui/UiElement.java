@@ -67,28 +67,27 @@ public abstract class UiElement {
         return this;
     }
 
-    //TODO: возможно не работает при изменённом screenPos
     public Vector4f getScreenPosWithKeptProportions(float widthToHeightCoefficient) {
         float aspectRatio = Window.getAspectRatio();
 
         if (widthToHeightCoefficient < aspectRatio) {
-            float coefficient = widthToHeightCoefficient / aspectRatio;
+            float coefficient = (1 - widthToHeightCoefficient / aspectRatio) * 0.5f;
 
             return new Vector4f(
-                    screenPos.x * coefficient,
+                    screenPos.x + coefficient,
                     screenPos.y,
-                    screenPos.z * coefficient,
+                    screenPos.z - coefficient,
                     screenPos.w
             );
         }
 
-        float coefficient = aspectRatio / widthToHeightCoefficient;
+        float coefficient = 1 - (aspectRatio / widthToHeightCoefficient) * 0.5f;
 
         return new Vector4f(
                 screenPos.x,
-                screenPos.y * coefficient,
+                screenPos.y + coefficient,
                 screenPos.z,
-                screenPos.w * coefficient
+                screenPos.w - coefficient
         );
     }
 

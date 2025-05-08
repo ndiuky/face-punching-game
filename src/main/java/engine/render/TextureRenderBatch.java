@@ -2,7 +2,6 @@ package engine.render;
 
 import engine.component.CSpriteRenderer;
 import engine.object.GameObject;
-import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -186,6 +185,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch
     }
 
     private void loadVertexProperties(int index) {
+
         CSpriteRenderer sprite = spriteRenderers[index];
 
         int offset = index * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;

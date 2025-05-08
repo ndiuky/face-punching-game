@@ -1,7 +1,6 @@
 package engine.component.ui;
 
 import engine.component.CInventory;
-import engine.util.AssetPool;
 import item.Item;
 import org.joml.Vector4f;
 
@@ -20,23 +19,16 @@ public class UiTotalItems extends UiElement {
         super(canvas);
 
         this.connectedInventory = connectedInventory;
-
-        uiSprites.add((UiSprite) new UiSprite(canvas, Item.NUT.sprite).setScreenPos(new Vector4f(-1, -1, 0, 0)));
-        uiSprites.add((UiSprite) new UiSprite(canvas, Item.STONE_PEBBLE.sprite).setScreenPos(new Vector4f(0, 0, 1, 1)).setKeepProportions(false));
-        uiSprites.add((UiSprite) new UiSprite(canvas, Item.CHIP.sprite).setScreenPos(new Vector4f(0.25f, -1, 0.75f, 0)));
     }
 
     @Override
     public void update() {
 //TODO: УБРАТЬ ОТСЮДА НАХУЙ!!!!!!!!
+        updateContents();
 
-
-
-//        updateContents();
-//
-//        if (isDirty) {
-//            redrawSidePanel();
-//        }
+        if (isDirty) {
+            redrawSidePanel();
+        }
     }
 
     public void updateContents() {
@@ -53,7 +45,7 @@ public class UiTotalItems extends UiElement {
         for (Map.Entry<Item, Integer> currItems : contents.entrySet()) {
 
             //TODO: не вижу смысла сначала передавать конвас в конструктор, а затем ему же передавать этот объект. Нужно что-то с этим придумать
-            UiSprite uiSprite = (UiSprite) new UiSprite(canvas, currItems.getKey().sprite).setScreenPos(new Vector4f(-1, 0.5f - counter * 0.05f - 0.05f, -0.95f, 0.5f - counter * 0.05f));
+            UiSprite uiSprite = (UiSprite) new UiSprite(canvas, currItems.getKey().sprite).setScreenPos(new Vector4f(-1, 1 - (counter + 1) * 0.1f, -0.9f, 1 - counter * 0.1f));
 //            canvas.addUiElement(uiSprite);
             uiSprites.add(uiSprite);
 

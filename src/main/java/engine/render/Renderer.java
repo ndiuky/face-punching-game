@@ -123,6 +123,11 @@ public class Renderer {
     public void render() {
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
+        //TODO: delete
+//        if (!currentShader.equals(AssetPool.getShader("uiShader"))) {
+//            return;
+//        }
+
         for (List<? extends Batch> batches : shaderBatchesMapping.get(currentShader)) {
             for (Batch batch : batches) {
                 batch.render();

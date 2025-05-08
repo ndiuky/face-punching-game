@@ -15,11 +15,14 @@ void main(){
 
     fColor = aColor;
     fTextureId = aTextureId;
-    if (gl_VertexID == 0){
+
+    // TODO: возможно стоит передавать фиксированные текстурные координаты прямо с CPU, а на стороне GPU не заниматься вычислениями
+    int vertexId = gl_VertexID % 4;
+    if (vertexId == 0){
         fTextureCoords = vec2(0, 1);
-    } else if (gl_VertexID == 1){
+    } else if (vertexId == 1){
         fTextureCoords = vec2(0, 0);
-    } else if (gl_VertexID == 2){
+    } else if (vertexId == 2){
         fTextureCoords = vec2(-1, 0);
     } else {
         fTextureCoords = vec2(-1, 1);
@@ -39,7 +42,7 @@ out vec4 color;
 
 void main(){
     if (fTextureId > 0) {
-        color = fColor * texture(uTextures[int(fTextureId)], fTextureCoords) + 0.2;
+        color = fColor * texture(uTextures[int(fTextureId)], fTextureCoords) + 0.5f;
     } else {
         color = fColor;
     }

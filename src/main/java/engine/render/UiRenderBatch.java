@@ -7,7 +7,6 @@ import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static engine.util.EnginePreferences.DEFAULT_QUAD_VERTICES_AMOUNT;
 import static engine.util.EnginePreferences.EBO_QUAD_VERTICES_AMOUNT;
@@ -93,12 +92,12 @@ public class UiRenderBatch implements Batch {
     @Override
     public void render() {
         //TODO: убрать стрим
-        if (attachedCanvas.getUiElements().stream().map(e -> e.getUiSprites().size()).reduce(Integer::sum).get() != numUiSprites){
+        if (attachedCanvas.getUiElements().stream().map(e -> e.getUiSprites().size()).reduce(Integer::sum).get() != numUiSprites) {
             numUiSprites = 0;
 
             //TODO: убрать стрим
             attachedCanvas.getUiElements().forEach(this::addElement);
-        } else{
+        } else {
             //TODO: implement rebuffering
             for (int i = 0; i < numUiSprites; i++) {
                 loadVertexProperties(i);

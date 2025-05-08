@@ -1,11 +1,10 @@
 package scene;
 
-import component.controls.TestingSceneControls;
+import component.controls.ForestSceneControls;
 import component.entity.Player;
 import component.object.Stone;
 import component.object.Tree;
 import engine.component.CGameCamera;
-import engine.component.CSpriteRenderer;
 import engine.component.ui.CFpsCounter;
 import engine.component.ui.CPositionText;
 import engine.object.GameObject;
@@ -16,8 +15,8 @@ import engine.object.Transform;
 import engine.render.Camera;
 import engine.util.AssetPool;
 import org.joml.Vector2f;
+import registry.TextureType;
 
-import java.util.List;
 import java.util.Random;
 
 //TODO: реализовать процедурную генерацию текстур. В этой сцене она понадобится для генерации земли
@@ -27,12 +26,10 @@ public class ForestScene extends Scene {
 
     @Override
     public void init() {
-        loadResources();
-
         camera = new Camera().setZoom(150);
 
         GameObject controls = new GameObject("controls", new Transform(new Vector2f(), new Vector2f()), 0)
-                .addComponent(new TestingSceneControls());
+                .addComponent(new ForestSceneControls());
 
         addGameObjectToScene(controls);
 
@@ -49,22 +46,6 @@ public class ForestScene extends Scene {
         addGameObjectToScene(fpsGO1);
 
         generateWorld();
-    }
-
-
-    private void loadResources() {
-        AssetPool.getShader("default");
-
-        for (GameObject g : gameObjects) {
-            if (g.getComponents(CSpriteRenderer.class) != null) {
-                List<CSpriteRenderer> sprites = g.getComponents(CSpriteRenderer.class);
-                for (CSpriteRenderer sprite : sprites) {
-                    if (sprite.getTexture() != null) {
-                        sprite.setTexture(AssetPool.getTexture(sprite.getTexture().getFilepath()));
-                    }
-                }
-            }
-        }
     }
 
     private void generateWorld() {
@@ -91,10 +72,10 @@ public class ForestScene extends Scene {
         }
 
         //floor tiles
-        Sprite grassFloor = new Sprite().setTexture(AssetPool.getTexture("grass-0"));
+        Sprite grassFloor = new Sprite(AssetPool.getTexture(TextureType.GRASS_0));
         for (int i = -25; i < 25; i++) {
             for (int j = -25; j < 25; j++) {
-                GameObject go = Prefab.generateSpriteObject(grassFloor, 1, 1, -5);
+                GameObject go = Prefab.generateSpriteObject(grassFloor, 1, -5);
                 go.transform.position = new Vector2f(i, j);
                 addGameObjectToScene(go);
             }

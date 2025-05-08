@@ -1,6 +1,5 @@
-package gameComponent;
+package engine.component;
 
-import engine.component.Component;
 import engine.util.listener.KeyListener;
 import org.joml.Vector2f;
 

@@ -34,7 +34,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //TODO: создать класс для помощи в работе с OpenGL
 //TODO: удалить поддержку SpriteSheet, и всегда использовать по одной текстуре не спрайт (кроме текста). Таким образом можно не передавать текстурные координаты в шейдер, а просто выставлять их там вручную ({0,0},{1,1}). Плюс должны исчезнуть все артефакты связанные с неточностью чисел с плавающей точкой
-public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch {
+public class TextureRenderBatch extends Batch implements Comparable<TextureRenderBatch>{
 
     private static final int POS_SIZE = 2;
 
@@ -95,7 +95,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch
         glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
 
         int eboID = glGenBuffers();
-        int[] indices = generateIndices();
+        int[] indices = generateIndices(maxBatchSize);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
@@ -190,7 +190,7 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch
 
         int offset = index * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;
 
-        Color color = sprite.getColor();
+        Vector4f color = sprite.getColor();
         Vector2f[] textureCoords = sprite.getTextureCoords();
 
         int textureId = 0;
@@ -215,13 +215,16 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch
                     sprite.gameObject.transform.scale.y, 1);
         }
 
-        float xAdd = 0.5f;
+        // TODO: перенести в Texture
+        float textureAspectRatio = (float) sprite.getTexture().getWidth() / sprite.getTexture().getHeight();
+
+        float xAdd = 0.5f * textureAspectRatio;
         float yAdd = 0.5f;
         for (int i = 0; i < EBO_QUAD_VERTICES_AMOUNT; i++) {
             if (i == 1) {
                 yAdd = -0.5f;
             } else if (i == 2) {
-                xAdd = -0.5f;
+                xAdd = -0.5f * textureAspectRatio;
             } else if (i == 3) {
                 yAdd = 0.5f;
             }
@@ -238,10 +241,10 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch
             vertices[offset] = currentPos.x;
             vertices[offset + 1] = currentPos.y;
 
-            vertices[offset + 2] = color.r;
-            vertices[offset + 3] = color.g;
-            vertices[offset + 4] = color.b;
-            vertices[offset + 5] = color.a;
+            vertices[offset + 2] = color.x;
+            vertices[offset + 3] = color.y;
+            vertices[offset + 4] = color.z;
+            vertices[offset + 5] = color.w;
 
             vertices[offset + 6] = textureCoords[i].x;
             vertices[offset + 7] = textureCoords[i].y;
@@ -253,29 +256,6 @@ public class TextureRenderBatch implements Comparable<TextureRenderBatch>, Batch
             offset += VERTEX_SIZE;
         }
     }
-
-    private void loadElementIndices(int[] elements, int index) {
-        int offsetArrayIndex = DEFAULT_QUAD_VERTICES_AMOUNT * index;
-        int offset = EBO_QUAD_VERTICES_AMOUNT * index;
-
-        elements[offsetArrayIndex] = offset + 3;
-        elements[offsetArrayIndex + 1] = offset + 2;
-        elements[offsetArrayIndex + 2] = offset;
-
-        elements[offsetArrayIndex + 3] = offset;
-        elements[offsetArrayIndex + 4] = offset + 2;
-        elements[offsetArrayIndex + 5] = offset + 1;
-    }
-
-    private int[] generateIndices() {
-        int[] elements = new int[maxBatchSize * DEFAULT_QUAD_VERTICES_AMOUNT];
-        for (int i = 0; i < maxBatchSize; i++) {
-            loadElementIndices(elements, i);
-        }
-
-        return elements;
-    }
-
 
     public boolean destroyIfExists(GameObject go) {
         boolean wasDestroyed = false;

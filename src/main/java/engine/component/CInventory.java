@@ -1,13 +1,13 @@
 package engine.component;
 
-import item.Item;
-import item.ItemStack;
+import registry.ItemType;
+import util.ItemStack;
 
 import java.util.EnumMap;
 
 public class CInventory extends Component {
 
-    private final EnumMap<Item, Integer> contents = new EnumMap<>(Item.class);
+    private final EnumMap<ItemType, Integer> contents = new EnumMap<>(ItemType.class);
 
     public void addItemStack(final ItemStack pickedStack) {
         contents.merge(pickedStack.getItem(), pickedStack.getStackSize(), Integer::sum);
@@ -19,7 +19,7 @@ public class CInventory extends Component {
      * false если предметов оказалось меньше чем необходимо, предметы отниматься
      * не будут.
      */
-    public boolean removeItems(Item item, int amount) {
+    public boolean removeItems(ItemType item, int amount) {
         if (amountOfItems(item) < amount) {
             return false;
         }
@@ -38,11 +38,11 @@ public class CInventory extends Component {
         return true;
     }
 
-    public int amountOfItems(Item item) {
+    public int amountOfItems(ItemType item) {
         return contents.getOrDefault(item, 0);
     }
 
-    public EnumMap<Item, Integer> getContents() {
+    public EnumMap<ItemType, Integer> getContents() {
         return new EnumMap<>(contents);
     }
 }

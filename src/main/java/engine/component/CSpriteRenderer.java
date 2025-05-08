@@ -3,23 +3,30 @@ package engine.component;
 import engine.object.Sprite;
 import engine.object.Transform;
 import engine.render.Texture;
+import engine.util.AssetPool;
 import engine.util.Color;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
+import registry.TextureType;
 
 // TODO: перетащить привязку спрайта в конструктор
 public class CSpriteRenderer extends Component {
 
-    private Color color = Color.WHITE;
+    private Vector4f color = Color.WHITE.asVector();
 
-    private Sprite sprite = new Sprite();
+    private Sprite sprite;
 
-    private transient Transform lastTransform;
+    private Transform lastTransform;
 
-    private transient boolean isDirty = true;
+    private boolean isDirty = true;
 
-    //    TODO: добавить boolean переменную, которая будет отвечать за учитывание конкретного спрайта в pickingShader.
-//     при false не будет, при true будет
-    private boolean isClickable = false;
+    public CSpriteRenderer(final Sprite sprite) {
+        this.sprite = sprite;
+    }
+
+    public CSpriteRenderer(final TextureType texture) {
+        sprite = new Sprite(AssetPool.getTexture(texture));
+    }
 
     @Override
     public void start() {
@@ -34,11 +41,15 @@ public class CSpriteRenderer extends Component {
         }
     }
 
-    public Color getColor() {
+    public Vector4f getColor() {
         return color;
     }
 
     public CSpriteRenderer setColor(Color color) {
+        return setColor(color.asVector());
+    }
+
+    public CSpriteRenderer setColor(Vector4f color) {
         if (!this.color.equals(color)) {
             this.color = color;
             isDirty = true;
@@ -76,15 +87,5 @@ public class CSpriteRenderer extends Component {
         isDirty = true;
 
         return this;
-    }
-
-    public CSpriteRenderer setIsClickable(boolean value) {
-        isClickable = value;
-
-        return this;
-    }
-
-    public boolean isClickable() {
-        return isClickable;
     }
 }

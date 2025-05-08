@@ -16,7 +16,6 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 import scene.ForestScene;
-import scene.SceneSelectionScene;
 
 import static engine.util.EnginePreferences.ENABLE_SMALLER_WINDOWED_SIZE;
 import static engine.util.EnginePreferences.ENABLE_VSYNK;
@@ -49,6 +48,7 @@ import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -165,8 +165,7 @@ public class Window implements KeyboardEventListener {
 
         createWindow(fullscreen);
 
-//        Window.changeScene(SceneSelectionScene.class);
-        Window.changeScene(ForestScene.class);
+        changeScene(ForestScene.class);
     }
 
     private static void createWindow(boolean fullscreen) {
@@ -220,7 +219,7 @@ public class Window implements KeyboardEventListener {
         createCapabilities();
 
         glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         pickingTexture = new PickingTexture(getWidth(), getHeight());
 
@@ -254,6 +253,7 @@ public class Window implements KeyboardEventListener {
             DebugDraw.beginFrame();
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             if (dt >= 0) {
                 // TODO: нужно разделить обновление графики от обновления реального состояния объектов. Это должно увеличить производительность В РАЗЫ
@@ -326,14 +326,6 @@ public class Window implements KeyboardEventListener {
 
     public static int getHeight() {
         return fullscreen ? height : windowedHeight;
-    }
-
-    public static void setWidth(int newWidth) {
-        width = newWidth;
-    }
-
-    public static void setHeight(int newHeight) {
-        height = newHeight;
     }
 
     public static long getGlfwWindow() {

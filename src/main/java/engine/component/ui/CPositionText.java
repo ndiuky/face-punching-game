@@ -12,8 +12,8 @@ public class CPositionText extends Component {
 
     @Override
     public void start() {
-        textRenderer = new CTextRenderer()
-                .setText(new Text("")
+        textRenderer = new CTextRenderer(
+                new Text("")
                         .setColor(Color.BLUE)
                         .setSizeModifier(0.5f)
                         .setAlignment(Alignment.BOTTOM_CENTER)

@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Objects;
 
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGB;
@@ -23,15 +22,17 @@ import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11C.GL_RGBA8;
 import static org.lwjgl.opengl.GL13C.GL_CLAMP_TO_BORDER;
+import static org.lwjgl.stb.STBImage.stbi_convert_iphone_png_to_rgb;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
+import static org.lwjgl.stb.STBImage.stbi_set_unpremultiply_on_load;
 
 public class Texture {
 
     private String filepath;
 
-    private transient int texID = -1;
+    private int texID = -1;
 
     private int width = -1;
 
@@ -39,19 +40,6 @@ public class Texture {
 
     public Texture() {
     }
-
-//    public Texture(int width, int height) {
-//        this.filepath = "Generated";
-//
-//        texID = glGenTextures();
-//        bind();
-//
-//        setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
-//                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-//    }
 
     public Texture init(String filepath) {
         this.filepath = filepath;
@@ -68,6 +56,8 @@ public class Texture {
         IntBuffer heightIntBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer channelsIntBuffer = BufferUtils.createIntBuffer(1);
         stbi_set_flip_vertically_on_load(true);
+        stbi_set_unpremultiply_on_load(true);
+        stbi_convert_iphone_png_to_rgb(true);
         ByteBuffer image = stbi_load(filepath, widthIntBuffer, heightIntBuffer, channelsIntBuffer, 0);
 
         if (image != null) {
@@ -75,10 +65,10 @@ public class Texture {
             height = heightIntBuffer.get(0);
 
             if (channelsIntBuffer.get(0) == 3) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthIntBuffer.get(0), heightIntBuffer.get(0),
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
                         0, GL_RGB, GL_UNSIGNED_BYTE, image);
             } else if (channelsIntBuffer.get(0) == 4) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthIntBuffer.get(0), heightIntBuffer.get(0),
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
                         0, GL_RGBA, GL_UNSIGNED_BYTE, image);
             } else {
                 throw new RuntimeException("Error: (Texture) Unknown number of channels '" + channelsIntBuffer.get(0) + "'");
@@ -148,8 +138,12 @@ public class Texture {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Texture texture = (Texture) o;
         return texID == texture.texID && width == texture.width && height == texture.height && Objects.equals(filepath, texture.filepath);
     }

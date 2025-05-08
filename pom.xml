@@ -16,7 +16,6 @@
         <lwjgl.version>3.3.3</lwjgl.version>
         <joml.version>1.10.5</joml.version>
         <lwjgl.natives>natives-windows</lwjgl.natives>
-        <gson.version>2.11.0</gson.version>
     </properties>
 
 
@@ -34,12 +33,6 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>

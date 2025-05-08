@@ -3,7 +3,6 @@ package engine.component.ui;
 import engine.component.Component;
 import engine.text.Text;
 import engine.util.Color;
-import engine.util.EngineUtils;
 import util.TextAnimation;
 
 import java.util.LinkedList;
@@ -23,7 +22,7 @@ public class CFpsCounter extends Component {
 
     @Override
     public void start() {
-        textRenderer = new CTextRenderer().setText(new Text("calculating...").setAnimation(TextAnimation.SIZE_WAVING_BACKWARDS).setColor(Color.GREY3));
+        textRenderer = new CTextRenderer(new Text("calculating...").setAnimation(TextAnimation.SIZE_WAVING_BACKWARDS).setColor(Color.GREY3));
         gameObject.addComponent(textRenderer);
     }
 

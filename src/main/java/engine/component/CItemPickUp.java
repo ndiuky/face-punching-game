@@ -1,14 +1,12 @@
 package engine.component;
 
 import component.ItemDrop;
-import engine.component.ui.UiTotalItems;
 import engine.object.GameObject;
 import engine.render.DebugDraw;
 import engine.render.Window;
 import engine.util.Color;
 import engine.util.EnginePreferences;
-import item.Item;
-import item.ItemStack;
+import util.ItemStack;
 
 import java.util.List;
 
@@ -32,9 +30,9 @@ public class CItemPickUp extends Component {
 
     public void onPickupComplete(ItemStack pickedItem) {
         final List<CInventory> objectInventories = gameObject.getComponents(CInventory.class);
-        if (objectInventories == null){
-           return;
-       }
+        if (objectInventories == null) {
+            return;
+        }
 
         objectInventories.getFirst().addItemStack(pickedItem);
     }

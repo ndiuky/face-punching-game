@@ -1,25 +1,22 @@
 package component.entity;
 
 import component.ItemDrop;
+import engine.component.CFistAttackRandom;
 import engine.component.CInventory;
 import engine.component.CItemPickUp;
+import engine.component.CMoveWasd;
 import engine.component.CSpriteRenderer;
 import engine.component.Component;
 import engine.component.ui.Canvas;
 import engine.component.ui.UiTotalItems;
 import engine.event.KeyboardEventListener;
 import engine.event.MouseEventListener;
-import engine.object.GameObject;
-import engine.object.Sprite;
-import engine.object.Transform;
 import engine.render.Window;
-import engine.util.AssetPool;
 import engine.util.listener.MouseListener;
-import gameComponent.CFistAttackRandom;
-import gameComponent.CMoveWasd;
-import item.Item;
-import item.ItemStack;
 import org.joml.Vector2f;
+import registry.ItemType;
+import registry.TextureType;
+import util.ItemStack;
 
 import java.util.List;
 
@@ -39,7 +36,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private final List<Component> REQUIRED_COMPONENTS = List.of(new CMoveWasd(),
             new CFistAttackRandom(),
-            new CSpriteRenderer().setSprite(new Sprite().setTexture(AssetPool.getTexture("dummy"))),
+            new CSpriteRenderer(TextureType.DUMMY),
             new CItemPickUp(),
             inventory,
             canvas
@@ -78,7 +75,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
     @Override
     public void onKeyPress(int key) {
         if (key == GLFW_KEY_Q) {
-            dropItems(Item.STONE_PEBBLE, 1);
+            dropItems(ItemType.STONE_PEBBLE, 1);
         }
     }
 
@@ -89,7 +86,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
     /**
      * @return true если удалось выбросить нужное количество предметов, в ином случае false
      */
-    public boolean dropItems(Item item, int amount) {
+    public boolean dropItems(ItemType item, int amount) {
         if (!inventory.removeItems(item, amount)) {
             return false;
         }

@@ -15,7 +15,7 @@ public class CLoadingText extends Component {
 
     @Override
     public void start() {
-        textRenderer = new CTextRenderer().setText(new Text("loading").setAlignment(Alignment.MIDDLE_LEFT).setAnimation(TextAnimation.SIZE_WAVING_FORWARDS));
+        textRenderer = new CTextRenderer(new Text("loading").setAlignment(Alignment.MIDDLE_LEFT).setAnimation(TextAnimation.SIZE_WAVING_FORWARDS));
         gameObject.addComponent(textRenderer);
 
         dots += getUid();

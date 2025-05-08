@@ -47,7 +47,7 @@ import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
 // TODO: рендер батчей как бы есть, но логики их создания по сути нет. Если одновременно попытаться отрендерить слишком много текста, то просто вылетит эксепшен
-public class TextRenderBatch implements Comparable<TextRenderBatch>, Batch {
+public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch>  {
 
     private static final int POS_SIZE = 2;
 
@@ -102,9 +102,10 @@ public class TextRenderBatch implements Comparable<TextRenderBatch>, Batch {
 
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        // TODO: в TextureRenderBatch и UiRenderBatch тут есть еще и glBufferData. Если и тут можно её добавить, то получится вынести start() в родителя
 
         int eboID = glGenBuffers();
-        int[] indices = generateIndices();
+        int[] indices = generateIndices(maxBatchSize);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
         GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
@@ -294,15 +295,6 @@ public class TextRenderBatch implements Comparable<TextRenderBatch>, Batch {
         }
     }
 
-    private int[] generateIndices() {
-        int[] elements = new int[maxBatchSize * DEFAULT_QUAD_VERTICES_AMOUNT];
-        for (int i = 0; i < maxBatchSize; i++) {
-            loadElementIndices(elements, i);
-        }
-
-        return elements;
-    }
-
     public boolean destroyIfExists(GameObject go) {
         boolean wasDestroyed = false;
 
@@ -323,19 +315,6 @@ public class TextRenderBatch implements Comparable<TextRenderBatch>, Batch {
         }
 
         return wasDestroyed;
-    }
-
-    private void loadElementIndices(int[] elements, int index) {
-        int offsetArrayIndex = DEFAULT_QUAD_VERTICES_AMOUNT * index;
-        int offset = EBO_QUAD_VERTICES_AMOUNT * index;
-
-        elements[offsetArrayIndex] = offset + 3;
-        elements[offsetArrayIndex + 1] = offset + 2;
-        elements[offsetArrayIndex + 2] = offset;
-
-        elements[offsetArrayIndex + 3] = offset;
-        elements[offsetArrayIndex + 4] = offset + 2;
-        elements[offsetArrayIndex + 5] = offset + 1;
     }
 
     private void enableVertexAttributes() {

@@ -30,7 +30,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public class UiRenderBatch implements Batch {
+public class UiRenderBatch extends Batch {
 
     //TODO: ограничение. Либо поднять, либо добавить возможность одновременно работать сразу с несколькими батчами, либо сделать динамическим
     private static final int MAX_BATCH_SIZE = 1024;
@@ -81,7 +81,7 @@ public class UiRenderBatch implements Batch {
         glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
 
         int eboID = glGenBuffers();
-        int[] indices = generateIndices();
+        int[] indices = generateIndices(MAX_BATCH_SIZE);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
@@ -202,28 +202,6 @@ public class UiRenderBatch implements Batch {
 
         glVertexAttribPointer(2, TEXTURE_ID_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, TEXTURE_ID_OFFSET);
         glEnableVertexAttribArray(2);
-    }
-
-    private int[] generateIndices() {
-        int[] elements = new int[MAX_BATCH_SIZE * DEFAULT_QUAD_VERTICES_AMOUNT];
-        for (int i = 0; i < MAX_BATCH_SIZE; i++) {
-            loadElementIndices(elements, i);
-        }
-
-        return elements;
-    }
-
-    private void loadElementIndices(int[] elements, int index) {
-        int offsetArrayIndex = DEFAULT_QUAD_VERTICES_AMOUNT * index;
-        int offset = EBO_QUAD_VERTICES_AMOUNT * index;
-
-        elements[offsetArrayIndex] = offset + 3;
-        elements[offsetArrayIndex + 1] = offset + 2;
-        elements[offsetArrayIndex + 2] = offset;
-
-        elements[offsetArrayIndex + 3] = offset;
-        elements[offsetArrayIndex + 4] = offset + 2;
-        elements[offsetArrayIndex + 5] = offset + 1;
     }
 
     public boolean hasTexture(Texture texture) {

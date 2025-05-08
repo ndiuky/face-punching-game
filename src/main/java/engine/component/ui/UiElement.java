@@ -1,6 +1,7 @@
 package engine.component.ui;
 
 import engine.render.Window;
+import engine.util.Alignment;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
@@ -10,6 +11,9 @@ public abstract class UiElement {
 
     // (bottomLeftX, bottomLeftY, topRightX, topRightY)
     protected Vector4f screenPos = new Vector4f(-1, -1, 1, 1);
+
+    //TODO: implement
+    protected Alignment alignment = Alignment.CENTER;
 
     protected Vector4f color = new Vector4f(1);
 
@@ -26,6 +30,37 @@ public abstract class UiElement {
     }
 
     public abstract void update();
+
+    public Vector4f getScreenPosWithKeptProportions(float widthToHeightCoefficient) {
+        float aspectRatio = Window.getAspectRatio();
+
+        float currentWidth = screenPos.z - screenPos.x;
+        float currentHeight = screenPos.w - screenPos.y;
+        float desiredNormalizedRatio = widthToHeightCoefficient / aspectRatio;
+        float currentNormalizedRatio = currentWidth / currentHeight;
+        float centerX = (screenPos.x + screenPos.z) * 0.5f;
+        float centerY = (screenPos.y + screenPos.w) * 0.5f;
+
+        if (currentNormalizedRatio > desiredNormalizedRatio) {
+            float newWidth = currentHeight * desiredNormalizedRatio * 0.5f;
+
+            return new Vector4f(
+                    centerX - newWidth,
+                    screenPos.y,
+                    centerX + newWidth,
+                    screenPos.w
+            );
+        }
+
+        float newHeight = currentWidth / desiredNormalizedRatio * 0.5f;
+
+        return new Vector4f(
+                screenPos.x,
+                centerY - newHeight,
+                screenPos.z,
+                centerY + newHeight
+        );
+    }
 
     public Vector4f getScreenPos() {
         return new Vector4f(screenPos);
@@ -67,35 +102,6 @@ public abstract class UiElement {
         return this;
     }
 
-    public Vector4f getScreenPosWithKeptProportions(float widthToHeightCoefficient) {
-        float aspectRatio = Window.getAspectRatio();
-
-        float currentWidth = screenPos.z - screenPos.x;
-        float currentHeight = screenPos.w - screenPos.y;
-        float desiredNormalizedRatio = widthToHeightCoefficient / aspectRatio;
-        float currentNormalizedRatio = currentWidth / currentHeight;
-        float centerX = (screenPos.x + screenPos.z) * 0.5f;
-        float centerY = (screenPos.y + screenPos.w) * 0.5f;
-
-        if (currentNormalizedRatio > desiredNormalizedRatio) {
-
-            float newWidth = currentHeight * desiredNormalizedRatio * 0.5f;
-            return new Vector4f(
-                    centerX - newWidth,
-                    screenPos.y,
-                    centerX + newWidth,
-                    screenPos.w
-            );
-        }
-
-        float newHeight = currentWidth / desiredNormalizedRatio * 0.5f;
-        return new Vector4f(
-                screenPos.x,
-                centerY - newHeight,
-                screenPos.z,
-                centerY + newHeight
-        );
-    }
 
     public Canvas getCanvas() {
         return canvas;
@@ -103,5 +109,15 @@ public abstract class UiElement {
 
     public List<UiSprite> getUiSprites() {
         return List.copyOf(uiSprites);
+    }
+
+    public Alignment getAlignment() {
+        return alignment;
+    }
+
+    public UiElement setAlignment(final Alignment alignment) {
+        this.alignment = alignment;
+
+        return this;
     }
 }

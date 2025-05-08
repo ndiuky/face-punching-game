@@ -3,12 +3,11 @@ package component.object;
 import component.ItemDrop;
 import engine.component.CSpriteRenderer;
 import engine.component.Component;
-import engine.object.Sprite;
 import engine.render.Window;
-import engine.util.AssetPool;
 import engine.util.Interactable;
-import item.Item;
-import item.ItemStack;
+import registry.ItemType;
+import registry.TextureType;
+import util.ItemStack;
 import org.joml.Vector2f;
 import util.InteractionType;
 import util.LootTable;
@@ -38,9 +37,9 @@ public class Tree extends Component implements Interactable {
     Random random = new Random();
 
     private LootTable lootTable = LootTable.of(
-            new ItemStack(Item.CHIP, 2),
-            new ItemStack(Item.CHIP, 2),
-            new ItemStack(Item.CHIP)
+            new ItemStack(ItemType.CHIP, 2),
+            new ItemStack(ItemType.CHIP, 2),
+            new ItemStack(ItemType.CHIP)
     );
 
     @Override
@@ -48,9 +47,7 @@ public class Tree extends Component implements Interactable {
         gameObject.transform.scale = new Vector2f(3);
         originalScale = new Vector2f(gameObject.transform.scale);
 
-        treeSR = new CSpriteRenderer()
-                .setSprite(new Sprite().setTexture(AssetPool.getTexture("tree")))
-                .setIsClickable(true);
+        treeSR = new CSpriteRenderer(TextureType.TREE);
 
         gameObject.addComponent(treeSR);
     }

@@ -19,12 +19,17 @@ public class Sprite {
             new Vector2f(0, 1)
     };
 
+    public Sprite(final Texture texture) {
+        this.texture = texture;
+    }
+
     public Texture getTexture() {
         return texture;
     }
 
     public Sprite setTexture(Texture texture) {
         this.texture = texture;
+
         return this;
     }
 

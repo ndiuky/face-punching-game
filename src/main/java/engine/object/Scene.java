@@ -1,16 +1,9 @@
 package engine.object;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import engine.component.Component;
-import engine.component.ui.UiSprite;
 import engine.render.Camera;
 import engine.render.Renderer;
-import engine.util.AssetPool;
-import engine.util.serializer.ComponentSerializer;
-import engine.util.serializer.GameObjectSerializer;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,14 +27,9 @@ public abstract class Scene {
 
     private boolean isRunning = false;
 
-    protected transient boolean isLevelLoaded;
+    protected boolean isLevelLoaded;
 
     protected List<GameObject> gameObjects = new ArrayList<>();
-
-    private transient Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Component.class, new ComponentSerializer())
-            .registerTypeAdapter(GameObject.class, new GameObjectSerializer())
-            .create();
 
     private static final List<Scene> scenesList = new ArrayList<>();
 
@@ -106,7 +94,8 @@ public abstract class Scene {
                     gameObjectsToSerialize.add(gameObject);
                 }
             }
-            writer.write(gson.toJson(gameObjectsToSerialize));
+            //TODO: implement
+//            writer.write(gson.toJson(gameObjectsToSerialize));
             writer.close();
         } catch (IOException ex) {
             throw new RuntimeException("Unable to save scene data: " + ex.getMessage());
@@ -115,7 +104,9 @@ public abstract class Scene {
 
     public void loadSceneData() {
         Path path = Paths.get(SAVE_FILE_NAME);
-        if (!Files.exists(path)) return;
+        if (!Files.exists(path)) {
+            return;
+        }
 
         String inFile = "";
         try {
@@ -128,7 +119,9 @@ public abstract class Scene {
             int maxComponentId = -1;
             int maxGameObjectId = -1;
 
-            GameObject[] objects = gson.fromJson(inFile, GameObject[].class);
+            //TODO: implement
+//            GameObject[] objects = gson.fromJson(inFile, GameObject[].class);
+            GameObject[] objects = null;
             for (GameObject gameObject : objects) {
                 addGameObjectToScene(gameObject);
                 for (Component c : gameObject.getAllComponents()) {
@@ -173,6 +166,7 @@ public abstract class Scene {
         List<GameObject> resultList = new ArrayList<>();
 
         for (GameObject go : gameObjects) {
+            // TODO: смотреть на squared параметр
             if (go.transform.position.distance(origin) <= radius) {
                 resultList.add(go);
             }

@@ -4,7 +4,9 @@ package engine.util;
 import engine.object.SpriteSheet;
 import engine.render.Shader;
 import engine.render.Texture;
+import registry.TextureType;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ public class AssetPool {
 
     private static final Map<String, Shader> shaders = new HashMap<>();
 
-    private static final Map<String, Texture> textures = new HashMap<>();
+    private static final EnumMap<TextureType, Texture> textures = new EnumMap<>(TextureType.class);
 
     private static final Map<String, SpriteSheet> spriteSheets = new HashMap<>();
 
@@ -38,15 +40,12 @@ public class AssetPool {
         }
     }
 
-    /**
-     * @param textureName name of the texture in 'asset/texture' directory without postfix
-     */
-    public static Texture getTexture(String textureName) {
-        if (textures.containsKey(textureName)) {
-            return textures.get(textureName);
+    public static Texture getTexture(TextureType textureType) {
+        if (AssetPool.textures.containsKey(textureType)) {
+            return AssetPool.textures.get(textureType);
         } else {
-            Texture texture = new Texture().init(getFullTexturePath(textureName));
-            textures.put(textureName, texture);
+            Texture texture = new Texture().init(getFullTexturePath(textureType.path));
+            AssetPool.textures.put(textureType, texture);
 
             return texture;
         }

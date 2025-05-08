@@ -31,8 +31,7 @@ public class SpriteSheet {
                     new Vector2f(leftX, topY)
             };
 
-            Sprite sprite = new Sprite()
-                    .setTexture(texture)
+            Sprite sprite = new Sprite(texture)
                     .setTexCoords(texCoords)
                     .setWidth(spriteWidth)
                     .setHeight(spriteHeight);

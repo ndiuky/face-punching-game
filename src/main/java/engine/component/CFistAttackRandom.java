@@ -1,6 +1,5 @@
-package gameComponent;
+package engine.component;
 
-import engine.component.Component;
 import engine.event.MouseEventListener;
 import engine.object.GameObject;
 import engine.object.Prefab;
@@ -13,25 +12,26 @@ import engine.util.EnginePreferences;
 import engine.util.Interactable;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
+import registry.TextureType;
 import util.InteractionType;
 
 import java.util.ArrayDeque;
 import java.util.Random;
 
+import static engine.component.CFistAttackRandom.AttackState.INACTIVE;
+import static engine.component.CFistAttackRandom.AttackState.MOVING_TO_TARGET;
+import static engine.component.CFistAttackRandom.AttackState.RETRACTING;
+import static engine.component.CFistAttackRandom.AttackType.ARC_LEFT;
+import static engine.component.CFistAttackRandom.AttackType.ARC_RIGHT;
 import static engine.event.MouseEventProducer.listenToMousePress;
 import static engine.event.MouseEventProducer.listenToMouseRelease;
 import static engine.util.EngineUtils.calculateClampedPosition;
-import static gameComponent.CFistAttackRandom.AttackState.INACTIVE;
-import static gameComponent.CFistAttackRandom.AttackState.MOVING_TO_TARGET;
-import static gameComponent.CFistAttackRandom.AttackState.RETRACTING;
-import static gameComponent.CFistAttackRandom.AttackType.ARC_LEFT;
-import static gameComponent.CFistAttackRandom.AttackType.ARC_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static util.Utils.calculatePath;
 
 public class CFistAttackRandom extends Component implements MouseEventListener {
 
-    private final Sprite FIST_SPRITE = new Sprite().setTexture(AssetPool.getTexture("fist"));
+    private static final Sprite FIST_SPRITE = new Sprite(AssetPool.getTexture(TextureType.FIST));
 
     private static final float TIME_BETWEEN_ATTACKS = 0.25f;
 
@@ -140,7 +140,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
             path = calculatePath(gameObject.transform.position, targetPos, false, arcSegments, approachAngle, middlePointDistance);
         }
 
-        fistGO = Prefab.generateSpriteObject(FIST_SPRITE, 0.4f, 0.4f, gameObject.getZIndex() - 1);
+        fistGO = Prefab.generateSpriteObject(FIST_SPRITE, 0.4f, gameObject.getZIndex() - 1);
         fistGO.transform.position = new Vector2f(gameObject.transform.position);
         Window.getCurrentScene().addGameObjectToScene(fistGO);
 

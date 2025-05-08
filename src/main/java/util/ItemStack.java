@@ -1,24 +1,26 @@
-package item;
+package util;
+
+import registry.ItemType;
 
 // TODO: нужно как-то обрабатывать добавление нестакабельных предметов
 public class ItemStack {
 
-    private final Item item;
+    private final ItemType item;
 
     private int stackSize;
 
-    public ItemStack(final Item item) {
+    public ItemStack(final ItemType item) {
         this.item = item;
         stackSize = 1;
     }
 
-    public ItemStack(final Item item, final int initialAmount) {
+    public ItemStack(final ItemType item, final int initialAmount) {
         this.item = item;
         stackSize = initialAmount;
     }
 
-    public boolean addItem(final Item item) {
-        if (item.equals(this.item) && !item.isStackable) {
+    public boolean addItem(final ItemType item) {
+        if (item.equals(this.item)) {
             stackSize++;
 
             return true;
@@ -31,7 +33,7 @@ public class ItemStack {
      * @return true если удалось добавить предметы в стак, false если нет
      */
     public boolean addItemsFromStack(ItemStack stack) {
-        if (item.equals(stack.item) && !item.isStackable) {
+        if (item.equals(stack.item)/* && !item.isStackable*/) {
             stackSize += stack.stackSize;
 
             return true;
@@ -56,7 +58,7 @@ public class ItemStack {
         return 0;
     }
 
-    public Item getItem() {
+    public ItemType getItem() {
         return item;
     }
 

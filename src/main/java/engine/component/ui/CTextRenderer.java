@@ -12,9 +12,13 @@ public class CTextRenderer extends Component {
 
     //TODO: добавить флаг, отвечающий за влияние размера родительского объекта на размер текста
 
-    private transient Transform lastTransform;
+    private Transform lastTransform;
 
-    private transient boolean isDirty = true;
+    private boolean isDirty = true;
+
+    public CTextRenderer(final Text text) {
+        this.text = text;
+    }
 
     @Override
     public void start() {

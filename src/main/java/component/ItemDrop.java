@@ -7,10 +7,10 @@ import engine.object.Prefab;
 import engine.text.Text;
 import engine.util.Alignment;
 import engine.util.EngineUtils;
-import item.Item;
-import item.ItemStack;
 import org.joml.Math;
 import org.joml.Vector2f;
+import registry.ItemType;
+import util.ItemStack;
 
 import java.util.Random;
 
@@ -22,8 +22,6 @@ public class ItemDrop extends Component {
     private static final float FLYING_ACCELERATION_RATE = 20;
 
     private static final float MAX_SUCKING_ANGLE_DELTA = 45;
-
-    private static final float DROP_SIZE_MODIFIER = 0.5f;
 
     private static final float WOBBLE_SIZE_DELTA = 0.08f;
 
@@ -53,7 +51,7 @@ public class ItemDrop extends Component {
 
     private boolean isDroppedManually = false;
 
-    private ItemDrop(Item item) {
+    private ItemDrop(ItemType item) {
         containingStack = new ItemStack(item);
     }
 
@@ -61,9 +59,9 @@ public class ItemDrop extends Component {
         containingStack = itemStack;
     }
 
-    public static ItemDrop generateForItem(Item item) {
+    public static ItemDrop generateForItem(ItemType item) {
         ItemDrop itemDrop = new ItemDrop(item);
-        Prefab.generateSpriteObject(item.sprite, 0.5f, 0.5f, 1, item.name())
+        Prefab.generateSpriteObject(item.sprite, item.dropSizeMultiplier, 1, item.name())
                 .addComponent(itemDrop);
         return itemDrop;
     }
@@ -74,15 +72,15 @@ public class ItemDrop extends Component {
         }
 
         ItemDrop itemDrop = new ItemDrop(itemStack);
-        Prefab.generateSpriteObject(itemStack.getItem().sprite, DROP_SIZE_MODIFIER, DROP_SIZE_MODIFIER, 1, itemStack.getItem().name())
+        Prefab.generateSpriteObject(itemStack.getItem().sprite, itemStack.getItem().dropSizeMultiplier, 1, itemStack.getItem().name())
                 .addComponent(itemDrop)
                 .addComponent(
-                        new CTextRenderer()
-                                .setText(
-                                        new Text(String.valueOf(itemStack.getStackSize()))
-                                                .setOffset(new Vector2f(-0.25f * DROP_SIZE_MODIFIER))
-                                )
-                                .setAlignment(Alignment.TOP_LEFT)
+                        new CTextRenderer(
+                                new Text(String.valueOf(itemStack.getStackSize()))
+                                        // TODO: offset кривой. Фиксить нужно будет после имплементации Anchor point
+                                        .setOffset(new Vector2f(-0.25f * itemStack.getItem().dropSizeMultiplier))
+                                        .setAlignment(Alignment.TOP_LEFT)
+                        )
                 );
         return itemDrop;
     }

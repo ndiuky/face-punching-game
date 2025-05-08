@@ -9,7 +9,7 @@ public abstract class Component {
 
     private int uid = -1;
 
-    public transient GameObject gameObject = null;
+    public GameObject gameObject = null;
 
     public static void init(int maxId) {
         idCounter = maxId;

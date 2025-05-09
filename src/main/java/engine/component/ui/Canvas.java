@@ -13,7 +13,7 @@ public class Canvas extends Component {
     public void update(float dt) {
         for (int i = 0; i < uiElements.size(); i++) {
             // TODO: каждый кадр КАЖДЫЙ элемент обновляться НЕ ДОЛЖЕН!!!! пиздецки сильно влияет на производительность. Как минимум - юзать dirtyFlag, но в идеале - обновление только при получении соответствующего ивента
-            uiElements.get(i).update();
+            uiElements.get(i).updateInternal();
         }
     }
 

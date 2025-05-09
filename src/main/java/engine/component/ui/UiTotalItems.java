@@ -22,7 +22,7 @@ public class UiTotalItems extends UiElement {
     }
 
     @Override
-    public void update() {
+    protected void update() {
 //TODO: УБРАТЬ ОТСЮДА НАХУЙ!!!!!!!!
         updateContents();
 

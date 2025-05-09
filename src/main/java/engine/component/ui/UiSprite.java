@@ -19,7 +19,7 @@ public class UiSprite extends UiElement {
     }
 
     @Override
-    public void update() {
+    protected void update() {
         //TODO: change sprite if needed
     }
 }

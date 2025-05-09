@@ -7,6 +7,7 @@ import engine.component.ui.UiElement;
 import engine.object.GameObject;
 import engine.text.Text;
 import engine.util.AssetPool;
+import registry.ShaderType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,9 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import static engine.util.EnginePreferences.MAX_BATCH_SIZE;
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
 
 public class Renderer {
 
@@ -28,10 +26,10 @@ public class Renderer {
     private final List<UiRenderBatch> uiRenderBatches = new ArrayList<>();
 
     private final Map<Shader, List<List<? extends Batch>>> shaderBatchesMapping = Map.ofEntries(
-            Map.entry(AssetPool.getShader("default"), List.of(textureBatches)),
-            Map.entry(AssetPool.getShader("pickingShader"), List.of(textureBatches)),
-            Map.entry(AssetPool.getShader("uiShader"), List.of(uiRenderBatches)),
-            Map.entry(AssetPool.getShader("fontShader"), List.of(textBatches))
+            Map.entry(AssetPool.getShader(ShaderType.DEFAULT), List.of(textureBatches)),
+            Map.entry(AssetPool.getShader(ShaderType.PICKING), List.of(textureBatches)),
+            Map.entry(AssetPool.getShader(ShaderType.UI), List.of(uiRenderBatches)),
+            Map.entry(AssetPool.getShader(ShaderType.FONT), List.of(textBatches))
     );
 
     private static Shader currentShader;

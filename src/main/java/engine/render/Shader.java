@@ -53,6 +53,7 @@ public class Shader {
 
     private boolean beingUsed = false;
 
+    // TODO: парсинг некрасивый, переделай на какие-нибудь мапки и листы
     public Shader(String filepath) {
         this.filepath = filepath;
         try {

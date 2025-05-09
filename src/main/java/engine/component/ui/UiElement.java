@@ -17,19 +17,27 @@ public abstract class UiElement {
 
     protected Vector4f color = new Vector4f(1);
 
+    protected List<UiSprite> uiSprites = new ArrayList<>();
+
     protected boolean keepProportions = true;
 
     protected boolean isClickable = false;
 
     protected Canvas canvas;
 
-    protected List<UiSprite> uiSprites = new ArrayList<>();
+    protected boolean isEnabled = true;
 
     public UiElement(Canvas canvas) {
         this.canvas = canvas;
     }
 
-    public abstract void update();
+    public final void updateInternal() {
+        if (isEnabled) {
+            update();
+        }
+    }
+
+    protected abstract void update();
 
     public Vector4f getScreenPosWithKeptProportions(float widthToHeightCoefficient) {
         float aspectRatio = Window.getAspectRatio();
@@ -119,5 +127,13 @@ public abstract class UiElement {
         this.alignment = alignment;
 
         return this;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        isEnabled = enabled;
     }
 }

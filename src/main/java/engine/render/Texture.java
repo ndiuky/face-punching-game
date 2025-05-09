@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL11C.GL_RGBA8;
-import static org.lwjgl.opengl.GL13C.GL_CLAMP_TO_BORDER;
+import static org.lwjgl.opengl.GL12C.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.stb.STBImage.stbi_convert_iphone_png_to_rgb;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_load;
@@ -56,6 +56,7 @@ public class Texture {
         IntBuffer heightIntBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer channelsIntBuffer = BufferUtils.createIntBuffer(1);
         stbi_set_flip_vertically_on_load(true);
+        // TODO: возможно эти две строки ни на что не влияют, проверить
         stbi_set_unpremultiply_on_load(true);
         stbi_convert_iphone_png_to_rgb(true);
         ByteBuffer image = stbi_load(filepath, widthIntBuffer, heightIntBuffer, channelsIntBuffer, 0);
@@ -90,8 +91,8 @@ public class Texture {
 
         texture.bind();
 
-        texture.setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        texture.setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        texture.setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        texture.setParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         texture.setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         texture.setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 

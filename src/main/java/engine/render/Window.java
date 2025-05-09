@@ -15,6 +15,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
+import registry.ShaderType;
 import scene.ForestScene;
 
 import static engine.util.EnginePreferences.ENABLE_SMALLER_WINDOWED_SIZE;
@@ -235,10 +236,10 @@ public class Window implements KeyboardEventListener {
         float endTime;
         float dt = -1.0f;
 
-        Shader defaultShader = AssetPool.getShader("default");
-        Shader uiShader = AssetPool.getShader("uiShader");
-        Shader pickingShader = AssetPool.getShader("pickingShader");
-        Shader fontShader = AssetPool.getShader("fontShader");
+        Shader defaultShader = AssetPool.getShader(ShaderType.DEFAULT);
+        Shader uiShader = AssetPool.getShader(ShaderType.UI);
+        Shader pickingShader = AssetPool.getShader(ShaderType.PICKING);
+        Shader fontShader = AssetPool.getShader(ShaderType.FONT);
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();

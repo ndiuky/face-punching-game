@@ -91,18 +91,23 @@ public class UiRenderBatch extends Batch {
 
     @Override
     public void render() {
-        //TODO: убрать стрим
-        if (attachedCanvas.getUiElements().stream().map(e -> e.getUiSprites().size()).reduce(Integer::sum).get() != numUiSprites) {
-            numUiSprites = 0;
+        // TODO: вернуть, но в переделанном виде. Текущий вариант работает совершенно неточно
+//        if (attachedCanvas.getUiElements().stream().filter(UiElement::isEnabled).map(e -> e.getUiSprites().size()).reduce(Integer::sum).get() != numUiSprites) {
+//            numUiSprites = 0;
+//
+//            //TODO: убрать стрим
+//            attachedCanvas.getUiElements().stream().filter(UiElement::isEnabled).forEach(this::addElement);
+//        } else {
+//            //TODO: implement rebuffering
+//            for (int i = 0; i < numUiSprites; i++) {
+//                loadVertexProperties(i);
+//            }
+//        }
 
-            //TODO: убрать стрим
-            attachedCanvas.getUiElements().forEach(this::addElement);
-        } else {
-            //TODO: implement rebuffering
-            for (int i = 0; i < numUiSprites; i++) {
-                loadVertexProperties(i);
-            }
-        }
+        //vvvvvv
+        numUiSprites = 0;
+        attachedCanvas.getUiElements().stream().filter(UiElement::isEnabled).forEach(this::addElement);
+        //^^^^^^
 
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);

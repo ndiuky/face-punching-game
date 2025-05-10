@@ -114,12 +114,14 @@ public class MouseListener implements MouseEventProducer {
         return new Vector2f(getX(), getY());
     }
 
+    // [0; 1]
     public static float getScreenX() {
-        return getX() * Window.getWidth();
+        return getX() / Window.getWidth();
     }
 
+    // [0; 1]
     public static float getScreenY() {
-        return getY() * Window.getHeight();
+        return getY() / Window.getHeight();
     }
 
     public static Vector2f getOrtho() {

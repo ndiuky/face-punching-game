@@ -38,13 +38,15 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private static final float INVENTORY_ANIMATION_OVERTHROW_VALUE = 1.70158f;
 
+    private ItemType selectedItemType;
+
     private CInventory inventory = new CInventory();
 
     private final Canvas canvas = new Canvas();
 
     private final UiInventory uiInventory = new UiInventory(canvas, inventory);
 
-    private InventoryOpeningState inventoryState = uiInventory.isEnabled() ? InventoryOpeningState.FULLY_OPENED : InventoryOpeningState.FULLY_CLOSED;
+    public InventoryOpeningState inventoryState = uiInventory.isEnabled() ? InventoryOpeningState.FULLY_OPENED : InventoryOpeningState.FULLY_CLOSED;
 
     private float currInventoryAnimationTime = 0;
 
@@ -55,6 +57,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
             inventory,
             canvas
     );
+
 
     @Override
     public void start() {
@@ -76,6 +79,9 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     @Override
     public void update(float dt) {
+        //TODO: delete!!!
+        uiInventory.getItemUnderCursor();
+
         if (!inventoryState.isStableState) {
             playInventoryAnimation(dt);
         }
@@ -83,16 +89,25 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     @Override
     public void onMousePress(int button) {
+        //TODO: добавить сюда FistAttackRandom
+        if (button == GLFW_MOUSE_BUTTON_1 && InventoryOpeningState.FULLY_OPENED.equals(inventoryState)){
+            ItemType itemUnderCursor = uiInventory.getItemUnderCursor();
+
+            if (itemUnderCursor != null){
+                selectedItemType = itemUnderCursor;
+            }
+        }
     }
 
     @Override
     public void onMouseRelease(int button) {
+        //TODO: добавить сюда FistAttackRandom
     }
 
     @Override
     public void onKeyPress(int key) {
         if (key == GLFW_KEY_Q) {
-            dropItems(ItemType.STONE_PEBBLE, 1);
+            dropItems(selectedItemType, 1);
         } else if (key == GLFW_KEY_E) {
             switchInventoryOpenState();
         }

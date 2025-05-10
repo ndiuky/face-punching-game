@@ -9,7 +9,8 @@ public enum ItemType {
     SCREW(TextureType.SCREW_0, 0.4f),
     // TODO: заменить на реальную текстуру
     STONE_PEBBLE(TextureType.STONE, 0.5f),
-    CHIP(TextureType.CHIP_SMALL, 0.8f),
+    CHIP(TextureType.CHIP_SMALL, 0.6f),
+    CHIP_LOCKED(TextureType.CHIP_SMALL_LOCKED, 0.4f),
     ;
 
     public final Sprite sprite;

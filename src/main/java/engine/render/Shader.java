@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
@@ -43,86 +44,57 @@ import static org.lwjgl.opengl.GL20C.glGetAttribLocation;
 
 public class Shader {
 
-    private int shaderProgramID;
-
-    private String vertexSource;
-
-    private String fragmentSource;
-
-    private String filepath;
+    public final int shaderProgramID;
 
     private boolean beingUsed = false;
 
     // TODO: парсинг некрасивый, переделай на какие-нибудь мапки и листы
     public Shader(String filepath) {
-        this.filepath = filepath;
         try {
             String source = new String(Files.readAllBytes(Paths.get(filepath)));
             String[] splitString = source.split("(#type)( )+([a-zA-Z]+)");
 
             int index = source.indexOf("#type") + 6;
-            int eol = source.indexOf("\r\n", index);
-            String firstPattern = source.substring(index, eol).trim();
+            String firstPattern = source.substring(index, source.indexOf("\r\n", index)).trim();
 
-            index = source.indexOf("#type", eol) + 6;
-            eol = source.indexOf("\r\n", index);
-            String secondPattern = source.substring(index, eol).trim();
-
+            String fragmentSource, vertexSource;
             if (firstPattern.equals("vertex")) {
                 vertexSource = splitString[1];
+                fragmentSource = splitString[2];
             } else if (firstPattern.equals("fragment")) {
                 fragmentSource = splitString[1];
+                vertexSource = splitString[2];
             } else {
                 throw new RuntimeException("Unexpected token '" + firstPattern + "'");
             }
 
-            if (secondPattern.equals("vertex")) {
-                vertexSource = splitString[2];
-            } else if (secondPattern.equals("fragment")) {
-                fragmentSource = splitString[2];
-            } else {
-                throw new RuntimeException("Unexpected token '" + secondPattern + "'");
+            int vertexID = glCreateShader(GL_VERTEX_SHADER);
+            glShaderSource(vertexID, vertexSource);
+            glCompileShader(vertexID);
+
+            if (glGetShaderi(vertexID, GL_COMPILE_STATUS) == GL_FALSE) {
+                throw new RuntimeException("ERROR: '" + filepath + "'\n\tVertex shader compilation failed. " + glGetShaderInfoLog(vertexID, glGetShaderi(vertexID, GL_INFO_LOG_LENGTH)));
             }
+
+            int fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
+            glShaderSource(fragmentID, fragmentSource);
+            glCompileShader(fragmentID);
+
+            if (glGetShaderi(fragmentID, GL_COMPILE_STATUS) == GL_FALSE) {
+                throw new RuntimeException("ERROR: '" + filepath + "'\n\tFragment shader compilation failed. " + glGetShaderInfoLog(fragmentID, glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH)));
+            }
+
+            shaderProgramID = glCreateProgram();
+            glAttachShader(shaderProgramID, vertexID);
+            glAttachShader(shaderProgramID, fragmentID);
+            glLinkProgram(shaderProgramID);
+
+            if (glGetProgrami(shaderProgramID, GL_LINK_STATUS) == GL_FALSE) {
+                throw new RuntimeException("ERROR: '" + filepath + "'\n\tLinking of shaders failed. " + glGetShaderInfoLog(shaderProgramID, glGetProgrami(shaderProgramID, GL_INFO_LOG_LENGTH)));
+            }
+
         } catch (IOException e) {
             throw new RuntimeException("Error: Could not open file for shader: '" + filepath + "'");
-        }
-    }
-
-    public void compile() {
-        int vertexID, fragmentID;
-
-        vertexID = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexID, vertexSource);
-        glCompileShader(vertexID);
-
-        int success = glGetShaderi(vertexID, GL_COMPILE_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
-
-            throw new RuntimeException("ERROR: '" + filepath + "'\n\tVertex shader compilation failed. " + glGetShaderInfoLog(vertexID, len));
-        }
-
-        fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentID, fragmentSource);
-        glCompileShader(fragmentID);
-
-        success = glGetShaderi(fragmentID, GL_COMPILE_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
-
-            throw new RuntimeException("ERROR: '" + filepath + "'\n\tFragment shader compilation failed. " + glGetShaderInfoLog(fragmentID, len));
-        }
-
-        shaderProgramID = glCreateProgram();
-        glAttachShader(shaderProgramID, vertexID);
-        glAttachShader(shaderProgramID, fragmentID);
-        glLinkProgram(shaderProgramID);
-
-        success = glGetProgrami(shaderProgramID, GL_LINK_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetProgrami(shaderProgramID, GL_INFO_LOG_LENGTH);
-
-            throw new RuntimeException("ERROR: '" + filepath + "'\n\tLinking of shaders failed. " + glGetShaderInfoLog(shaderProgramID, len));
         }
     }
 
@@ -215,12 +187,15 @@ public class Shader {
         }
     }
 
-    public String getFilepath() {
-        return filepath;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Shader shader)) return false;
+        return shaderProgramID == shader.shaderProgramID;
     }
 
     @Override
-    public String toString() {
-        return filepath.substring(filepath.lastIndexOf('/') + 1, filepath.lastIndexOf('.'));
+    public int hashCode() {
+        return Objects.hashCode(shaderProgramID);
     }
 }

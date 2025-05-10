@@ -93,10 +93,7 @@ public class MouseListener implements MouseEventProducer {
     }
 
     public static GameObject getGameObjectUnderCursor() {
-        GameObject gameObjectById = Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int) getX(), (int) getY()));
-        //TODO: delete
-        System.out.println(gameObjectById.getAllComponents());
-        return gameObjectById;
+        return Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int) getX(), (int) getY()));
     }
 
     public static float getRelativeAngle(Vector2f position) {

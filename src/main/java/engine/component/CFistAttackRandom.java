@@ -82,7 +82,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
     @Override
     public void update(float dt) {
-        DebugDraw.drawCircle(gameObject.transform.position, maxAttackDistance, 0, Color.GREY5, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
+        DebugDraw.drawCircle(gameObject.transform.position, maxAttackDistance, 0, Color.RED, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
 
         if (!attackState.equals(INACTIVE)) {
             executeCurrentAttack(dt);
@@ -122,13 +122,12 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
         attackState = MOVING_TO_TARGET;
 
         targetGameobject = MouseListener.getGameObjectUnderCursor();
+        //TODO: избавиться от переменной мб
         boolean isObjectInteractable = targetGameobject != null && targetGameobject.isInteractable();
-        float distance = isObjectInteractable
-                ? targetGameobject.transform.position.distance(gameObject.transform.position)
-                : MouseListener.getOrtho().distance(gameObject.transform.position);
+        float distance = MouseListener.getOrtho().distance(gameObject.transform.position);
 
         if (isObjectInteractable && distance < maxAttackDistance) {
-            targetPos = new Vector2f(targetGameobject.transform.position);
+            targetPos = MouseListener.getOrtho();
         } else {
             targetPos = calculateClampedPosition(gameObject.transform.position, MouseListener.getOrtho(), maxAttackDistance, distance);
             targetGameobject = null;

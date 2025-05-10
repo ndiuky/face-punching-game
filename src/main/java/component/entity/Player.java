@@ -34,9 +34,9 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private static final float ITEM_DROP_STRENGTH = 3.5f;
 
-    private static final float INVENTORY_ANIMATION_TIME = 1f;
+    private static final float INVENTORY_ANIMATION_TIME = 0.15f;
 
-    private static final float INVENTORY_ANIMATION_EASING = 1.70158f;
+    private static final float INVENTORY_ANIMATION_OVERTHROW_VALUE = 1.70158f;
 
     private CInventory inventory = new CInventory();
 
@@ -100,6 +100,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private void switchInventoryOpenState() {
         inventoryState = InventoryOpeningState.getOpposedStartingState(inventoryState);
+        currInventoryAnimationTime = 0;
         if (InventoryOpeningState.IS_OPENING.equals(inventoryState)) {
             uiInventory.setEnabled(true);
         }
@@ -134,7 +135,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
         float currProcessStep = Math.clamp(0, 1, currInventoryAnimationTime / INVENTORY_ANIMATION_TIME);
         // TODO: перенести эту и подобные интерполяции в утилитарный класс с анимациями
         float factor = Math.lerp(0, 1,
-                (float) (1 + (INVENTORY_ANIMATION_EASING + 1) * pow(currProcessStep - 1, 3) + INVENTORY_ANIMATION_EASING * pow(currProcessStep - 1, 2)));
+                (float) (1 + (INVENTORY_ANIMATION_OVERTHROW_VALUE + 1) * pow(currProcessStep - 1, 3) + INVENTORY_ANIMATION_OVERTHROW_VALUE * pow(currProcessStep - 1, 2)));
         if (InventoryOpeningState.IS_OPENING.equals(inventoryState)) {
             resultingSize = UiInventory.DEFAULT_RELATIVE_SCREEN_SIZE * factor;
         } else {

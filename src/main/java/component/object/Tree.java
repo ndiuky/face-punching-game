@@ -12,6 +12,7 @@ import org.joml.Vector2f;
 import util.InteractionType;
 import util.LootTable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -37,9 +38,9 @@ public class Tree extends Component implements Interactable {
     Random random = new Random();
 
     private LootTable lootTable = LootTable.of(
-            new ItemStack(ItemType.CHIP, 2),
-            new ItemStack(ItemType.CHIP, 2),
-            new ItemStack(ItemType.CHIP)
+            Arrays.stream(ItemType.values())
+                    .map(ItemStack::new)
+                    .toArray(ItemStack[]::new)
     );
 
     @Override

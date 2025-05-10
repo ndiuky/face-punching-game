@@ -31,7 +31,6 @@ public class AssetPool {
             return shaders.get(shaderType);
         } else {
             Shader shader = new Shader(getFullShaderPath(shaderType.name));
-            shader.compile();
             shaders.put(shaderType, shader);
 
             return shader;

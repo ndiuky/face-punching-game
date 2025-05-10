@@ -162,6 +162,7 @@ public abstract class Scene {
     }
 
     //TODO: есть подозрение что этот метод жрёт дохрена ресурсов, нужно протестить производительность
+    //TODO: идея: добавить отдельный метод, который будет искать все объекты, которые также рендерятся в picking шейдере. Нужно просмотреть все пиксели в нужном радиусе, и вернуть все найденные id'шники
     public List<GameObject> getAllGameObjectsInRadius(Vector2f origin, float radius) {
         List<GameObject> resultList = new ArrayList<>();
 

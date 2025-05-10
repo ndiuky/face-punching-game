@@ -28,8 +28,6 @@ public class ItemDrop extends Component {
 
     private static final float SLIDE_TIME = 0.5f;
 
-    private static final float ROTATION_TIME = 1f;
-
     private final float wobbleOffset = new Random().nextFloat(1);
 
     private ItemStack containingStack;
@@ -132,7 +130,7 @@ public class ItemDrop extends Component {
         if (currSlidingTime == 0) {
             rotationFactor = 0;
         } else {
-            rotationFactor = currSlidingTime >= ROTATION_TIME ? 1 : (float) (1 - pow(2, -10 * currSlidingTime));
+            rotationFactor = (float) pow(2, -10 * currSlidingTime);
         }
 
         gameObject.transform.position = new Vector2f(initialPos).add(new Vector2f(slideDir).mul(factor));
@@ -140,7 +138,7 @@ public class ItemDrop extends Component {
 
         currSlidingTime += dt;
 
-        if (factor == 1 && rotationFactor == 1) {
+        if (factor == 1) {
             isFullyStopped = true;
             currSlidingTime = 0;
             initialPos = gameObject.transform.position;

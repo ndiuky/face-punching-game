@@ -34,7 +34,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private static final float ITEM_DROP_STRENGTH = 3.5f;
 
-    private static final float INVENTORY_ANIMATION_TIME = 0.2f;
+    private static final float INVENTORY_ANIMATION_TIME = 1f;
 
     private static final float INVENTORY_ANIMATION_EASING = 1.70158f;
 

@@ -49,7 +49,7 @@ public class Stone extends Component implements Interactable {
     public void start() {
         originalScale = new Vector2f(gameObject.transform.scale);
 
-        stoneSR = new CSpriteRenderer(TextureType.STONE);
+        stoneSR = new CSpriteRenderer(TextureType.STONE).setAnchorPoint(0, -0.35f);
 
         gameObject.addComponent(stoneSR);
     }

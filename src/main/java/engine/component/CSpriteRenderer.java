@@ -88,4 +88,14 @@ public class CSpriteRenderer extends Component {
 
         return this;
     }
+
+    public Vector2f getAnchorPoint() {
+        return sprite.getAnchorPoint();
+    }
+
+    public CSpriteRenderer setAnchorPoint(float x, float y) {
+        sprite.setAnchorPoint(new Vector2f(x, y));
+
+        return this;
+    }
 }

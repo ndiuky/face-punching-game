@@ -19,6 +19,9 @@ public class Sprite {
             new Vector2f(0, 1)
     };
 
+    // from [-0.5; -0.5] to [0.5; 0.5]
+    private Vector2f anchorPoint = new Vector2f(0);
+
     public Sprite(final Texture texture) {
         this.texture = texture;
     }
@@ -62,5 +65,15 @@ public class Sprite {
 
     public int getTexId() {
         return texture == null ? -1 : texture.getTexID();
+    }
+
+    public Vector2f getAnchorPoint() {
+        return new Vector2f(anchorPoint);
+    }
+
+    public Sprite setAnchorPoint(Vector2f anchorPoint) {
+        this.anchorPoint = anchorPoint;
+
+        return this;
     }
 }

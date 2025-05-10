@@ -27,7 +27,7 @@ public class Renderer {
 
     private final Map<Shader, List<List<? extends Batch>>> shaderBatchesMapping = Map.ofEntries(
             Map.entry(AssetPool.getShader(ShaderType.DEFAULT), List.of(textureBatches)),
-            Map.entry(AssetPool.getShader(ShaderType.PICKING), List.of(textureBatches)),
+            Map.entry(AssetPool.getShader(ShaderType.PICKING), List.of(textureBatches, uiRenderBatches)),
             Map.entry(AssetPool.getShader(ShaderType.UI), List.of(uiRenderBatches)),
             Map.entry(AssetPool.getShader(ShaderType.FONT), List.of(textBatches))
     );

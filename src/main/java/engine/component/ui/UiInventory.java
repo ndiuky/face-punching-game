@@ -14,7 +14,7 @@ public class UiInventory extends UiElement {
     // TODO: сделать возможность изменять из настроек
     private CInventory connectedInventory;
 
-    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.75f;
+    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.6f;
 
     private float relativeScreenSize = DEFAULT_RELATIVE_SCREEN_SIZE;
 
@@ -38,7 +38,7 @@ public class UiInventory extends UiElement {
         int counter = 0;
         for (Map.Entry<ItemType, Integer> currItems : connectedInventory.getContents().entrySet()) {
 
-            UiSprite uiSprite = (UiSprite) new UiSprite(canvas, currItems.getKey().sprite).setScreenPos(new Vector4f(-relativeScreenSize, relativeScreenSize - (counter + 1) * 0.2f, -0.8f * relativeScreenSize, relativeScreenSize - counter * 0.2f));
+            UiSprite uiSprite = (UiSprite) new UiSprite(canvas, currItems.getKey().sprite).setScreenPos(new Vector4f(-relativeScreenSize, relativeScreenSize - (counter + 1) * 0.2f, -0.8f * relativeScreenSize, relativeScreenSize - counter * 0.2f)).setClickable(true);
             uiSprites.add(uiSprite);
 
             counter++;
@@ -57,9 +57,9 @@ public class UiInventory extends UiElement {
     }
 
     private void updateBgSprite(){
-        bgSprite = (UiSprite) new UiSprite(canvas, new Sprite(AssetPool.getTexture(TextureType.CHIP_SMALL)))
+        bgSprite = (UiSprite) new UiSprite(canvas, new Sprite(AssetPool.getTexture(TextureType.PIXEL)))
                 .setKeepProportions(false)
                 .setScreenPos(new Vector4f(-relativeScreenSize, -relativeScreenSize, relativeScreenSize, relativeScreenSize))
-                .setColor(new Vector4f(0.3f, 0.3f, 0.3f, 0.7f));
+                .setColor(new Vector4f(0.5f, 0.5f, 0.6f, 0.7f));
     }
 }

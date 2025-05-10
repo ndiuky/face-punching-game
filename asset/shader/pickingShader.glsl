@@ -1,6 +1,7 @@
 #type vertex
 #version 330 core
-layout (location=0) in vec3 aPos;
+
+layout (location=0) in vec2 aPos;
 layout (location=1) in vec4 aColor;
 layout (location=2) in vec2 aTexCoords;
 layout (location=3) in float aTexId;
@@ -21,7 +22,7 @@ void main()
     fTexId = aTexId;
     fEntityId = aEntityId;
 
-    gl_Position = uProjection * uView * vec4(aPos, 1.0);
+    gl_Position = uProjection * uView * vec4(aPos, 1.0, 1.0);
 }
 
 #type fragment
@@ -38,13 +39,14 @@ out vec3 color;
 
 void main()
 {
+    //TODO: менять местами
     vec4 texColor = vec4(1, 1, 1, 1);
     if (fTexId > 0) {
         int id = int(fTexId);
         texColor = fColor * texture(uTextures[id], fTexCoords);
     }
 
-    if (texColor.a < 0.5) {
+    if (texColor.a < 0.1) {
         discard;
     }
     color = vec3(fEntityId, fEntityId, fEntityId);

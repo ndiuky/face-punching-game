@@ -28,7 +28,7 @@ public class Tree extends Component implements Interactable {
 
     private static final float HIT_ANIMATION_DURATION = 0.5f;
 
-    private static final float MAX_Y_HIT_ANIMATION_DELTA = 1f;
+    private static final float MAX_Y_HIT_ANIMATION_DELTA = 0.6f;
 
     private CSpriteRenderer treeSR;
 
@@ -47,7 +47,7 @@ public class Tree extends Component implements Interactable {
         gameObject.transform.scale = new Vector2f(3);
         originalScale = new Vector2f(gameObject.transform.scale);
 
-        treeSR = new CSpriteRenderer(TextureType.TREE);
+        treeSR = new CSpriteRenderer(TextureType.TREE).setAnchorPoint(0, -0.45f);
 
         gameObject.addComponent(treeSR);
     }

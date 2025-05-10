@@ -14,6 +14,7 @@ public enum TextureType {
     SCREW_1("screw-1"),
     STONE("stone"),
     TREE("tree"),
+    PIXEL("pixel"),
     ATTACK_BUTTON("ui/attack-button"),
     BLOCK_BUTTON("ui/block-button"),
     BONUS_BUTTON("ui/bonus-button"),

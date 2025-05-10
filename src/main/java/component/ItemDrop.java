@@ -16,6 +16,7 @@ import java.util.Random;
 
 import static java.lang.Math.pow;
 
+//TODO: чем больше размер стака, тем больше скейл итема
 //TODO: убрать item из рендера в pickingShader
 public class ItemDrop extends Component {
 

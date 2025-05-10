@@ -2,7 +2,6 @@ package engine.render;
 
 import engine.component.CSpriteRenderer;
 import engine.object.GameObject;
-import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -34,7 +33,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //TODO: создать класс для помощи в работе с OpenGL
 //TODO: удалить поддержку SpriteSheet, и всегда использовать по одной текстуре не спрайт (кроме текста). Таким образом можно не передавать текстурные координаты в шейдер, а просто выставлять их там вручную ({0,0},{1,1}). Плюс должны исчезнуть все артефакты связанные с неточностью чисел с плавающей точкой
-public class TextureRenderBatch extends Batch implements Comparable<TextureRenderBatch>{
+public class TextureRenderBatch extends Batch implements Comparable<TextureRenderBatch> {
 
     private static final int POS_SIZE = 2;
 
@@ -218,15 +217,23 @@ public class TextureRenderBatch extends Batch implements Comparable<TextureRende
         // TODO: перенести в Texture
         float textureAspectRatio = (float) sprite.getTexture().getWidth() / sprite.getTexture().getHeight();
 
-        float xAdd = 0.5f * textureAspectRatio;
-        float yAdd = 0.5f;
+        //debug
+//        Vector4f mul = new Vector4f(sprite.gameObject.transform.position.x, sprite.gameObject.transform.position.y, 0, 1);
+//        if (!AssetPool.getTexture(TextureType.GRASS_0).equals(sprite.getTexture())) {
+//            DebugDraw.drawCircle(new Vector2f(mul.x, mul.y), 0.1f, -1, Color.RED, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_LOW);
+//        }
+
+        Vector2f anchorPoint = sprite.getAnchorPoint();
+
+        float xAdd = (0.5f - anchorPoint.x) * textureAspectRatio;
+        float yAdd = 0.5f - anchorPoint.y;
         for (int i = 0; i < EBO_QUAD_VERTICES_AMOUNT; i++) {
             if (i == 1) {
-                yAdd = -0.5f;
+                yAdd = -anchorPoint.y - 0.5f;
             } else if (i == 2) {
-                xAdd = -0.5f * textureAspectRatio;
+                xAdd = (-anchorPoint.x - 0.5f) * textureAspectRatio;
             } else if (i == 3) {
-                yAdd = 0.5f;
+                yAdd = 0.5f - anchorPoint.y;
             }
 
             Vector4f currentPos = new Vector4f(

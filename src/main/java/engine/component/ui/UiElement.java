@@ -7,7 +7,12 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: определять id UI объекта на который пришлось нажатие, опираясь на его screenPos
 public abstract class UiElement {
+
+    private static int idCounter = 0;
+
+    private int uid = -1;
 
     // (bottomLeftX, bottomLeftY, topRightX, topRightY)
     protected Vector4f screenPos = new Vector4f(-1, -1, 1, 1);
@@ -25,10 +30,14 @@ public abstract class UiElement {
 
     protected Canvas canvas;
 
-    protected boolean isEnabled = true;
+    protected boolean isEnabled = false;
+
+
 
     public UiElement(Canvas canvas) {
         this.canvas = canvas;
+
+        uid = idCounter++;
     }
 
     public final void updateInternal() {
@@ -135,5 +144,9 @@ public abstract class UiElement {
 
     public void setEnabled(final boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public int getUid() {
+        return uid;
     }
 }

@@ -82,7 +82,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
     @Override
     public void update(float dt) {
-        DebugDraw.drawCircle(gameObject.transform.position, maxAttackDistance, 0, Color.GREY5, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
+        DebugDraw.drawCircle(gameObject.transform.position, maxAttackDistance, 0, Color.GREY5, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
 
         if (!attackState.equals(INACTIVE)) {
             executeCurrentAttack(dt);

@@ -29,7 +29,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class DebugDraw {
-    private static final int MAX_LINES = 4096;
+    private static final int MAX_LINES = 4096*8;
 
     private static final int INDICES_COUNT = 6;
 
@@ -157,19 +157,11 @@ public class DebugDraw {
         drawLine(vertices[3], vertices[0], zOrder, color);
     }
 
-    public static void drawCircle(Vector2f center, float radius, int zOrder) {
-        drawCircle(center, radius, zOrder, Color.BLUE, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-    }
-
     public static void drawCircle(Vector2f center, float radius, int zOrder, Color color) {
-        drawCircle(center, radius, zOrder, color, 1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
+        drawCircle(center, radius, zOrder, color, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
     }
 
-    public static void drawCircle(Vector2f center, float radius, int zOrder, Color color, int lifetime) {
-        drawCircle(center, radius, zOrder, color, lifetime, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID);
-    }
-
-    public static void drawCircle(Vector2f center, float radius, int zOrder, Color color, int lifetime, int segments) {
+    public static void drawCircle(Vector2f center, float radius, int zOrder, Color color, int segments) {
         Vector2f[] points = new Vector2f[segments];
         float increment = 360f / points.length;
         float currentAngle = 0;

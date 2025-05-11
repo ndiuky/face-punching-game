@@ -3,7 +3,7 @@ package engine.component.ui;
 import engine.component.Component;
 import engine.text.Text;
 import engine.util.Alignment;
-import util.TextAnimation;
+import engine.text.TextAnimation;
 
 public class CLoadingText extends Component {
 
@@ -15,10 +15,13 @@ public class CLoadingText extends Component {
 
     @Override
     public void start() {
-        textRenderer = new CTextRenderer(new Text("loading").setAlignment(Alignment.MIDDLE_LEFT).setAnimation(TextAnimation.SIZE_WAVING_FORWARDS));
+        Text text = new Text("loading");
+        text.alignment = Alignment.MIDDLE_LEFT;
+        text.animation = TextAnimation.SIZE_WAVING_FORWARDS;
+        textRenderer = new CTextRenderer(text);
         gameObject.addComponent(textRenderer);
 
-        dots += getUid();
+        dots += uid;
     }
 
     @Override

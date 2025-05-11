@@ -12,8 +12,8 @@ import engine.util.EnginePreferences;
 import engine.util.Interactable;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
+import registry.Interaction;
 import registry.TextureType;
-import util.InteractionType;
 
 import java.util.ArrayDeque;
 import java.util.Random;
@@ -25,9 +25,9 @@ import static engine.component.CFistAttackRandom.AttackType.ARC_LEFT;
 import static engine.component.CFistAttackRandom.AttackType.ARC_RIGHT;
 import static engine.event.MouseEventProducer.listenToMousePress;
 import static engine.event.MouseEventProducer.listenToMouseRelease;
-import static engine.util.EngineUtils.calculateClampedPosition;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
-import static util.Utils.calculatePath;
+import static util.Utils.calculateBezierPath;
+import static util.Utils.calculateClampedPosition;
 
 public class CFistAttackRandom extends Component implements MouseEventListener {
 
@@ -109,7 +109,8 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
             case STRAIGHT -> {
                 straightMoveFistToTarget(dt);
             }
-            case ARC_LEFT, ARC_RIGHT -> {
+            case ARC_LEFT,
+                 ARC_RIGHT -> {
                 arcMoveFistToTarget(dt);
             }
         }
@@ -123,7 +124,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
         targetGameobject = MouseListener.getGameObjectUnderCursor();
         //TODO: избавиться от переменной мб
-        boolean isObjectInteractable = targetGameobject != null && targetGameobject.isInteractable();
+        boolean isObjectInteractable = targetGameobject != null && targetGameobject.isInteractable;
         float distance = MouseListener.getOrtho().distance(gameObject.transform.position);
 
         if (isObjectInteractable && distance < maxAttackDistance) {
@@ -134,14 +135,14 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
         }
 
         if (currentAttack == ARC_LEFT) {
-            path = calculatePath(gameObject.transform.position, targetPos, true, arcSegments, approachAngle, middlePointDistance);
+            path = calculateBezierPath(gameObject.transform.position, targetPos, true, arcSegments, approachAngle, middlePointDistance);
         } else if (currentAttack == ARC_RIGHT) {
-            path = calculatePath(gameObject.transform.position, targetPos, false, arcSegments, approachAngle, middlePointDistance);
+            path = calculateBezierPath(gameObject.transform.position, targetPos, false, arcSegments, approachAngle, middlePointDistance);
         }
 
-        fistGO = Prefab.generateSpriteObject(FIST_SPRITE, 0.4f, gameObject.getZIndex() - 1);
+        fistGO = Prefab.generateSpriteObject(FIST_SPRITE, 0.4f, gameObject.zIndex - 1);
         fistGO.transform.position = new Vector2f(gameObject.transform.position);
-        Window.getCurrentScene().addGameObjectToScene(fistGO);
+        Window.currentScene.addGameObjectToScene(fistGO);
 
         lastPerformedAttack = currentAttack;
     }
@@ -156,7 +157,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
             fistGO.transform.position = new Vector2f(targetPos);
 
             if (targetGameobject != null) {
-                for (Component component : targetGameobject.getAllComponents()) {
+                for (Component component : targetGameobject.components) {
 //                        if (component instanceof Knockable) {
 //
 //                            float radians = (float) Math.toRadians(90 * (1 - approachAngle));
@@ -169,8 +170,10 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 //
 //                            break;
 //                        }
-                    if (component instanceof Interactable) {
-                        ((Interactable) component).onInteraction(InteractionType.ATTACK);
+                    if (component instanceof Interactable interactable) {
+                        interactable.onInteraction(Interaction.ATTACK);
+
+                        // TODO: здесь скорее всего не нужен break, ибо нужно пройтись по всем Interactable в каждом объекте
                         break;
                     }
                 }
@@ -196,7 +199,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
                 fistGO.transform.position = currentDestination;
 
                 if (targetGameobject != null) {
-                    for (Component component : targetGameobject.getAllComponents()) {
+                    for (Component component : targetGameobject.components) {
 //                        if (component instanceof Knockable) {
 //
 //                            float radians = (float) Math.toRadians(90 * (1 - approachAngle));
@@ -210,7 +213,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 //                            break;
 //                        }
                         if (component instanceof Interactable) {
-                            ((Interactable) component).onInteraction(InteractionType.ATTACK);
+                            ((Interactable) component).onInteraction(Interaction.ATTACK);
                             break;
                         }
                     }

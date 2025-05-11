@@ -7,7 +7,7 @@ import java.util.List;
 
 public class LootTable {
 
-    private final List<ItemStack> itemStacks;
+    public final List<ItemStack> itemStacks;
 
     private LootTable(List<ItemStack> itemStacks) {
         this.itemStacks = itemStacks;
@@ -15,10 +15,6 @@ public class LootTable {
 
     public static LootTable of(ItemStack... itemStacks) {
         return new LootTable(List.of(itemStacks));
-    }
-
-    public List<ItemStack> getContent() {
-        return new ArrayList<>(itemStacks);
     }
 
     public List<ItemDrop> getContentDropped() {

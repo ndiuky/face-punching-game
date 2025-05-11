@@ -35,7 +35,7 @@ public class CDraggingCamera extends Component implements MouseEventListener {
 
         if (isDragging) {
             if (dragDebounce > 0) {
-                clickOrigin = MouseListener.getOrtho();
+                clickOrigin = new Vector2f(MouseListener.getOrtho());
                 dragDebounce -= dt;
 
                 return;
@@ -48,9 +48,9 @@ public class CDraggingCamera extends Component implements MouseEventListener {
             dragDebounce = 0.1f;
         }
 
-        if (MouseListener.getScrollY() != 0.0f) {
-            camera.addZoom(-(float) Math.pow(Math.abs(MouseListener.getScrollY() * scrollSensitivity),
-                    1 / camera.getZoom()) * -Math.signum(MouseListener.getScrollY()));
+        if (MouseListener.scrollY != 0.0f) {
+            camera.addZoom(-(float) Math.pow(Math.abs(MouseListener.scrollY * scrollSensitivity),
+                    1 / camera.zoom) * -Math.signum(MouseListener.scrollY));
         }
 
         if (KeyListener.isKeyPressed(GLFW_KEY_COMMA)) {
@@ -59,15 +59,15 @@ public class CDraggingCamera extends Component implements MouseEventListener {
 
         if (reset) {
             camera.position.lerp(new Vector2f(), lerpTime);
-            camera.setZoom(this.camera.getZoom() + ((1.0f - camera.getZoom()) * lerpTime));
+            camera.zoom = this.camera.zoom + ((1.0f - camera.zoom) * lerpTime);
             this.lerpTime += 0.01f * dt;
 
             if (Math.abs(camera.position.x) <= 0.01f &&
                 Math.abs(camera.position.y) <= 0.01f &&
-                Math.abs(camera.getZoom() - 1) <= 0.01f) {
+                Math.abs(camera.zoom - 1) <= 0.01f) {
                 lerpTime = 0.0f;
                 camera.position.set(0f, 0f);
-                camera.setZoom(1.0f);
+                camera.zoom = 1;
                 reset = false;
             }
         }

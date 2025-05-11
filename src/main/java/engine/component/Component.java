@@ -7,7 +7,7 @@ public abstract class Component {
 
     private static int idCounter = 0;
 
-    private int uid = -1;
+    public int uid = -1;
 
     public GameObject gameObject = null;
 
@@ -27,10 +27,6 @@ public abstract class Component {
         if (uid == -1) {
             uid = idCounter++;
         }
-    }
-
-    public int getUid() {
-        return uid;
     }
 
     public void destroy() {

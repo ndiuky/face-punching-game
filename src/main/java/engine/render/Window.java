@@ -3,11 +3,9 @@ package engine.render;
 import engine.event.KeyboardEventListener;
 import engine.event.KeyboardEventProducer;
 import engine.event.MouseEventProducer;
-import engine.object.Scene;
 import engine.util.AssetPool;
 import engine.util.Color;
 import engine.util.EnginePreferences;
-import engine.util.EngineUtils;
 import engine.util.listener.KeyListener;
 import engine.util.listener.MouseListener;
 import org.lwjgl.PointerBuffer;
@@ -17,6 +15,8 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 import registry.ShaderType;
 import scene.ForestScene;
+import scene.Scene;
+import util.Utils;
 
 import static engine.util.EnginePreferences.ENABLE_SMALLER_WINDOWED_SIZE;
 import static engine.util.EnginePreferences.ENABLE_VSYNK;
@@ -48,7 +48,6 @@ import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
@@ -72,7 +71,7 @@ public class Window implements KeyboardEventListener {
 
     private static int windowedWidth, windowedHeight;
 
-    private static float aspectRatio;
+    public static float aspectRatio;
 
     private static boolean fullscreen = EnginePreferences.FULLSCREEN_BY_DEFAULT;
 
@@ -82,17 +81,15 @@ public class Window implements KeyboardEventListener {
 
     private static String title;
 
-    private static long glfwWindow;
+    public static long glfwWindow;
 
     private static PickingTexture pickingTexture;
 
-    public static Color bgColor = Color.GREY1;
-
-    private static Scene currentScene;
+    public static Scene currentScene;
 
     private static Window instance;
 
-    private static long currentFrame = 0;
+    public static long currentFrame = 0;
 
     public Window() {
         title = "Face punching game idk";
@@ -191,8 +188,8 @@ public class Window implements KeyboardEventListener {
 
             windowPosX = vidMode.width() / 2 + xOffset;
             windowPosY = (int) (vidMode.height() / 2.2f);
-        } else{
-            currentScene.getCamera().updateProjectionSize();
+        } else {
+            currentScene.camera.updateProjectionSize();
         }
 
         if (fullscreen) {
@@ -232,7 +229,7 @@ public class Window implements KeyboardEventListener {
     }
 
     public void loop() {
-        float beginTime = EngineUtils.time();
+        float beginTime = Utils.time();
         float endTime;
         float dt = -1.0f;
 
@@ -275,14 +272,14 @@ public class Window implements KeyboardEventListener {
 
             currentFrame++;
 
-            endTime = EngineUtils.time();
+            endTime = Utils.time();
             dt = endTime - beginTime;
             beginTime = endTime;
         }
     }
 
     private void renderSceneWithShader(Shader shader) {
-        Renderer.bindShader(shader);
+        Renderer.currentShader = shader;
         currentScene.render();
     }
 
@@ -308,7 +305,6 @@ public class Window implements KeyboardEventListener {
         //TODO: реализовать
     }
 
-
     public static Window get() {
         if (instance == null) {
             instance = new Window();
@@ -317,28 +313,12 @@ public class Window implements KeyboardEventListener {
         return instance;
     }
 
-    public static float getAspectRatio() {
-        return aspectRatio;
-    }
-
-    public static Scene getCurrentScene() {
-        return currentScene;
-    }
-
     public static int getWidth() {
         return fullscreen ? width : windowedWidth;
     }
 
     public static int getHeight() {
         return fullscreen ? height : windowedHeight;
-    }
-
-    public static long getGlfwWindow() {
-        return glfwWindow;
-    }
-
-    public static long getCurrentFrame() {
-        return currentFrame;
     }
 
     public static void clearColor(Color color) {
@@ -351,7 +331,7 @@ public class Window implements KeyboardEventListener {
             toggleFullscreen();
         } else if (key == GLFW_KEY_F3) {
             toggleDebugMenu();
-        } else if (key == GLFW_KEY_F5){
+        } else if (key == GLFW_KEY_F5) {
             changeScene(ForestScene.class);
         }
     }

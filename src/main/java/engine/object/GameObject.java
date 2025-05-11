@@ -2,11 +2,7 @@ package engine.object;
 
 
 import engine.component.Component;
-import engine.component.ui.CTextRenderer;
 import engine.render.Window;
-import engine.text.Text;
-import engine.util.Alignment;
-import engine.util.Color;
 import engine.util.Interactable;
 
 import java.util.ArrayList;
@@ -14,32 +10,29 @@ import java.util.List;
 
 public class GameObject {
 
+    public final List<Component> components = new ArrayList<>();
+
     private static int idCounter = 0;
 
-    private int uid = -1;
+    public boolean doSerialize = true;
 
-    private String name;
+    public boolean isDead = false;
 
-    private final List<Component> components = new ArrayList<>();
+    public boolean isInteractable;
 
     public Transform transform;
 
-    private int zIndex;
+    public String name;
 
-    private boolean isDead = false;
+    public int uid = -1;
 
-    private boolean doSerialize = true;
+    public int zIndex;
 
-    private boolean isInteractable;
 
     public GameObject(String name, Transform transform, int zIndex) {
         this.name = name;
         this.transform = transform;
         this.zIndex = zIndex;
-
-//        CTextRenderer textRenderer = new CTextRenderer().setText(new Text(name).setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
-//        textRenderer.getText().setSizeModifier(0.5f);
-//        addComponent(textRenderer);
 
         uid = idCounter++;
     }
@@ -85,7 +78,7 @@ public class GameObject {
             isInteractable = true;
         }
 
-        if (Window.getCurrentScene().isLevelLoaded) {
+        if (Window.currentScene.isLevelLoaded) {
             c.start();
         }
 
@@ -108,41 +101,5 @@ public class GameObject {
         for (Component curr : components) {
             curr.destroy();
         }
-    }
-
-    public List<Component> getAllComponents() {
-        return components;
-    }
-
-    public int getZIndex() {
-        return zIndex;
-    }
-
-    public int getUid() {
-        return uid;
-    }
-
-    public boolean isDoSerialize() {
-        return doSerialize;
-    }
-
-    public void setDoSerialize(boolean doSerialize) {
-        this.doSerialize = doSerialize;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isInteractable() {
-        return isInteractable;
-    }
-
-    public void setInteractable(boolean interactableByPlayer) {
-        isInteractable = interactableByPlayer;
-    }
-
-    public boolean isDead() {
-        return isDead;
     }
 }

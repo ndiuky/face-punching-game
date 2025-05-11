@@ -3,7 +3,7 @@ import engine.util.EnginePreferences;
 
 // TODO: форсировать запуск с ZGC
 // TODO: переделать сейвфайл на .penis формат
-//TODO: нахуй private поля. Нахуй геттеры. СДЕЛАТЬ ВСЁ PUBLIC!!!
+//TODO: все методы должны возвращать оригинальные объекты. А мутировать их или нет - решает уже вызывающая сторона
 public class Main {
     public static void main(String[] args) throws Exception {
         EnginePreferences.applyConfigurationFromConfigFile();

@@ -1,12 +1,12 @@
 package engine.util;
 
-import util.InteractionType;
+import registry.Interaction;
 
 import java.util.List;
 
 public interface Interactable {
 
-    List<InteractionType> getInteractionTypes();
+//    List<Interaction> getInteractionTypes();
 
-    void onInteraction(InteractionType interactionType);
+    void onInteraction(Interaction interaction);
 }

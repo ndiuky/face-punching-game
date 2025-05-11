@@ -2,7 +2,6 @@ package engine.component.ui;
 
 import engine.component.CInventory;
 import engine.object.Sprite;
-import engine.render.DebugDraw;
 import engine.util.AssetPool;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
@@ -12,6 +11,8 @@ import registry.TextureType;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static util.Utils.printf;
 
 //TODO: сейчас количество строк не ограничено
 public class UiInventory extends UiElement {
@@ -23,7 +24,9 @@ public class UiInventory extends UiElement {
 
     public static final float COLUMN_RELATIVE_WIDTH_DOUBLED = 1f / MAX_COLUMNS * 2;
 
-    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.9f;
+    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 1f;
+
+    private final Vector4f BG_COLOR = new Vector4f(0.5f, 0.5f, 0.6f, 1f);
 
     private float relativeScreenSize = DEFAULT_RELATIVE_SCREEN_SIZE;
 
@@ -35,7 +38,6 @@ public class UiInventory extends UiElement {
 
     public UiInventory(final Canvas canvas, final CInventory connectedInventory) {
         super(canvas);
-
         this.connectedInventory = connectedInventory;
 
         updateBgSprite();
@@ -50,8 +52,12 @@ public class UiInventory extends UiElement {
 
         uiSprites.add(bgSprite);
         int counter = 0;
-        for (Map.Entry<ItemType, Integer> currItems : connectedInventory.getContents().entrySet()) {
-            uiSprites.add((UiSprite) new UiSprite(canvas, currItems.getKey().sprite).setScreenPos(getPositionsForItemQuad(counter)).setClickable(true));
+        for (Map.Entry<ItemType, Integer> currItems : connectedInventory.contents.entrySet()) {
+            UiSprite uiSprite = new UiSprite(canvas, currItems.getKey().sprite);
+            uiSprite.screenPos = getPositionsForItemQuad(counter);
+            uiSprite.isClickable = true;
+            uiSprites.add(uiSprite);
+
             itemBySlot.put(counter++, currItems.getKey());
         }
 
@@ -70,10 +76,11 @@ public class UiInventory extends UiElement {
     }
 
     private void updateBgSprite() {
-        bgSprite = (UiSprite) new UiSprite(canvas, new Sprite(AssetPool.getTexture(TextureType.PIXEL)))
-                .setKeepProportions(false)
-                .setScreenPos(new Vector4f(-relativeScreenSize, -relativeScreenSize, relativeScreenSize, relativeScreenSize))
-                .setColor(new Vector4f(0.5f, 0.5f, 0.6f, 0.7f));
+        bgSprite = new UiSprite(canvas, new Sprite(AssetPool.getTexture(TextureType.PIXEL)));
+
+        bgSprite.screenPos = new Vector4f(-relativeScreenSize, -relativeScreenSize, relativeScreenSize, relativeScreenSize);
+        bgSprite.color = BG_COLOR;
+        bgSprite.keepProportions = false;
     }
 
     private Vector4f getPositionsForItemQuad(int quadNum) {
@@ -86,13 +93,14 @@ public class UiInventory extends UiElement {
     }
 
     public ItemType getItemUnderCursor() {
-        Vector2f pos = new Vector2f(MouseListener.getScreenX() - 0.5f, 0.5f - MouseListener.getScreenY()).div(relativeScreenSize);
+        Vector2f pos = new Vector2f((MouseListener.getScreenX() - 0.5f) * 2, (MouseListener.getScreenY() - 0.5f) * 2).div(relativeScreenSize);
 
-        int column = (int) Math.floor((pos.x / relativeScreenSize + 1) / COLUMN_RELATIVE_WIDTH_DOUBLED);
-        int row = (int) Math.floor((1 - pos.y / relativeScreenSize) / COLUMN_RELATIVE_WIDTH_DOUBLED);
+        int column = (int) Math.floor(pos.x / COLUMN_RELATIVE_WIDTH_DOUBLED);
+        int row = (int) Math.floor((1 - pos.y) / COLUMN_RELATIVE_WIDTH_DOUBLED) + 1;
         int key = row * MAX_COLUMNS + column;
 
-        System.out.println(String.format("col:%s, row:%s, key%s", column, row, key));
+        printf("posX:%, posY:%, col:%, row:%, key:%", pos.x, pos.y, column, row, key);
+
         return itemBySlot.get(key);
     }
 }

@@ -12,14 +12,14 @@ public interface KeyboardEventProducer {
     Map<Integer, List<KeyboardEventListener>> releaseListeners = new HashMap<>();
 
     static void listenToKeyboardPress(int key, KeyboardEventListener i) {
-        pressListeners.computeIfAbsent(key, k -> new ArrayList<>()).add(i);
+        pressListeners.computeIfAbsent(key, _ -> new ArrayList<>()).add(i);
     }
 
     static void listenToKeyboardRelease(int key, KeyboardEventListener i) {
-        releaseListeners.computeIfAbsent(key, k -> new ArrayList<>()).add(i);
+        releaseListeners.computeIfAbsent(key, _ -> new ArrayList<>()).add(i);
     }
 
-    static void clearListeners(){
+    static void clearListeners() {
         pressListeners.clear();
         releaseListeners.clear();
     }

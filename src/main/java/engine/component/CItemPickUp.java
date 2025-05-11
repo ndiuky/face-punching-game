@@ -6,21 +6,25 @@ import engine.render.DebugDraw;
 import engine.render.Window;
 import engine.util.Color;
 import engine.util.EnginePreferences;
+import org.joml.Vector2f;
 import util.ItemStack;
 
 import java.util.List;
 
 public class CItemPickUp extends Component {
 
-    private float pickUpRadius = 2;
+    public float pickUpRadius = 2;
 
     @Override
     public void update(float dt) {
         DebugDraw.drawCircle(gameObject.transform.position, pickUpRadius, -1, Color.GREY1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
-        List<GameObject> allGameObjectsInRadius = Window.getCurrentScene().getAllGameObjectsInRadius(gameObject.transform.position, pickUpRadius);
+
+        DebugDraw.drawLine(new Vector2f(0), new Vector2f(100, 0), -1);
+
+        List<GameObject> allGameObjectsInRadius = Window.currentScene.getAllGameObjectsInRadius(gameObject.transform.position, pickUpRadius);
 
         for (GameObject go : allGameObjectsInRadius) {
-            for (Component component : go.getAllComponents()) {
+            for (Component component : go.components) {
                 if (component instanceof ItemDrop itemDrop && !itemDrop.isBeingPickedUp()) {
                     itemDrop.setIsBeingPickedUp(this);
                 }
@@ -35,11 +39,5 @@ public class CItemPickUp extends Component {
         }
 
         objectInventories.getFirst().addItemStack(pickedItem);
-    }
-
-    public CItemPickUp setPickUpRadius(float pickUpRadius) {
-        this.pickUpRadius = pickUpRadius;
-
-        return this;
     }
 }

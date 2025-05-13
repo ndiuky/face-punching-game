@@ -1,6 +1,8 @@
 package engine.component.ui;
 
 import engine.component.Component;
+import engine.render.DebugDraw;
+import engine.util.listener.MouseListener;
 
 import java.util.ArrayList;
 import java.util.List;

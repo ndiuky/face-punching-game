@@ -25,6 +25,9 @@ public class ForestScene extends Scene {
 
     @Override
     public void init() {
+        //TODO: rollback
+        if (true) return;
+
         camera = new Camera();
         camera.zoom = 150;
 

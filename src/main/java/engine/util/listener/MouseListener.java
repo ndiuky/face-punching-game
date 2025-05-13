@@ -94,12 +94,12 @@ public class MouseListener implements MouseEventProducer {
 
     // [0; 1]
     public static float getScreenX() {
-        return xPos / Window.getWidth();
+        return xPos / Window.width;
     }
 
     // [0; 1]
     public static float getScreenY() {
-        return yPos / Window.getHeight();
+        return yPos / Window.height;
     }
 
     public static Vector2f getOrtho() {
@@ -111,7 +111,7 @@ public class MouseListener implements MouseEventProducer {
         Matrix4f viewProjection = new Matrix4f();
         camera.inverseViewMatrix.mul(camera.inverseProjectionMatrix, viewProjection);
 
-        Vector4f tmp = new Vector4f(xPos / Window.getWidth() * 2 - 1, 1 - yPos / Window.getHeight() * 2, 0, 1).mul(viewProjection);
+        Vector4f tmp = new Vector4f(xPos / Window.width * 2 - 1, 1 - yPos / Window.height * 2, 0, 1).mul(viewProjection);
 
         cachedOrtho = new Vector2f(tmp.x, tmp.y);
         calculatedValuesAtFrame = Window.currentFrame;

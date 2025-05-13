@@ -11,6 +11,7 @@ import registry.TextureType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static util.Utils.printf;
 
@@ -24,7 +25,7 @@ public class UiInventory extends UiElement {
 
     public static final float COLUMN_RELATIVE_WIDTH_DOUBLED = 1f / MAX_COLUMNS * 2;
 
-    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 1f;
+    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.9f;
 
     private final Vector4f BG_COLOR = new Vector4f(0.5f, 0.5f, 0.6f, 1f);
 
@@ -53,7 +54,13 @@ public class UiInventory extends UiElement {
         uiSprites.add(bgSprite);
         int counter = 0;
         for (Map.Entry<ItemType, Integer> currItems : connectedInventory.contents.entrySet()) {
-            UiSprite uiSprite = new UiSprite(canvas, currItems.getKey().sprite);
+//            UiSprite uiSprite = new UiSprite(canvas, currItems.getKey().sprite);
+
+            Random random = new Random();
+            UiSprite uiSprite = new UiSprite(canvas, new Sprite(AssetPool.getTexture(TextureType.PIXEL)));
+            uiSprite.color = new Vector4f(random.nextFloat(0.5f, 1), random.nextFloat(0.5f, 1), random.nextFloat(0.5f, 1), 0.4f);
+            uiSprite.keepProportions = false;
+
             uiSprite.screenPos = getPositionsForItemQuad(counter);
             uiSprite.isClickable = true;
             uiSprites.add(uiSprite);
@@ -99,7 +106,7 @@ public class UiInventory extends UiElement {
         int row = (int) Math.floor((1 - pos.y) / COLUMN_RELATIVE_WIDTH_DOUBLED) + 1;
         int key = row * MAX_COLUMNS + column;
 
-        printf("posX:%, posY:%, col:%, row:%, key:%", pos.x, pos.y, column, row, key);
+        printf("realX:%, realY:%, posX:%, posY:%, col:%, row:%, key:%", MouseListener.getScreenX(), MouseListener.getScreenY(), pos.x, pos.y, column, row, key);
 
         return itemBySlot.get(key);
     }

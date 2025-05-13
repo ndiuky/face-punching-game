@@ -74,6 +74,6 @@ public class Camera {
     }
 
     public void updateProjectionSize(){
-        projectionSize = new Vector2f(Window.getWidth(), Window.getHeight());
+        projectionSize = new Vector2f(Window.width, Window.height);
     }
 }

@@ -19,8 +19,6 @@ public class CItemPickUp extends Component {
     public void update(float dt) {
         DebugDraw.drawCircle(gameObject.transform.position, pickUpRadius, -1, Color.GREY1, EnginePreferences.DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH);
 
-        DebugDraw.drawLine(new Vector2f(0), new Vector2f(100, 0), -1);
-
         List<GameObject> allGameObjectsInRadius = Window.currentScene.getAllGameObjectsInRadius(gameObject.transform.position, pickUpRadius);
 
         for (GameObject go : allGameObjectsInRadius) {

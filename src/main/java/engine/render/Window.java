@@ -41,6 +41,8 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
@@ -60,6 +62,7 @@ import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static util.Utils.printf;
 
 public class Window implements KeyboardEventListener {
 
@@ -67,9 +70,7 @@ public class Window implements KeyboardEventListener {
 
     private static long primaryMonitor;
 
-    private static int width, height;
-
-    private static int windowedWidth, windowedHeight;
+    public static int width, height;
 
     public static float aspectRatio;
 
@@ -148,19 +149,10 @@ public class Window implements KeyboardEventListener {
                 vidMode = GLFW.glfwGetVideoMode(primaryMonitor);
             }
 
-            width = vidMode.width();
-            height = vidMode.height();
-
-            windowedWidth = width / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
-            windowedHeight = height / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
-
-            aspectRatio = (float) width / height;
-
             glfwDefaultWindowHints();
             glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
             glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-
         }
 
         createWindow(fullscreen);
@@ -169,11 +161,27 @@ public class Window implements KeyboardEventListener {
     }
 
     private static void createWindow(boolean fullscreen) {
+        long usedMonitor;
+
+        if (fullscreen){
+            width = vidMode.width();
+            height = vidMode.height();
+
+            usedMonitor = primaryMonitor;
+        } else{
+            width = vidMode.width() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
+            height = vidMode.height() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
+
+            usedMonitor = 0;
+        }
+
+        aspectRatio = (float) width / height;
+
         if (glfwWindow == NULL) {
             if (fullscreen) {
-                glfwWindow = glfwCreateWindow(width, height, title, primaryMonitor, 0);
+                glfwWindow = glfwCreateWindow(vidMode.width(), vidMode.height(), title, usedMonitor, 0);
             } else {
-                glfwWindow = glfwCreateWindow(windowedWidth, windowedHeight, title, 0, 0);
+                glfwWindow = glfwCreateWindow(vidMode.width() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1), vidMode.height(), title, 0, 0);
             }
 
             windowPosX = (vidMode.width() - height / 2) / 2;
@@ -182,7 +190,7 @@ public class Window implements KeyboardEventListener {
             PointerBuffer monitorBuffer = GLFW.glfwGetMonitors();
 
             int xOffset = 0;
-            for (int i = 0; i < Math.clamp(EnginePreferences.CREATE_WINDOW_ON_MONITOR, 0, primaryMonitor); i++) {
+            for (int i = 0; i < Math.clamp(EnginePreferences.CREATE_WINDOW_ON_MONITOR, 0, usedMonitor); i++) {
                 xOffset += GLFW.glfwGetVideoMode(monitorBuffer.get(i)).width();
             }
 
@@ -199,9 +207,9 @@ public class Window implements KeyboardEventListener {
             windowPosX = xPos[0];
             windowPosY = yPos[0];
 
-            GLFW.glfwSetWindowMonitor(glfwWindow, primaryMonitor, 0, 0, width, height, vidMode.refreshRate());
+            GLFW.glfwSetWindowMonitor(glfwWindow, usedMonitor, 0, 0, width, height, vidMode.refreshRate());
         } else {
-            GLFW.glfwSetWindowMonitor(glfwWindow, NULL, windowPosX, windowPosY, windowedWidth, windowedHeight, GLFW_DONT_CARE);
+            GLFW.glfwSetWindowMonitor(glfwWindow, NULL, windowPosX, windowPosY, width, height, GLFW_DONT_CARE);
         }
 
         if (glfwWindow == NULL) {
@@ -216,6 +224,8 @@ public class Window implements KeyboardEventListener {
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
         glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
         glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
+        glfwSetWindowSizeCallback(glfwWindow, Window::windowResizeCallback);
+        glfwSetWindowPosCallback(glfwWindow, Window::windowPosCallback);
 
         glfwShowWindow(glfwWindow);
         createCapabilities();
@@ -223,9 +233,27 @@ public class Window implements KeyboardEventListener {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        pickingTexture = new PickingTexture(getWidth(), getHeight());
+        pickingTexture = new PickingTexture(Window.width, Window.height);
 
-        glViewport(0, 0, getWidth(), getHeight());
+        glViewport(0, 0, width, height);
+    }
+
+    private static void windowPosCallback(long window, int x, int y) {
+        printf("Window pos callback! Old x:%, old y:%, new x:%, new y:%", windowPosX, windowPosY, x, y);
+        windowPosX = x;
+        windowPosY = y;
+
+        int[] xSize = new int[1];
+        int[] ySize = new int[1];
+        GLFW.glfwGetWindowSize(glfwWindow, xSize, ySize);
+        printf("Window resize callback! Old width:%, old height:%, new width:%, new height:%", width, height, xSize[0], ySize[0]);
+    }
+
+    // TODO: мб перетащить
+    private static void windowResizeCallback(long window, int newWidth, int newHeight) {
+        printf("Window resize callback! Old width:%, old height:%, new width:%, new height:%", width, height, newWidth, newHeight);
+        height = newHeight;
+        width = newWidth;
     }
 
     public void loop() {
@@ -311,14 +339,6 @@ public class Window implements KeyboardEventListener {
         }
 
         return instance;
-    }
-
-    public static int getWidth() {
-        return fullscreen ? width : windowedWidth;
-    }
-
-    public static int getHeight() {
-        return fullscreen ? height : windowedHeight;
     }
 
     public static void clearColor(Color color) {

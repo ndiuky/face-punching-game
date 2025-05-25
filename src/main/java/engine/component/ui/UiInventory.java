@@ -1,8 +1,11 @@
 package engine.component.ui;
 
 import engine.component.CInventory;
+import engine.object.GameObject;
 import engine.object.Sprite;
-import engine.render.DebugDraw;
+import engine.render.Window;
+import engine.text.Text;
+import engine.util.Alignment;
 import engine.util.AssetPool;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
@@ -33,10 +36,18 @@ public class UiInventory extends UiElement {
 
     UiSprite bgSprite;
 
+    //TODO: delete
+    CTextRenderer mouseIdOverlay;
+
     public UiInventory(final Canvas canvas, final CInventory connectedInventory) {
         super(canvas);
 
         this.connectedInventory = connectedInventory;
+
+        //TODO: delete
+        //TODO: мб не удалить, а переработать в новый UiElement, типа FollowMouseTextUi
+        mouseIdOverlay = new CTextRenderer(new Text("none").setAlignment(Alignment.BOTTOM_LEFT).setSizeModifier(0.5f));
+        Window.getCurrentScene().addGameObjectToScene(GameObject.create().addComponent(mouseIdOverlay));
 
         updateBgSprite();
 
@@ -78,12 +89,14 @@ public class UiInventory extends UiElement {
 
     private Vector4f getPositionsForItemQuad(int quadNum) {
         return new Vector4f(
+
                 relativeScreenSize * (quadNum % MAX_COLUMNS * COLUMN_RELATIVE_WIDTH_DOUBLED - 1),
                 relativeScreenSize * (1 - (quadNum / MAX_COLUMNS + 1) * COLUMN_RELATIVE_WIDTH_DOUBLED),
                 relativeScreenSize * ((quadNum % MAX_COLUMNS + 1) * COLUMN_RELATIVE_WIDTH_DOUBLED - 1),
                 relativeScreenSize * (1 - quadNum / MAX_COLUMNS * COLUMN_RELATIVE_WIDTH_DOUBLED)
         );
     }
+
 
     public ItemType getItemUnderCursor() {
         Vector2f pos = new Vector2f(MouseListener.getScreenX() - 0.5f, 0.5f - MouseListener.getScreenY()).div(relativeScreenSize);
@@ -92,7 +105,9 @@ public class UiInventory extends UiElement {
         int row = (int) Math.floor((1 - pos.y / relativeScreenSize) / COLUMN_RELATIVE_WIDTH_DOUBLED);
         int key = row * MAX_COLUMNS + column;
 
-        System.out.println(String.format("col:%s, row:%s, key%s", column, row, key));
+        mouseIdOverlay.setTextContent(String.format("inventorySlotId: %s", key));
+        mouseIdOverlay.gameObject.transform.position = MouseListener.getOrtho();
+
         return itemBySlot.get(key);
     }
 }

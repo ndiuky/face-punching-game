@@ -2,12 +2,9 @@ package engine.object;
 
 
 import engine.component.Component;
-import engine.component.ui.CTextRenderer;
 import engine.render.Window;
-import engine.text.Text;
-import engine.util.Alignment;
-import engine.util.Color;
 import engine.util.Interactable;
+import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +43,10 @@ public class GameObject {
 
     public static void init(int maxId) {
         idCounter = maxId;
+    }
+
+    public static GameObject create() {
+        return new GameObject("defaultName", new Transform(new Vector2f(), new Vector2f(1)), -1);
     }
 
     public void start() {

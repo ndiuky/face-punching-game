@@ -158,10 +158,6 @@ public class Shader {
         uploadInt(varName, slot);
     }
 
-    public int getShaderProgramID() {
-        return shaderProgramID;
-    }
-
     public int getAttributeLocation(CharSequence name) {
         return glGetAttribLocation(shaderProgramID, name);
     }

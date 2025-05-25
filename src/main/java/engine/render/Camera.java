@@ -6,23 +6,23 @@ import org.joml.Vector3f;
 
 public class Camera {
 
-    private final Matrix4f projectionMatrix;
-
-    private Vector2f projectionSize;
-
-    private final Matrix4f viewMatrix;
-
-    private final Matrix4f inverseProjectionMatrix;
-
-    private final Matrix4f inverseViewMatrix;
-
-    public Vector2f position;
-
     private static long calculatedValuesAtFrame = -1;
 
     private static Matrix4f cachedViewMatrix;
 
-    private float zoom = 1f;
+    public final Matrix4f projectionMatrix;
+
+    public final Matrix4f inverseProjectionMatrix;
+
+    public final Matrix4f inverseViewMatrix;
+
+    public Vector2f projectionSize;
+
+    public Vector2f position;
+
+    public float zoom = 1f;
+
+    private final Matrix4f viewMatrix;
 
     public Camera(Vector2f position) {
         this.position = position;
@@ -53,16 +53,8 @@ public class Camera {
         zoom += amount;
     }
 
-    public Matrix4f getProjectionMatrix() {
-        return projectionMatrix;
-    }
-
-    public Vector2f getProjectionSize() {
-        return projectionSize;
-    }
-
     public Matrix4f getViewMatrix() {
-        if (calculatedValuesAtFrame == Window.getCurrentFrame()) {
+        if (calculatedValuesAtFrame == Window.currentFrame) {
             return cachedViewMatrix;
         }
 
@@ -76,33 +68,12 @@ public class Camera {
         viewMatrix.invert(inverseViewMatrix);
 
         cachedViewMatrix = viewMatrix;
-        calculatedValuesAtFrame = Window.getCurrentFrame();
+        calculatedValuesAtFrame = Window.currentFrame;
 
         return cachedViewMatrix;
     }
 
-    public Matrix4f getInverseProjectionMatrix() {
-        return inverseProjectionMatrix;
-    }
-
-    public Matrix4f getInverseViewMatrix() {
-        return inverseViewMatrix;
-    }
-
-    public float getZoom() {
-        return zoom;
-    }
-
-    /**
-     * Передашь 0 - получишь эксепшен. Take it or leave it
-     */
-    public Camera setZoom(float zoom) {
-        this.zoom = zoom;
-
-        return this;
-    }
-
     public void updateProjectionSize(){
-        projectionSize = new Vector2f(Window.getWidth(), Window.getHeight());
+        projectionSize = new Vector2f(Window.width, Window.height);
     }
 }

@@ -9,14 +9,14 @@ import registry.ItemType;
 import registry.TextureType;
 import util.ItemStack;
 import org.joml.Vector2f;
-import util.InteractionType;
+import registry.Interaction;
 import util.LootTable;
 
 import java.util.List;
 import java.util.Random;
 
-import static engine.util.EngineUtils.inverseLerpUnclamped;
-import static util.InteractionType.ATTACK;
+import static registry.Interaction.ATTACK;
+import static util.Utils.inverseLerpUnclamped;
 
 public class Stone extends Component implements Interactable {
 
@@ -72,7 +72,7 @@ public class Stone extends Component implements Interactable {
         for (ItemDrop itemDrop : lootTable.getContentDropped()) {
             itemDrop.gameObject.transform.position = new Vector2f(gameObject.transform.position);
             itemDrop.applyInitialImpulse(new Vector2f(random.nextFloat(-1, 1), random.nextFloat(-1, 1)));
-            Window.getCurrentScene().addGameObjectToScene(itemDrop.gameObject);
+            Window.currentScene.addGameObjectToScene(itemDrop.gameObject);
         }
         gameObject.destroy();
     }
@@ -91,13 +91,8 @@ public class Stone extends Component implements Interactable {
     }
 
     @Override
-    public List<InteractionType> getInteractionTypes() {
-        return List.of(ATTACK);
-    }
-
-    @Override
-    public void onInteraction(InteractionType interactionType) {
-        if (interactionType == ATTACK) {
+    public void onInteraction(Interaction interaction) {
+        if (interaction == ATTACK) {
             reduceHp(3);
 
             currentHitAnimationTime = 0;

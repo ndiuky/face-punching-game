@@ -12,12 +12,10 @@ public class CPositionText extends Component {
 
     @Override
     public void start() {
-        textRenderer = new CTextRenderer(
-                new Text("")
-                        .setColor(Color.BLUE)
-                        .setSizeModifier(0.5f)
-                        .setAlignment(Alignment.BOTTOM_CENTER)
-                        .setOffset(new Vector2f(0, -0.75f)));
+        Text text = new Text("", 0.5f, Color.BLUE);
+        text.alignment = Alignment.BOTTOM_CENTER;
+        text.offset = new Vector2f(0, -0.75f);
+        textRenderer = new CTextRenderer(text);
         gameObject.addComponent(textRenderer);
     }
 

@@ -15,7 +15,7 @@ public class UiSprite extends UiElement {
     }
 
     public Texture getTexture() {
-        return sprite.getTexture();
+        return sprite.texture;
     }
 
     @Override

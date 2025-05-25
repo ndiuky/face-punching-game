@@ -5,34 +5,18 @@ import org.joml.Vector4f;
 
 public class Line {
 
-    private Vector2f from;
+    public Vector4f color;
 
-    private Vector2f to;
+    public Vector2f from;
 
-    private int zOrder;
+    public Vector2f to;
 
-    private Vector4f color;
+    public int zOrder;
 
     public Line(Vector2f from, Vector2f to, int zOrder, Vector4f color) {
         this.from = from;
         this.to = to;
         this.zOrder = zOrder;
         this.color = color;
-    }
-
-    public Vector2f getFrom() {
-        return from;
-    }
-
-    public Vector2f getTo() {
-        return to;
-    }
-
-    public int getzOrder() {
-        return zOrder;
-    }
-
-    public Vector4f getColor() {
-        return color;
     }
 }

@@ -9,7 +9,6 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import registry.TextureType;
 
-// TODO: перетащить привязку спрайта в конструктор
 public class CSpriteRenderer extends Component {
 
     private Vector4f color = Color.WHITE.asVector();
@@ -18,7 +17,7 @@ public class CSpriteRenderer extends Component {
 
     private Transform lastTransform;
 
-    private boolean isDirty = true;
+    public boolean isDirty = true;
 
     public CSpriteRenderer(final Sprite sprite) {
         this.sprite = sprite;
@@ -59,27 +58,17 @@ public class CSpriteRenderer extends Component {
     }
 
     public Texture getTexture() {
-        return sprite.getTexture();
+        return sprite.texture;
     }
 
     public CSpriteRenderer setTexture(Texture texture) {
-        sprite.setTexture(texture);
+        sprite.texture = texture;
 
         return this;
     }
 
     public Vector2f[] getTextureCoords() {
-        return sprite.getTexCoords();
-    }
-
-    public boolean getIsDirty() {
-        return isDirty;
-    }
-
-    public CSpriteRenderer setIsDirty() {
-        isDirty = true;
-
-        return this;
+        return sprite.texCoords;
     }
 
     public CSpriteRenderer setSprite(Sprite sprite) {
@@ -90,11 +79,11 @@ public class CSpriteRenderer extends Component {
     }
 
     public Vector2f getAnchorPoint() {
-        return sprite.getAnchorPoint();
+        return sprite.anchorPoint;
     }
 
     public CSpriteRenderer setAnchorPoint(float x, float y) {
-        sprite.setAnchorPoint(new Vector2f(x, y));
+        sprite.anchorPoint = new Vector2f(x, y);
 
         return this;
     }

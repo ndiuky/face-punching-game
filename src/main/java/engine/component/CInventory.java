@@ -7,10 +7,10 @@ import java.util.EnumMap;
 
 public class CInventory extends Component {
 
-    private final EnumMap<ItemType, Integer> contents = new EnumMap<>(ItemType.class);
+    public final EnumMap<ItemType, Integer> contents = new EnumMap<>(ItemType.class);
 
     public void addItemStack(final ItemStack pickedStack) {
-        contents.merge(pickedStack.getItem(), pickedStack.getStackSize(), Integer::sum);
+        contents.merge(pickedStack.item, pickedStack.stackSize, Integer::sum);
     }
 
     /**
@@ -40,9 +40,5 @@ public class CInventory extends Component {
 
     public int amountOfItems(ItemType item) {
         return contents.getOrDefault(item, 0);
-    }
-
-    public EnumMap<ItemType, Integer> getContents() {
-        return new EnumMap<>(contents);
     }
 }

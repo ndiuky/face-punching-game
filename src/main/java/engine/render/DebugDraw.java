@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static engine.util.EngineUtils.rotateVertex;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_FLOAT;
@@ -27,6 +26,7 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static util.Utils.rotateVertex;
 
 public class DebugDraw {
     private static final int MAX_LINES = 4096*8;
@@ -79,14 +79,14 @@ public class DebugDraw {
 
         int index = 0;
         for (Line line : lines) {
-            Vector4f color = line.getColor();
+            Vector4f color = line.color;
 
             for (int i = 0; i < 2; i++) {
-                Vector2f position = i == 0 ? line.getFrom() : line.getTo();
+                Vector2f position = i == 0 ? line.from : line.to;
 
                 vertices[index] = position.x;
                 vertices[index + 1] = position.y;
-                vertices[index + 2] = line.getzOrder();
+                vertices[index + 2] = line.zOrder;
 
                 vertices[index + 3] = color.x;
                 vertices[index + 4] = color.y;
@@ -99,8 +99,8 @@ public class DebugDraw {
         glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertices, 0, lines.size() * INDICES_COUNT * 2));
 
         shader.use();
-        shader.uploadMat4f("uProjection", Window.getCurrentScene().getCamera().getProjectionMatrix());
-        shader.uploadMat4f("uView", Window.getCurrentScene().getCamera().getViewMatrix());
+        shader.uploadMat4f("uProjection", Window.currentScene.camera.projectionMatrix);
+        shader.uploadMat4f("uView", Window.currentScene.camera.getViewMatrix());
 
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);

@@ -1,7 +1,7 @@
 package component.entity;
 
 import engine.util.Interactable;
-import util.InteractionType;
+import registry.Interaction;
 
 import java.util.List;
 
@@ -9,8 +9,7 @@ public class Dummy extends Entity implements Interactable {
 
     @Override
     public void start() {
-        gameObject.setInteractable(true);
-
+        gameObject.isInteractable = true;
     }
 
     @Override
@@ -21,12 +20,7 @@ public class Dummy extends Entity implements Interactable {
     }
 
     @Override
-    public List<InteractionType> getInteractionTypes() {
-        return List.of(InteractionType.ATTACK);
-    }
-
-    @Override
-    public void onInteraction(InteractionType interactionType) {
+    public void onInteraction(Interaction interaction) {
         isKnocked = true;
     }
 }

@@ -32,7 +32,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //TODO: создать класс для помощи в работе с OpenGL
-//TODO: удалить поддержку SpriteSheet, и всегда использовать по одной текстуре не спрайт (кроме текста). Таким образом можно не передавать текстурные координаты в шейдер, а просто выставлять их там вручную ({0,0},{1,1}). Плюс должны исчезнуть все артефакты связанные с неточностью чисел с плавающей точкой
+//TODO: удалить поддержку SpriteSheet, и всегда использовать по одной текстуре не спрайт (кроме текста). Таким образом можно не передавать текстурные координаты в шейдер, а просто выставлять их там вручную ({0,0},{1,1})
 public class TextureRenderBatch extends Batch implements Comparable<TextureRenderBatch> {
 
     private static final int POS_SIZE = 2;
@@ -108,9 +108,9 @@ public class TextureRenderBatch extends Batch implements Comparable<TextureRende
         for (int i = 0; i < numElements; i++) {
             CSpriteRenderer spriteRenderer = spriteRenderers[i];
             //TODO: почему-то это условие всегда true
-            if (spriteRenderer.getIsDirty()) {
+            if (spriteRenderer.isDirty) {
                 loadVertexProperties(i);
-                spriteRenderer.setIsDirty();
+                spriteRenderer.isDirty = true;
                 rebufferData = true;
             }
         }
@@ -120,10 +120,10 @@ public class TextureRenderBatch extends Batch implements Comparable<TextureRende
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
         }
 
-        Shader shader = Renderer.getCurrentShader();
+        Shader shader = Renderer.currentShader;
         shader.use();
-        shader.uploadMat4f("uProjection", Window.getCurrentScene().getCamera().getProjectionMatrix());
-        shader.uploadMat4f("uView", Window.getCurrentScene().getCamera().getViewMatrix());
+        shader.uploadMat4f("uProjection", Window.currentScene.camera.projectionMatrix);
+        shader.uploadMat4f("uView", Window.currentScene.camera.getViewMatrix());
 
         for (int i = 0; i < textures.size(); i++) {
             glActiveTexture(GL_TEXTURE0 + i + 1);
@@ -215,7 +215,7 @@ public class TextureRenderBatch extends Batch implements Comparable<TextureRende
         }
 
         // TODO: перенести в Texture
-        float textureAspectRatio = (float) sprite.getTexture().getWidth() / sprite.getTexture().getHeight();
+        float textureAspectRatio = (float) sprite.getTexture().width / sprite.getTexture().height;
 
         //debug
 //        Vector4f mul = new Vector4f(sprite.gameObject.transform.position.x, sprite.gameObject.transform.position.y, 0, 1);
@@ -258,7 +258,7 @@ public class TextureRenderBatch extends Batch implements Comparable<TextureRende
 
             vertices[offset + 8] = textureId;
 
-            vertices[offset + 9] = sprite.gameObject.getUid() + 1;
+            vertices[offset + 9] = sprite.gameObject.uid + 1;
 
             offset += VERTEX_SIZE;
         }
@@ -272,7 +272,7 @@ public class TextureRenderBatch extends Batch implements Comparable<TextureRende
             for (int i = 0; i < numElements; i++) {
                 if (spriteRenderers[i] == sprite) {
                     for (int j = i; j < numElements - 1; j++) {
-                        spriteRenderers[j].setIsDirty();
+                        spriteRenderers[j].isDirty = true;
                         spriteRenderers[j] = spriteRenderers[j + 1];
                     }
                     numElements--;

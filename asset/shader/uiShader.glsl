@@ -23,9 +23,9 @@ void main(){
     } else if (vertexId == 1){
         fTextureCoords = vec2(0, 0);
     } else if (vertexId == 2){
-        fTextureCoords = vec2(-1, 0);
+        fTextureCoords = vec2(1, 0);
     } else {
-        fTextureCoords = vec2(-1, 1);
+        fTextureCoords = vec2(1, 1);
     }
 }
 

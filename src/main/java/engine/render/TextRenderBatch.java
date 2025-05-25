@@ -5,13 +5,10 @@ import engine.object.GameObject;
 import engine.text.Font;
 import engine.text.Glyph;
 import engine.text.Text;
-import engine.util.AssetPool;
-import engine.util.Color;
-import engine.util.EngineUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 import org.lwjgl.opengl.GL15;
+import util.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +44,7 @@ import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
 // TODO: рендер батчей как бы есть, но логики их создания по сути нет. Если одновременно попытаться отрендерить слишком много текста, то просто вылетит эксепшен
-public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch>  {
+public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch> {
 
     private static final int POS_SIZE = 2;
 
@@ -63,7 +60,7 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
 
     private final int maxBatchSize;
 
-    private final int zIndex;
+    public final int zIndex;
 
     private static final int VERTEX_SIZE = 8;
 
@@ -85,7 +82,7 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
 
     private int numGlyphs = 0;
 
-    private boolean hasRoom = true;
+    public boolean hasRoom = true;
 
     public TextRenderBatch(int maxBatchSize, int zIndex) {
         this.zIndex = zIndex;
@@ -122,8 +119,8 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
             return;
         }
 
-        Shader shader = Renderer.getCurrentShader();
-        glBindFragDataLocation(shader.getShaderProgramID(), 0, "fragColor");
+        Shader shader = Renderer.currentShader;
+        glBindFragDataLocation(shader.shaderProgramID, 0, "fragColor");
 
         glActiveTexture(GL_TEXTURE0);
         Font.bind();
@@ -137,10 +134,10 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
             //TODO: вернуть логику ребафферинга
 //            if (textRenderer.getIsDirty()) {
             loadVertexProperties(numGlyphs, textRenderer);
-            textRenderer.setIsDirty();
+            textRenderer.isDirty = true;
             rebufferData = true;
 //            }
-            numGlyphs += textRenderer.getText().getTextSize();
+            numGlyphs += textRenderer.getText().textContent.length();
         }
 
         numVertices = numGlyphs * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;
@@ -156,7 +153,7 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
         shader.setUniform(shader.getUniformLocation("uTexture"), 0);
 
         shader.setUniform(shader.getUniformLocation("uProjection"),
-                Window.getCurrentScene().getCamera().getProjectionMatrix()
+                Window.currentScene.camera.projectionMatrix
         );
 
         //TODO: оказалось, что проблемой рендера текста была зеркально отражённая по главной диагонали view матрица.
@@ -164,7 +161,7 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
         // Не хочу чтобы разные рендереры требовали матрицы разного вида.
 
         //vvvvvv
-        final Matrix4f view = Window.getCurrentScene().getCamera().getViewMatrix();
+        final Matrix4f view = Window.currentScene.camera.getViewMatrix();
         shader.setUniform(shader.getUniformLocation("uView"),
                 new Matrix4f()
                         .m03(view.m30())
@@ -192,19 +189,10 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
         int offset = index * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE;
 
         Text text = textRenderer.getText();
-        float fullTextXAdd = textRenderer.gameObject.transform.position.x;
-        float fullTextYAdd = textRenderer.gameObject.transform.position.y;
 
-        int textSize = text.getTextSize();
-        Color color = text.getColor();
-        List<Glyph> content = text.getContent();
-        List<Vector2f> positions = text.getPositions();
-        int width = Font.getTexture().getWidth();
-        int height = Font.getTexture().getHeight();
-
-        for (int i = 0; i < textSize; i++) {
-            Vector2f pos = new Vector2f(positions.get(i)).mul(textRenderer.gameObject.transform.scale);
-            Glyph glyph = content.get(i);
+        for (int i = 0; i < text.textContent.length(); i++) {
+            Vector2f pos = new Vector2f(text.positions.get(i)).mul(textRenderer.gameObject.transform.scale);
+            Glyph glyph = text.content.get(i);
 
             // TODO: текст нельзя вращать
 //            boolean isRotated = textRenderer.gameObject.transform.rotation != 0;
@@ -220,7 +208,9 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
 
 
             //TODO: переделать это безумие из переменных
-            float xAdd, yAdd, glyphSizeModY;
+            float xAdd;
+            float yAdd;
+            float glyphSizeModY;
             for (int j = 0; j < EBO_QUAD_VERTICES_AMOUNT; j++) {
                 xAdd = 0;
                 yAdd = 0;
@@ -232,31 +222,22 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
                 if (j == 1 || j == 2) {
                     yAdd = glyph.height;
                     // TODO: эти формулы кривые как ёб-твою-мать, придумай что-нибудь менее кривовыглядящее
-                    switch (text.getAnimation()) {
+                    switch (text.animation) {
                         case SIZE_WAVING_FORWARDS ->
-                                glyphSizeModY += (float) (Math.sin(EngineUtils.time() * 2 - (i / 2f)) * 0.15f);
+                                glyphSizeModY += (float) (Math.sin(Utils.time() * 2 - (i / 2f)) * 0.15f);
                         case SIZE_WAVING_BACKWARDS ->
-                                glyphSizeModY += (float) (Math.sin(EngineUtils.time() * 2 + (i / 2f)) * 0.15f);
+                                glyphSizeModY += (float) (Math.sin(Utils.time() * 2 + (i / 2f)) * 0.15f);
                     }
                 }
 
-                Vector4f currentPos = new Vector4f(
-                        /*isRotated ?
-                                new Vector4f(fullTextXAdd, fullTextYAdd, 0, 1).mul(transformMatrix)
-                                :*/ new Vector4f(
-                        fullTextXAdd,
-                        fullTextYAdd,
-                        0, 1)
-                );
-
-                vertices[offset] = text.getOffset().x + currentPos.x + pos.x + xAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.x * TEXT_BASE_SIZE;
-                vertices[offset + 1] = text.getOffset().y + currentPos.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
-                vertices[offset + 2] = color.r;
-                vertices[offset + 3] = color.g;
-                vertices[offset + 4] = color.b;
-                vertices[offset + 5] = color.a;
-                vertices[offset + 6] = (glyph.x + xAdd) / width;
-                vertices[offset + 7] = (glyph.y + yAdd) / height;
+                vertices[offset] = text.offset.x + textRenderer.gameObject.transform.position.x + pos.x + xAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.x * TEXT_BASE_SIZE;
+                vertices[offset + 1] = text.offset.y + textRenderer.gameObject.transform.position.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
+                vertices[offset + 2] = text.color.r;
+                vertices[offset + 3] = text.color.g;
+                vertices[offset + 4] = text.color.b;
+                vertices[offset + 5] = text.color.a;
+                vertices[offset + 6] = (glyph.x + xAdd) / Font.texture.width;
+                vertices[offset + 7] = (glyph.y + yAdd) / Font.texture.height;
 
                 offset += VERTEX_SIZE;
             }
@@ -267,14 +248,12 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
         textRenderers[numTextBlocks] = textRenderer;
 
         if (textRenderer.getText() != null) {
-//            if (!hasText(textRenderer.getText())) {
             contentToRender.add(textRenderer.getText());
-//            }
         }
 
         loadVertexProperties(numGlyphs, textRenderer);
         numTextBlocks++;
-        numGlyphs += textRenderer.getText().getTextSize();
+        numGlyphs += textRenderer.getText().textContent.length();
 
         if (numGlyphs >= maxBatchSize) {
             hasRoom = false;
@@ -285,10 +264,10 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
     public void removeText(String textToDelete) {
         for (int i = 0; i < contentToRender.size(); i++) {
             Text currText = contentToRender.get(i);
-            if (currText.getTextContent().equals(textToDelete)) {
+            if (currText.textContent.equals(textToDelete)) {
                 contentToRender.remove(i);
                 numTextBlocks--;
-                numGlyphs -= currText.getTextSize();
+                numGlyphs -= currText.textContent.length();
 
                 return;
             }
@@ -303,11 +282,11 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
             for (int i = 0; i < numTextBlocks; i++) {
                 if (textRenderers[i] == fetchedTextRenderer) {
                     for (int j = i; j < numTextBlocks - 1; j++) {
-                        textRenderers[j].setIsDirty();
+                        textRenderers[j].isDirty = true;
                         textRenderers[j] = textRenderers[j + 1];
                     }
                     numTextBlocks--;
-                    numGlyphs -= fetchedTextRenderer.getText().getTextSize();
+                    numGlyphs -= fetchedTextRenderer.getText().textContent.length();
 
                     wasDestroyed = true;
                 }
@@ -334,14 +313,6 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
         glDisableVertexAttribArray(2);
     }
 
-    public boolean hasRoom() {
-        return hasRoom;
-    }
-
-    public int getZIndex() {
-        return zIndex;
-    }
-
     public boolean hasTextRoom() {
         return contentToRender.size() < 8;
     }
@@ -352,6 +323,6 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
 
     @Override
     public int compareTo(TextRenderBatch o) {
-        return Integer.compare(zIndex, o.getZIndex());
+        return Integer.compare(zIndex, o.zIndex);
     }
 }

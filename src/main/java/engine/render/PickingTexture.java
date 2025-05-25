@@ -73,6 +73,7 @@ public class PickingTexture {
 
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
         return true;
     }
 
@@ -89,7 +90,7 @@ public class PickingTexture {
         glReadBuffer(GL_COLOR_ATTACHMENT0);
 
         float[] pixels = new float[3];
-        glReadPixels(x, Window.getHeight() - y, 1, 1, GL_RGB, GL_FLOAT, pixels);
+        glReadPixels(x, Window.height - y, 1, 1, GL_RGB, GL_FLOAT, pixels);
 
         return (int) (pixels[0]) - 1;
     }

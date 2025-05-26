@@ -1,13 +1,8 @@
 package engine.object;
 
-
+import component.object.InteractableComponent;
 import engine.component.Component;
-import engine.component.ui.CTextRenderer;
 import engine.render.Window;
-import engine.text.Text;
-import engine.util.Alignment;
-import engine.util.Color;
-import engine.util.Interactable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +31,6 @@ public class GameObject {
         this.name = name;
         this.transform = transform;
         this.zIndex = zIndex;
-
-//        CTextRenderer textRenderer = new CTextRenderer().setText(new Text(name).setColor(Color.TRANSLUCENT)).setAlignment(Alignment.BOTTOM_MIDDLE);
-//        textRenderer.getText().setSizeModifier(0.5f);
-//        addComponent(textRenderer);
 
         uid = idCounter++;
     }
@@ -81,7 +72,7 @@ public class GameObject {
         components.add(c);
         c.gameObject = this;
 
-        if (c instanceof Interactable) {
+        if (c instanceof InteractableComponent) {
             isInteractable = true;
         }
 

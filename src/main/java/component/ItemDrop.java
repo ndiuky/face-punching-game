@@ -12,8 +12,7 @@ import org.joml.Vector2f;
 import registry.ItemType;
 import util.ItemStack;
 
-import java.util.Random;
-
+import static engine.util.EngineUtils.RANDOM;
 import static java.lang.Math.pow;
 
 //TODO: чем больше размер стака, тем больше скейл итема
@@ -28,7 +27,7 @@ public class ItemDrop extends Component {
 
     private static final float SLIDE_TIME = 0.5f;
 
-    private final float wobbleOffset = new Random().nextFloat(1);
+    private final float wobbleOffset = RANDOM.nextFloat(1);
 
     private ItemStack containingStack;
 

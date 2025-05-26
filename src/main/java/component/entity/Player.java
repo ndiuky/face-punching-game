@@ -5,13 +5,13 @@ import engine.component.CFistAttackRandom;
 import engine.component.CInventory;
 import engine.component.CItemPickUp;
 import engine.component.CMoveWasd;
+import engine.component.CRmbInteraction;
 import engine.component.CSpriteRenderer;
 import engine.component.Component;
 import engine.component.ui.Canvas;
 import engine.component.ui.UiInventory;
 import engine.component.ui.UiTotalItems;
 import engine.event.KeyboardEventListener;
-import engine.event.MouseEventListener;
 import engine.render.Window;
 import engine.util.listener.MouseListener;
 import org.joml.Math;
@@ -23,22 +23,18 @@ import util.ItemStack;
 import java.util.List;
 
 import static engine.event.KeyboardEventProducer.listenToKeyboardPress;
-import static engine.event.MouseEventProducer.listenToMousePress;
-import static java.lang.Math.pow;
+import static engine.util.EngineUtils.inverseLerpUnclamped;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
+import static util.AnimationUtils.easeOutBack;
 
-public class Player extends Entity implements MouseEventListener, KeyboardEventListener {
+public class Player extends Entity implements KeyboardEventListener {
+
+    public static final float INVENTORY_ANIMATION_TIME = 0.15f;
 
     private static final float ITEM_DROP_STRENGTH = 3.5f;
 
-    private static final float INVENTORY_ANIMATION_TIME = 0.15f;
-
-    private static final float INVENTORY_ANIMATION_OVERTHROW_VALUE = 1.70158f;
-
-    private CInventory inventory = new CInventory();
+    private final CInventory inventory = new CInventory();
 
     private final Canvas canvas = new Canvas();
 
@@ -50,6 +46,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private final List<Component> REQUIRED_COMPONENTS = List.of(new CMoveWasd(),
             new CFistAttackRandom(),
+            new CRmbInteraction(),
             new CSpriteRenderer(TextureType.DUMMY),
             new CItemPickUp(),
             inventory,
@@ -66,10 +63,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
         canvas.addUiElement(new UiTotalItems(canvas, inventory));
         canvas.addUiElement(uiInventory);
-//        Window.getCurrentScene().addGameObjectToScene(new GameObject("player's canvas", new Transform(new Vector2f(0), new Vector2f(1)), 1).addComponent(canvas));
 
-        listenToMousePress(GLFW_MOUSE_BUTTON_1, this);
-        listenToMousePress(GLFW_MOUSE_BUTTON_2, this);
         listenToKeyboardPress(GLFW_KEY_Q, this);
         listenToKeyboardPress(GLFW_KEY_E, this);
     }
@@ -82,14 +76,6 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
     }
 
     @Override
-    public void onMousePress(int button) {
-    }
-
-    @Override
-    public void onMouseRelease(int button) {
-    }
-
-    @Override
     public void onKeyPress(int key) {
         if (key == GLFW_KEY_Q) {
             dropItems(ItemType.STONE_PEBBLE, 1);
@@ -99,7 +85,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
     }
 
     private void switchInventoryOpenState() {
-        inventoryState = InventoryOpeningState.getOpposedStartingState(inventoryState);
+        inventoryState = inventoryState.getOpposedStartingState();
         currInventoryAnimationTime = 0;
         if (InventoryOpeningState.IS_OPENING.equals(inventoryState)) {
             uiInventory.setEnabled(true);
@@ -128,14 +114,11 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
         return true;
     }
 
-
     private void playInventoryAnimation(float dt) {
         float resultingSize;
 
-        float currProcessStep = Math.clamp(0, 1, currInventoryAnimationTime / INVENTORY_ANIMATION_TIME);
-        // TODO: перенести эту и подобные интерполяции в утилитарный класс с анимациями
-        float factor = Math.lerp(0, 1,
-                (float) (1 + (INVENTORY_ANIMATION_OVERTHROW_VALUE + 1) * pow(currProcessStep - 1, 3) + INVENTORY_ANIMATION_OVERTHROW_VALUE * pow(currProcessStep - 1, 2)));
+        float lerpResult = inverseLerpUnclamped(0, INVENTORY_ANIMATION_TIME, currInventoryAnimationTime);
+        float factor = easeOutBack(lerpResult);
         if (InventoryOpeningState.IS_OPENING.equals(inventoryState)) {
             resultingSize = UiInventory.DEFAULT_RELATIVE_SCREEN_SIZE * factor;
         } else {
@@ -144,7 +127,7 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
         uiInventory.setRelativeScreenSize(resultingSize);
         if (currInventoryAnimationTime >= INVENTORY_ANIMATION_TIME) {
-            inventoryState = InventoryOpeningState.getCompletedState(inventoryState);
+            inventoryState = inventoryState.getCompletedState();
             currInventoryAnimationTime = 0;
             uiInventory.setEnabled(InventoryOpeningState.isOpened(inventoryState));
 
@@ -167,9 +150,8 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
             this.isStableState = isStableState;
         }
 
-        // TODO: переделать все методы под нестатичные
-        public static InventoryOpeningState getOpposedStartingState(InventoryOpeningState state) {
-            return switch (state) {
+        public InventoryOpeningState getOpposedStartingState() {
+            return switch (this) {
                 case FULLY_CLOSED,
                      IS_CLOSING -> IS_OPENING;
                 case FULLY_OPENED,
@@ -177,8 +159,8 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
             };
         }
 
-        public static InventoryOpeningState getCompletedState(InventoryOpeningState state) {
-            return switch (state) {
+        public InventoryOpeningState getCompletedState() {
+            return switch (this) {
                 case IS_CLOSING,
                      FULLY_CLOSED -> FULLY_CLOSED;
                 case IS_OPENING,

@@ -2,9 +2,13 @@ package engine.util;
 
 import org.joml.Vector2f;
 
+import java.util.Random;
+
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class EngineUtils {
+
+    public static final Random RANDOM = new Random();
 
     public static void rotateVertex(Vector2f vec, float angleDeg, Vector2f origin) {
         float x = vec.x - origin.x;

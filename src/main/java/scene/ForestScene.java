@@ -2,6 +2,8 @@ package scene;
 
 import component.controls.ForestSceneControls;
 import component.entity.Player;
+import component.object.OpenableTest;
+import component.object.PickableTest;
 import component.object.Stone;
 import component.object.Tree;
 import engine.component.CGameCamera;
@@ -17,7 +19,7 @@ import engine.util.AssetPool;
 import org.joml.Vector2f;
 import registry.TextureType;
 
-import java.util.Random;
+import static engine.util.EngineUtils.RANDOM;
 
 //TODO: реализовать процедурную генерацию текстур. В этой сцене она понадобится для генерации земли
 public class ForestScene extends Scene {
@@ -49,14 +51,12 @@ public class ForestScene extends Scene {
     }
 
     private void generateWorld() {
-        Random random = new Random();
-
 //        addGameObjectToScene(new GameObject("pis'ka", new Transform(new Vector2f(0), new Vector2f(1)), -1).addComponent(new CTextRenderer().setText(new Text("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))));
 
         //stones
         for (int i = 0; i < 50; i++) {
-            float x = random.nextFloat(0.8f, 1.2f);
-            GameObject stone = new GameObject("stone", new Transform(new Vector2f(random.nextInt(-14, 15), random.nextInt(-14, 15)), new Vector2f(x)), -1)
+            float x = RANDOM.nextFloat(0.8f, 1.2f);
+            GameObject stone = new GameObject("stone", new Transform(new Vector2f(RANDOM.nextInt(-14, 15), RANDOM.nextInt(-14, 15)), new Vector2f(x)), -1)
                     .addComponent(new Stone());
 
             addGameObjectToScene(stone);
@@ -64,11 +64,29 @@ public class ForestScene extends Scene {
 
         //trees
         for (int i = 0; i < 25; i++) {
-            float x = random.nextFloat(0.8f, 1.2f);
-            GameObject stone = new GameObject("tree", new Transform(new Vector2f(random.nextInt(-14, 15) + 0.5f, random.nextInt(-14, 15) + 0.5f), new Vector2f(x)), -1)
+            float x = RANDOM.nextFloat(0.8f, 1.2f);
+            GameObject stone = new GameObject("tree", new Transform(new Vector2f(RANDOM.nextInt(-14, 15) + 0.5f, RANDOM.nextInt(-14, 15) + 0.5f), new Vector2f(x)), -1)
                     .addComponent(new Tree());
 
             addGameObjectToScene(stone);
+        }
+
+        // test pickable objects
+        for (int i = 0; i < 25; i++) {
+            float x = RANDOM.nextFloat(0.8f, 1.2f);
+            GameObject pickableObject = new GameObject("pickable object", new Transform(new Vector2f(RANDOM.nextInt(-14, 15) + 0.5f, RANDOM.nextInt(-14, 15) + 0.5f), new Vector2f(x)), -1)
+                    .addComponent(new PickableTest());
+
+            addGameObjectToScene(pickableObject);
+        }
+
+        // test openable objects
+        for (int i = 0; i < 25; i++) {
+            float x = RANDOM.nextFloat(0.8f, 1.2f);
+            GameObject openableObject = new GameObject("openable object", new Transform(new Vector2f(RANDOM.nextInt(-14, 15) + 0.5f, RANDOM.nextInt(-14, 15) + 0.5f), new Vector2f(x)), -1)
+                    .addComponent(new OpenableTest());
+
+            addGameObjectToScene(openableObject);
         }
 
         //floor tiles

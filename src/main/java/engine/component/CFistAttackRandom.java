@@ -1,5 +1,6 @@
 package engine.component;
 
+import component.object.InteractableComponent;
 import engine.event.MouseEventListener;
 import engine.object.GameObject;
 import engine.object.Prefab;
@@ -9,14 +10,12 @@ import engine.render.Window;
 import engine.util.AssetPool;
 import engine.util.Color;
 import engine.util.EnginePreferences;
-import engine.util.Interactable;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
 import registry.TextureType;
 import util.InteractionType;
 
 import java.util.ArrayDeque;
-import java.util.Random;
 
 import static engine.component.CFistAttackRandom.AttackState.INACTIVE;
 import static engine.component.CFistAttackRandom.AttackState.MOVING_TO_TARGET;
@@ -25,6 +24,7 @@ import static engine.component.CFistAttackRandom.AttackType.ARC_LEFT;
 import static engine.component.CFistAttackRandom.AttackType.ARC_RIGHT;
 import static engine.event.MouseEventProducer.listenToMousePress;
 import static engine.event.MouseEventProducer.listenToMouseRelease;
+import static engine.util.EngineUtils.RANDOM;
 import static engine.util.EngineUtils.calculateClampedPosition;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static util.Utils.calculatePath;
@@ -109,7 +109,8 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
             case STRAIGHT -> {
                 straightMoveFistToTarget(dt);
             }
-            case ARC_LEFT, ARC_RIGHT -> {
+            case ARC_LEFT,
+                 ARC_RIGHT -> {
                 arcMoveFistToTarget(dt);
             }
         }
@@ -117,7 +118,7 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
     private void applyNewRandomAttack() {
         //TODO: сделать покрасивее, вынести константы
-        int i = (lastPerformedAttack.ordinal() + new Random().nextInt(1, AttackType.values().length)) % AttackType.values().length;
+        int i = (lastPerformedAttack.ordinal() + RANDOM.nextInt(1, AttackType.values().length)) % AttackType.values().length;
         currentAttack = AttackType.values()[i];
         attackState = MOVING_TO_TARGET;
 
@@ -169,8 +170,8 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 //
 //                            break;
 //                        }
-                    if (component instanceof Interactable) {
-                        ((Interactable) component).onInteraction(InteractionType.ATTACK);
+                    if (component instanceof InteractableComponent interactableComponent) {
+                        interactableComponent.baseOnInteraction(InteractionType.ATTACK);
                         break;
                     }
                 }
@@ -209,8 +210,8 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 //
 //                            break;
 //                        }
-                        if (component instanceof Interactable) {
-                            ((Interactable) component).onInteraction(InteractionType.ATTACK);
+                        if (component instanceof InteractableComponent) {
+                            ((InteractableComponent) component).baseOnInteraction(InteractionType.ATTACK);
                             break;
                         }
                     }

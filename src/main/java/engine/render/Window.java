@@ -163,12 +163,12 @@ public class Window implements KeyboardEventListener {
     private static void createWindow(boolean fullscreen) {
         long usedMonitor;
 
-        if (fullscreen){
+        if (fullscreen) {
             width = vidMode.width();
             height = vidMode.height();
 
             usedMonitor = primaryMonitor;
-        } else{
+        } else {
             width = vidMode.width() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
             height = vidMode.height() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1);
 
@@ -181,16 +181,18 @@ public class Window implements KeyboardEventListener {
             if (fullscreen) {
                 glfwWindow = glfwCreateWindow(vidMode.width(), vidMode.height(), title, usedMonitor, 0);
             } else {
-                glfwWindow = glfwCreateWindow(vidMode.width() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1), vidMode.height(), title, 0, 0);
+                glfwWindow = glfwCreateWindow(vidMode.width() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1), vidMode.height() / 2 / (ENABLE_SMALLER_WINDOWED_SIZE ? 2 : 1), title, 0, 0);
             }
 
+            // TODO: падазрительные переменные
             windowPosX = (vidMode.width() - height / 2) / 2;
             windowPosY = (vidMode.height() - width / 2) / 2;
 
             PointerBuffer monitorBuffer = GLFW.glfwGetMonitors();
 
             int xOffset = 0;
-            for (int i = 0; i < Math.clamp(EnginePreferences.CREATE_WINDOW_ON_MONITOR, 0, usedMonitor); i++) {
+            // TODO: тут раньше был usedMonitor вместо primaryMonitor
+            for (int i = 0; i < Math.clamp(EnginePreferences.CREATE_WINDOW_ON_MONITOR, 0, primaryMonitor); i++) {
                 xOffset += GLFW.glfwGetVideoMode(monitorBuffer.get(i)).width();
             }
 
@@ -242,18 +244,13 @@ public class Window implements KeyboardEventListener {
         printf("Window pos callback! Old x:%, old y:%, new x:%, new y:%", windowPosX, windowPosY, x, y);
         windowPosX = x;
         windowPosY = y;
-
-        int[] xSize = new int[1];
-        int[] ySize = new int[1];
-        GLFW.glfwGetWindowSize(glfwWindow, xSize, ySize);
-        printf("Window resize callback! Old width:%, old height:%, new width:%, new height:%", width, height, xSize[0], ySize[0]);
     }
 
     // TODO: мб перетащить
     private static void windowResizeCallback(long window, int newWidth, int newHeight) {
         printf("Window resize callback! Old width:%, old height:%, new width:%, new height:%", width, height, newWidth, newHeight);
-        height = newHeight;
         width = newWidth;
+        height = newHeight;
     }
 
     public void loop() {
@@ -328,9 +325,9 @@ public class Window implements KeyboardEventListener {
         createWindow(fullscreen);
     }
 
+    //TODO: implement
     private void toggleDebugMenu() {
         isDebugMenuActive = !isDebugMenuActive;
-        //TODO: реализовать
     }
 
     public static Window get() {

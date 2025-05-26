@@ -4,7 +4,7 @@ import component.object.InteractableComponent;
 import engine.event.MouseEventListener;
 import engine.object.GameObject;
 import engine.util.listener.MouseListener;
-import util.InteractionType;
+import registry.InteractionType;
 
 import static engine.event.MouseEventProducer.listenToMousePress;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
@@ -38,7 +38,7 @@ public class CRmbInteraction extends Component implements MouseEventListener {
             return;
         }
 
-        for (Component currComponent : gameobjectUnderCursor.getAllComponents()) {
+        for (Component currComponent : gameobjectUnderCursor.components) {
             if (currComponent instanceof InteractableComponent interactableComponent) {
                 interactableComponent.baseOnInteraction(InteractionType.USE);
             }

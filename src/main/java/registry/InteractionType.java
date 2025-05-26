@@ -1,6 +1,6 @@
 package registry;
 
-public enum Interaction {
+public enum InteractionType {
     ATTACK,
     USE
 }

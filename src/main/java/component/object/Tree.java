@@ -2,15 +2,15 @@ package component.object;
 
 import engine.component.CSpriteRenderer;
 import org.joml.Vector2f;
+import registry.InteractionType;
 import registry.ItemType;
 import registry.TextureType;
-import util.InteractionType;
 import util.ItemStack;
 import util.LootTable;
 
 import java.util.Arrays;
 
-import static util.InteractionType.ATTACK;
+import static registry.InteractionType.ATTACK;
 
 public class Tree extends BreakableComponent {
 

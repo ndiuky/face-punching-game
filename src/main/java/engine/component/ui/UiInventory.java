@@ -46,8 +46,10 @@ public class UiInventory extends UiElement {
 
         //TODO: delete
         //TODO: мб не удалить, а переработать в новый UiElement, типа FollowMouseTextUi
-        mouseIdOverlay = new CTextRenderer(new Text("none").setAlignment(Alignment.BOTTOM_LEFT).setSizeModifier(0.5f));
-        Window.getCurrentScene().addGameObjectToScene(GameObject.create().addComponent(mouseIdOverlay));
+        Text text = new Text("none").setSizeModifier(0.5f);
+        text.alignment = Alignment.BOTTOM_LEFT;
+        mouseIdOverlay = new CTextRenderer(text);
+        Window.currentScene.addGameObjectToScene(GameObject.create().addComponent(mouseIdOverlay));
 
         updateBgSprite();
 
@@ -61,8 +63,11 @@ public class UiInventory extends UiElement {
 
         uiSprites.add(bgSprite);
         int counter = 0;
-        for (Map.Entry<ItemType, Integer> currItems : connectedInventory.getContents().entrySet()) {
-            uiSprites.add((UiSprite) new UiSprite(canvas, currItems.getKey().sprite).setScreenPos(getPositionsForItemQuad(counter)).setClickable(true));
+        for (Map.Entry<ItemType, Integer> currItems : connectedInventory.contents.entrySet()) {
+            UiSprite uiSprite = new UiSprite(canvas, currItems.getKey().sprite);
+            uiSprite.screenPos = getPositionsForItemQuad(counter);
+            uiSprite.isClickable = true;
+            uiSprites.add(uiSprite);
             itemBySlot.put(counter++, currItems.getKey());
         }
 
@@ -81,10 +86,10 @@ public class UiInventory extends UiElement {
     }
 
     private void updateBgSprite() {
-        bgSprite = (UiSprite) new UiSprite(canvas, new Sprite(AssetPool.getTexture(TextureType.PIXEL)))
-                .setKeepProportions(false)
-                .setScreenPos(new Vector4f(-relativeScreenSize, -relativeScreenSize, relativeScreenSize, relativeScreenSize))
-                .setColor(new Vector4f(0.5f, 0.5f, 0.6f, 0.7f));
+        bgSprite = new UiSprite(canvas, new Sprite(AssetPool.getTexture(TextureType.PIXEL)));
+        bgSprite.color = new Vector4f(0.5f, 0.5f, 0.6f, 0.7f);
+        bgSprite.keepProportions = false;
+        bgSprite.screenPos = new Vector4f(-relativeScreenSize, -relativeScreenSize, relativeScreenSize, relativeScreenSize);
     }
 
     private Vector4f getPositionsForItemQuad(int quadNum) {

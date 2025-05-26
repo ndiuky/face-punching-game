@@ -4,9 +4,9 @@ import component.ItemDrop;
 import engine.component.CSpriteRenderer;
 import engine.render.Window;
 import org.joml.Vector2f;
+import registry.InteractionType;
 import registry.ItemType;
 import registry.TextureType;
-import util.InteractionType;
 import util.ItemStack;
 
 import static engine.util.EngineUtils.RANDOM;
@@ -44,7 +44,7 @@ public class PickableTest extends InteractableComponent {
             final ItemDrop itemDrop = ItemDrop.generateForItemStack(drop);
             itemDrop.gameObject.transform.position = new Vector2f(gameObject.transform.position);
             itemDrop.applyInitialImpulse(new Vector2f(RANDOM.nextFloat(-0.5f, 0.5f), RANDOM.nextFloat(-0.5f, 0.5f)));
-            Window.getCurrentScene().addGameObjectToScene(itemDrop.gameObject);
+            Window.currentScene.addGameObjectToScene(itemDrop.gameObject);
 
             gameObject.destroy();
 

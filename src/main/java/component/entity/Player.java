@@ -12,6 +12,7 @@ import engine.component.ui.Canvas;
 import engine.component.ui.UiInventory;
 import engine.component.ui.UiTotalItems;
 import engine.event.KeyboardEventListener;
+import engine.event.MouseEventListener;
 import engine.render.Window;
 import engine.util.listener.MouseListener;
 import org.joml.Math;
@@ -23,9 +24,11 @@ import util.ItemStack;
 import java.util.List;
 
 import static engine.event.KeyboardEventProducer.listenToKeyboardPress;
+import static engine.event.MouseEventProducer.listenToMousePress;
 import static engine.util.EngineUtils.inverseLerpUnclamped;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static util.AnimationUtils.easeOutBack;
 
 public class Player extends Entity implements MouseEventListener, KeyboardEventListener {
@@ -74,6 +77,9 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     @Override
     public void update(float dt) {
+//        //TODO: delete!!!
+        uiInventory.getItemUnderCursor();
+        
         if (!inventoryState.isStableState) {
             playInventoryAnimation(dt);
         }

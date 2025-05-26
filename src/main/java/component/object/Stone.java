@@ -1,13 +1,13 @@
 package component.object;
 
 import engine.component.CSpriteRenderer;
+import registry.InteractionType;
 import registry.ItemType;
 import registry.TextureType;
-import util.InteractionType;
 import util.ItemStack;
 import util.LootTable;
 
-import static util.InteractionType.ATTACK;
+import static registry.InteractionType.ATTACK;
 
 public class Stone extends BreakableComponent {
 

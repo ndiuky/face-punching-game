@@ -39,7 +39,7 @@ public abstract class BreakableComponent extends InteractableComponent {
         for (ItemDrop itemDrop : lootTable.getContentDropped()) {
             itemDrop.gameObject.transform.position = new Vector2f(gameObject.transform.position);
             itemDrop.applyInitialImpulse(new Vector2f(RANDOM.nextFloat(-1, 1), RANDOM.nextFloat(-1, 1)));
-            Window.getCurrentScene().addGameObjectToScene(itemDrop.gameObject);
+            Window.currentScene.addGameObjectToScene(itemDrop.gameObject);
         }
         gameObject.destroy();
 

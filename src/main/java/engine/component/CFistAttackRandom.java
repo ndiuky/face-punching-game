@@ -12,8 +12,8 @@ import engine.util.Color;
 import engine.util.EnginePreferences;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
+import registry.InteractionType;
 import registry.TextureType;
-import util.InteractionType;
 
 import java.util.ArrayDeque;
 
@@ -28,7 +28,6 @@ import static engine.util.EngineUtils.RANDOM;
 import static engine.util.EngineUtils.calculateClampedPosition;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static util.Utils.calculateBezierPath;
-import static util.Utils.calculateClampedPosition;
 
 public class CFistAttackRandom extends Component implements MouseEventListener {
 

@@ -5,7 +5,7 @@ import engine.component.Component;
 import engine.util.Color;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
-import util.InteractionType;
+import registry.InteractionType;
 
 import java.util.ArrayList;
 import java.util.List;

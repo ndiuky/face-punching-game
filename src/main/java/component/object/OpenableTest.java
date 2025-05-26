@@ -5,15 +5,22 @@ import engine.component.ui.CTextRenderer;
 import engine.text.Text;
 import engine.util.Alignment;
 import engine.util.Color;
+import registry.InteractionType;
 import registry.TextureType;
-import util.InteractionType;
 
 // TODO: это тестовый класс, чтобы проверить несколько рандомных вещей. В целом можно под что-то более интересное переделать
 public class OpenableTest extends InteractableComponent {
 
-    private CTextRenderer openedStateText = new CTextRenderer(new Text("thing is closed!").setAlignment(Alignment.BOTTOM_CENTER).setColor(Color.RED).setSizeModifier(0.5f));
+    private final CTextRenderer openedStateText;
 
     private boolean isOpened = false;
+
+    public OpenableTest() {
+        Text text = new Text("thing is closed!").setSizeModifier(0.5f);
+        text.alignment = Alignment.BOTTOM_CENTER;
+        text.color = Color.RED;
+        openedStateText = new CTextRenderer(text);
+    }
 
     @Override
     public void start() {
@@ -40,7 +47,7 @@ public class OpenableTest extends InteractableComponent {
             isOpened = !isOpened;
 
             openedStateText.setTextContent(isOpened ? "thing is opened!" : "thing is closed!");
-            openedStateText.getText().setColor(isOpened ? Color.GREEN : Color.RED);
+            openedStateText.getText().color = isOpened ? Color.GREEN : Color.RED;
         }
     }
 }

@@ -10,21 +10,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class KeyListener implements KeyboardEventProducer {
 
-    private static KeyListener instance;
-
-    private final boolean[] keyPressed = new boolean[350];
-
-    public static KeyListener get() {
-        if (instance == null) {
-            instance = new KeyListener();
-        }
-
-        return instance;
-    }
+    // TODO: есть идея переделать все клавиши на массив byte элементов, и отображать состояние клавиши в текущий кадр, изменяя конкретный бит этого элемента. Например, первый бит - KEY_DOWN, по умолчанию = 0. В кадр нажатия клавиши этот бит меняется на 1, а в следующем кадре меняется обратно на 0. Второй бит - KEY_UP. Также по умолчанию = 0, и меняется на 1 в кадр, когда клавиша отжимается. Третий бит - нажата ли клавиша в текущий кадр. Нужны константы, определяющие за что отвечает каждый бит, и можно будет просто брать элемент из этого массива по нужному индексу, затем через & и определённую константу выяснять, равен ли нужный бит 1. Если равен - условие выполнено. Тоже самое можно сделать и в MouseListener
+    private static final boolean[] keyPressed = new boolean[350];
 
     public static void keyCallback(long window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS) {
-            get().keyPressed[key] = true;
+            keyPressed[key] = true;
 
             List<KeyboardEventListener> listeners = pressListeners.get(key);
             if (listeners != null) {
@@ -33,7 +24,7 @@ public class KeyListener implements KeyboardEventProducer {
                 }
             }
         } else if (action == GLFW_RELEASE) {
-            get().keyPressed[key] = false;
+            keyPressed[key] = false;
 
             List<KeyboardEventListener> listeners = releaseListeners.get(key);
             if (listeners != null) {
@@ -45,6 +36,6 @@ public class KeyListener implements KeyboardEventProducer {
     }
 
     public static boolean isKeyPressed(int keyCode) {
-        return get().keyPressed[keyCode];
+        return keyPressed[keyCode];
     }
 }

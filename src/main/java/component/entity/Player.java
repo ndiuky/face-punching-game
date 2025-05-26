@@ -28,19 +28,21 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static util.AnimationUtils.easeOutBack;
 
-public class Player extends Entity implements KeyboardEventListener {
+public class Player extends Entity implements MouseEventListener, KeyboardEventListener {
 
     public static final float INVENTORY_ANIMATION_TIME = 0.15f;
 
     private static final float ITEM_DROP_STRENGTH = 3.5f;
 
-    private final CInventory inventory = new CInventory();
+    private ItemType selectedItemType;
+
+    private CInventory inventory = new CInventory();
 
     private final Canvas canvas = new Canvas();
 
     private final UiInventory uiInventory = new UiInventory(canvas, inventory);
 
-    private InventoryOpeningState inventoryState = uiInventory.isEnabled() ? InventoryOpeningState.FULLY_OPENED : InventoryOpeningState.FULLY_CLOSED;
+    public InventoryOpeningState inventoryState = uiInventory.isEnabled ? InventoryOpeningState.FULLY_OPENED : InventoryOpeningState.FULLY_CLOSED;
 
     private float currInventoryAnimationTime = 0;
 
@@ -61,9 +63,11 @@ public class Player extends Entity implements KeyboardEventListener {
             }
         }
 
-        canvas.addUiElement(new UiTotalItems(canvas, inventory));
-        canvas.addUiElement(uiInventory);
+        canvas.uiElements.add(new UiTotalItems(canvas, inventory));
+        canvas.uiElements.add(uiInventory);
+//        Window.getCurrentScene().addGameObjectToScene(new GameObject("player's canvas", new Transform(new Vector2f(0), new Vector2f(1)), 1).addComponent(canvas));
 
+        listenToMousePress(GLFW_MOUSE_BUTTON_1, this);
         listenToKeyboardPress(GLFW_KEY_Q, this);
         listenToKeyboardPress(GLFW_KEY_E, this);
     }
@@ -76,9 +80,26 @@ public class Player extends Entity implements KeyboardEventListener {
     }
 
     @Override
+    public void onMousePress(int button) {
+        //TODO: добавить сюда FistAttackRandom
+        if (button == GLFW_MOUSE_BUTTON_1 && InventoryOpeningState.FULLY_OPENED.equals(inventoryState)) {
+            ItemType itemUnderCursor = uiInventory.getItemUnderCursor();
+
+            if (itemUnderCursor != null) {
+                selectedItemType = itemUnderCursor;
+            }
+        }
+    }
+
+    @Override
+    public void onMouseRelease(int button) {
+        //TODO: добавить сюда FistAttackRandom
+    }
+
+    @Override
     public void onKeyPress(int key) {
         if (key == GLFW_KEY_Q) {
-            dropItems(ItemType.STONE_PEBBLE, 1);
+            dropItems(selectedItemType, 1);
         } else if (key == GLFW_KEY_E) {
             switchInventoryOpenState();
         }
@@ -88,7 +109,7 @@ public class Player extends Entity implements KeyboardEventListener {
         inventoryState = inventoryState.getOpposedStartingState();
         currInventoryAnimationTime = 0;
         if (InventoryOpeningState.IS_OPENING.equals(inventoryState)) {
-            uiInventory.setEnabled(true);
+            uiInventory.isEnabled = true;
         }
     }
 
@@ -104,12 +125,13 @@ public class Player extends Entity implements KeyboardEventListener {
             return false;
         }
 
-        ItemDrop itemDrop = ItemDrop.generateForItemStack(new ItemStack(item, amount)).setDroppedManually(true);
+        ItemDrop itemDrop = ItemDrop.generateForItemStack(new ItemStack(item, amount));
+        itemDrop.isDroppedManually = true;
         itemDrop.gameObject.transform.position = new Vector2f(gameObject.transform.position);
         itemDrop.applyInitialImpulse(
-                MouseListener.getOrtho().sub(new Vector2f(gameObject.transform.position)).normalize().mul(ITEM_DROP_STRENGTH)
+                new Vector2f(MouseListener.getOrtho()).sub(new Vector2f(gameObject.transform.position)).normalize().mul(ITEM_DROP_STRENGTH)
         );
-        Window.getCurrentScene().addGameObjectToScene(itemDrop.gameObject);
+        Window.currentScene.addGameObjectToScene(itemDrop.gameObject);
 
         return true;
     }
@@ -129,7 +151,7 @@ public class Player extends Entity implements KeyboardEventListener {
         if (currInventoryAnimationTime >= INVENTORY_ANIMATION_TIME) {
             inventoryState = inventoryState.getCompletedState();
             currInventoryAnimationTime = 0;
-            uiInventory.setEnabled(InventoryOpeningState.isOpened(inventoryState));
+            uiInventory.isEnabled = InventoryOpeningState.isOpened(inventoryState);
 
             return;
         }

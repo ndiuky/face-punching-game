@@ -3,29 +3,30 @@ package engine.object;
 import component.object.InteractableComponent;
 import engine.component.Component;
 import engine.render.Window;
+import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject {
 
+    public final List<Component> components = new ArrayList<>();
+
     private static int idCounter = 0;
 
-    private int uid = -1;
+    public boolean doSerialize = true;
 
-    private String name;
-
-    private final List<Component> components = new ArrayList<>();
+    public boolean isDead = false;
 
     public Transform transform;
 
-    private int zIndex;
+    public boolean isInteractable;
 
-    private boolean isDead = false;
+    public String name;
 
-    private boolean doSerialize = true;
+    public int uid = -1;
 
-    private boolean isInteractable;
+    public int zIndex;
 
     public GameObject(String name, Transform transform, int zIndex) {
         this.name = name;
@@ -37,6 +38,10 @@ public class GameObject {
 
     public static void init(int maxId) {
         idCounter = maxId;
+    }
+
+    public static GameObject create() {
+        return new GameObject("defaultName", new Transform(new Vector2f(), new Vector2f(1)), -1);
     }
 
     public void start() {
@@ -76,7 +81,7 @@ public class GameObject {
             isInteractable = true;
         }
 
-        if (Window.getCurrentScene().isLevelLoaded) {
+        if (Window.currentScene.isLevelLoaded) {
             c.start();
         }
 
@@ -99,41 +104,5 @@ public class GameObject {
         for (Component curr : components) {
             curr.destroy();
         }
-    }
-
-    public List<Component> getAllComponents() {
-        return components;
-    }
-
-    public int getZIndex() {
-        return zIndex;
-    }
-
-    public int getUid() {
-        return uid;
-    }
-
-    public boolean isDoSerialize() {
-        return doSerialize;
-    }
-
-    public void setDoSerialize(boolean doSerialize) {
-        this.doSerialize = doSerialize;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isInteractable() {
-        return isInteractable;
-    }
-
-    public void setInteractable(boolean interactableByPlayer) {
-        isInteractable = interactableByPlayer;
-    }
-
-    public boolean isDead() {
-        return isDead;
     }
 }

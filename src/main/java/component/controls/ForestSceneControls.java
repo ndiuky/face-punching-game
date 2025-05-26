@@ -13,7 +13,7 @@ public class ForestSceneControls extends Component {
     public void update(float dt) {
         // TODO: переделать на ивент
         if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
-            glfwSetWindowShouldClose(Window.getGlfwWindow(), true);
+            glfwSetWindowShouldClose(Window.glfwWindow, true);
         }
     }
 }

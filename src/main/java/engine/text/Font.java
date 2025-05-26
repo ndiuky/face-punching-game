@@ -23,7 +23,7 @@ public class Font {
 
     private static final Map<Character, Glyph> glyphs = new HashMap<>();
 
-    private static final Texture texture;
+    public static final Texture texture;
 
     static {
         try {
@@ -187,10 +187,6 @@ public class Font {
 
     public static void unbind() {
         texture.unbind();
-    }
-
-    public static Texture getTexture() {
-        return texture;
     }
 
     public static Vector2f fillInTextMetadata(final List<Glyph> content, final float sizeModifier, final List<Vector2f> positions, String textContent) {

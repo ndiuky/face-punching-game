@@ -30,7 +30,7 @@ public class AssetPool {
         if (shaders.containsKey(shaderType)) {
             return shaders.get(shaderType);
         } else {
-            Shader shader = new Shader(getFullShaderPath(shaderType.name));
+            Shader shader = new Shader(String.format(SHADER_PATH_TEMPLATE, shaderType.name));
             shaders.put(shaderType, shader);
 
             return shader;
@@ -41,7 +41,7 @@ public class AssetPool {
         if (AssetPool.textures.containsKey(textureType)) {
             return AssetPool.textures.get(textureType);
         } else {
-            Texture texture = new Texture().init(getFullTexturePath(textureType.path));
+            Texture texture = new Texture().init(String.format(TEXTURE_PATH_TEMPLATE, textureType.path));
             AssetPool.textures.put(textureType, texture);
 
             return texture;
@@ -56,13 +56,5 @@ public class AssetPool {
 
     public static SpriteSheet getSpritesheet(String resourceName) {
         return spriteSheets.getOrDefault(resourceName, null);
-    }
-
-    private static String getFullShaderPath(String shaderName) {
-        return String.format(SHADER_PATH_TEMPLATE, shaderName);
-    }
-
-    private static String getFullTexturePath(String textureName) {
-        return String.format(TEXTURE_PATH_TEMPLATE, textureName);
     }
 }

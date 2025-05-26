@@ -11,7 +11,6 @@ import engine.component.ui.CFpsCounter;
 import engine.component.ui.CPositionText;
 import engine.object.GameObject;
 import engine.object.Prefab;
-import engine.object.Scene;
 import engine.object.Sprite;
 import engine.object.Transform;
 import engine.render.Camera;
@@ -28,7 +27,11 @@ public class ForestScene extends Scene {
 
     @Override
     public void init() {
-        camera = new Camera().setZoom(150);
+        //TODO: rollback
+        if (true) return;
+
+        camera = new Camera();
+        camera.zoom = 150;
 
         GameObject controls = new GameObject("controls", new Transform(new Vector2f(), new Vector2f()), 0)
                 .addComponent(new ForestSceneControls());

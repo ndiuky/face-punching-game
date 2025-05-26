@@ -3,38 +3,39 @@ package engine.text;
 import engine.util.Alignment;
 import engine.util.Color;
 import org.joml.Vector2f;
-import util.TextAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static engine.text.TextAnimation.NONE;
 import static engine.util.Alignment.BOTTOM_LEFT;
 import static engine.util.EnginePreferences.TEXT_BASE_SIZE;
-import static util.TextAnimation.NONE;
 
 public class Text {
 
-    private final List<Glyph> content = new ArrayList<>();
+    public final List<Glyph> content = new ArrayList<>();
 
-    private final List<Vector2f> positions = new ArrayList<>();
+    public final List<Vector2f> positions = new ArrayList<>();
 
-    private Vector2f offset = new Vector2f(0);
+    public Vector2f offset = new Vector2f(0);
 
-    private String textContent;
+    public String textContent;
 
     private float sizeModifier;
 
     // TODO: антиалиасинг криво работает с цветами. Возможно проблема связана с прозрачностью, которая на данный момент не настроена
-    private Color color;
+    public Color color;
 
-    private float width, height;
+    public float width;
 
-    private Alignment alignment = BOTTOM_LEFT;
+    public float height;
 
-    private TextAnimation animation = NONE;
+    public Alignment alignment = BOTTOM_LEFT;
 
-    private Text(String textContent, float sizeModifier, Color color) {
+    public TextAnimation animation = NONE;
+
+    public Text(String textContent, float sizeModifier, Color color) {
         this.textContent = textContent;
         this.sizeModifier = sizeModifier;
         this.color = color;
@@ -42,9 +43,6 @@ public class Text {
 
     public Text(String textContent) {
         this(textContent, 1, Color.WHITE);
-    }
-
-    public Text() {
     }
 
     // TODO: нужно как-то разделить логику этого метода, и логику обновления исключительно позиций. Сейчас довольно часто вызываются оба этих метода подряд, по сути перетирая работу друг друга
@@ -57,23 +55,6 @@ public class Text {
         height = dimensions.y;
     }
 
-    public Text setColor(Color color) {
-        this.color = color;
-        return this;
-    }
-
-    public int getTextSize() {
-        return textContent.length();
-    }
-
-    public List<Glyph> getContent() {
-        return content;
-    }
-
-    public List<Vector2f> getPositions() {
-        return positions;
-    }
-
     public Text setSizeModifier(float sizeModifier) {
         this.sizeModifier = sizeModifier;
 
@@ -83,14 +64,6 @@ public class Text {
 
     public float getSizeModifier() {
         return sizeModifier;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public String getTextContent() {
-        return textContent;
     }
 
     public void setTextContent(String textContent) {
@@ -110,44 +83,6 @@ public class Text {
 //        }
     }
 
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public TextAnimation getAnimation() {
-        return animation;
-    }
-
-    public Text setAnimation(final TextAnimation animation) {
-        this.animation = animation;
-
-        return this;
-    }
-
-    public Alignment getAlignment() {
-        return alignment;
-    }
-
-    public Text setAlignment(Alignment alignment) {
-        this.alignment = alignment;
-
-        return this;
-    }
-
-    public Vector2f getOffset() {
-        return offset;
-    }
-
-    public Text setOffset(final Vector2f offset) {
-        this.offset = offset;
-
-        return this;
-    }
-
     public void updatePositions() {
         positions.clear();
 
@@ -161,8 +96,12 @@ public class Text {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Text text)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Text text)) {
+            return false;
+        }
         return Float.compare(sizeModifier, text.sizeModifier) == 0 && Objects.equals(textContent, text.textContent) && color == text.color;
     }
 

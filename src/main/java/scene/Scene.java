@@ -1,6 +1,7 @@
-package engine.object;
+package scene;
 
 import engine.component.Component;
+import engine.object.GameObject;
 import engine.render.Camera;
 import engine.render.Renderer;
 import org.joml.Vector2f;
@@ -23,23 +24,23 @@ public abstract class Scene {
 
     protected Renderer renderer = new Renderer();
 
-    protected Camera camera;
+    public Camera camera;
 
-    private boolean isRunning = false;
+    public boolean isRunning = false;
 
-    protected boolean isLevelLoaded;
+    public boolean isLevelLoaded;
 
     protected List<GameObject> gameObjects = new ArrayList<>();
 
     private static final List<Scene> scenesList = new ArrayList<>();
 
-    public Scene() {
+    protected Scene() {
         uid = idCounter++;
         scenesList.add(this);
     }
 
     public void init() {
-
+        //Override on demand
     }
 
     public void start() {
@@ -70,7 +71,7 @@ public abstract class Scene {
             GameObject go = gameObjects.get(i);
             go.update(dt);
 
-            if (go.isDead()) {
+            if (go.isDead) {
                 gameObjects.remove(i--);
                 renderer.destroyGameObject(go);
             }
@@ -81,16 +82,12 @@ public abstract class Scene {
         renderer.render();
     }
 
-    public Camera getCamera() {
-        return camera;
-    }
-
     public void saveSceneData() {
         try {
             FileWriter writer = new FileWriter(SAVE_FILE_NAME);
             List<GameObject> gameObjectsToSerialize = new ArrayList<>();
             for (GameObject gameObject : gameObjects) {
-                if (gameObject.isDoSerialize()) {
+                if (gameObject.doSerialize) {
                     gameObjectsToSerialize.add(gameObject);
                 }
             }
@@ -124,13 +121,13 @@ public abstract class Scene {
             GameObject[] objects = null;
             for (GameObject gameObject : objects) {
                 addGameObjectToScene(gameObject);
-                for (Component c : gameObject.getAllComponents()) {
-                    if (c.getUid() > maxComponentId) {
-                        maxComponentId = c.getUid();
+                for (Component c : gameObject.components) {
+                    if (c.uid > maxComponentId) {
+                        maxComponentId = c.uid;
                     }
                 }
-                if (gameObject.getUid() > maxGameObjectId) {
-                    maxGameObjectId = gameObject.getUid();
+                if (gameObject.uid > maxGameObjectId) {
+                    maxGameObjectId = gameObject.uid;
                 }
             }
             Component.init(++maxComponentId);
@@ -142,7 +139,7 @@ public abstract class Scene {
 
     public GameObject getGameObjectByName(String name) {
         for (GameObject gameObject : gameObjects) {
-            if (name.equals(gameObject.getName())) {
+            if (name.equals(gameObject.name)) {
                 return gameObject;
             }
         }
@@ -153,7 +150,7 @@ public abstract class Scene {
     //TODO: 13.07.2024 возможно добавить в Gameobject переопределённый equals, который сравнивает только id, и вместо листа всех игровых объектов на сцене использовать хешсет либо хешмапу<id, Gameobject>, для ускоренного поиска
     public GameObject getGameObjectById(int id) {
         for (GameObject gameObject : gameObjects) {
-            if (gameObject.getUid() == id) {
+            if (gameObject.uid == id) {
                 return gameObject;
             }
         }
@@ -182,25 +179,13 @@ public abstract class Scene {
         }
     }
 
-    public int getUid() {
-        return uid;
-    }
-
-    public List<Scene> getAllScenes() {
-        return scenesList;
-    }
-
     public static Scene getSceneById(int sceneId) {
         for (Scene scene : scenesList) {
-            if (scene.getUid() == sceneId) {
+            if (scene.uid == sceneId) {
                 return scene;
             }
         }
 
         throw new RuntimeException("Scene with id=" + sceneId + " does not exist");
-    }
-
-    public boolean isRunning() {
-        return isRunning;
     }
 }

@@ -30,16 +30,13 @@ import static org.lwjgl.stb.STBImage.stbi_set_unpremultiply_on_load;
 
 public class Texture {
 
-    private String filepath;
+    public String filepath;
 
-    private int texID = -1;
+    public int texID = -1;
 
-    private int width = -1;
+    public int width = -1;
 
-    private int height = -1;
-
-    public Texture() {
-    }
+    public int height = -1;
 
     public Texture init(String filepath) {
         this.filepath = filepath;
@@ -85,8 +82,8 @@ public class Texture {
 
     public static Texture createTexture(int width, int height, ByteBuffer data) {
         Texture texture = new Texture();
-        texture.setWidth(width);
-        texture.setHeight(height);
+        texture.width = width;
+        texture.height = height;
         texture.texID = glGenTextures();
 
         texture.bind();
@@ -121,22 +118,6 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, name, value);
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getTexID() {
-        return texID;
-    }
-
-    public String getFilepath() {
-        return filepath;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -147,14 +128,6 @@ public class Texture {
         }
         Texture texture = (Texture) o;
         return texID == texture.texID && width == texture.width && height == texture.height && Objects.equals(filepath, texture.filepath);
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
     }
 
     @Override

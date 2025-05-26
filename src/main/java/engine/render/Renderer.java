@@ -18,7 +18,6 @@ import static engine.util.EnginePreferences.MAX_BATCH_SIZE;
 
 public class Renderer {
 
-    //TODO: объединить в один лист RenderBatch. МОЖЕТ НЕГАТИВНО ПОВЛИЯТЬ НА ПРОИЗВОДИТЕЛЬНОСТЬ!!!!
     private final List<TextureRenderBatch> textureBatches = new ArrayList<>();
 
     private final List<TextRenderBatch> textBatches = new ArrayList<>();
@@ -32,7 +31,7 @@ public class Renderer {
             Map.entry(AssetPool.getShader(ShaderType.FONT), List.of(textBatches))
     );
 
-    private static Shader currentShader;
+    public static Shader currentShader;
 
     public void add(GameObject go) {
         List<CSpriteRenderer> spriteRenderers = go.getComponents(CSpriteRenderer.class);
@@ -55,7 +54,7 @@ public class Renderer {
         for (CTextRenderer textRenderer : textRenderers) {
             boolean added = false;
             for (TextRenderBatch batch : textBatches) {
-                if (batch.hasRoom() && batch.getZIndex() == textRenderer.gameObject.getZIndex()) {
+                if (batch.hasRoom && batch.zIndex == textRenderer.gameObject.zIndex) {
                     Text text = textRenderer.getText();
                     //TODO: возможно проверка на null не нужна
                     if (text == null || batch.hasText(text) || batch.hasTextRoom()) {
@@ -68,7 +67,7 @@ public class Renderer {
             }
 
             if (!added) {
-                TextRenderBatch newBatch = new TextRenderBatch(MAX_BATCH_SIZE, textRenderer.gameObject.getZIndex());
+                TextRenderBatch newBatch = new TextRenderBatch(MAX_BATCH_SIZE, textRenderer.gameObject.zIndex);
                 newBatch.start();
                 textBatches.add(newBatch);
                 newBatch.addElement(textRenderer);
@@ -81,7 +80,7 @@ public class Renderer {
         for (CSpriteRenderer spriteRenderer : spriteRenderers) {
             boolean added = false;
             for (TextureRenderBatch batch : textureBatches) {
-                if (batch.hasRoom() && batch.getZIndex() == spriteRenderer.gameObject.getZIndex()) {
+                if (batch.hasRoom() && batch.getZIndex() == spriteRenderer.gameObject.zIndex) {
                     Texture texture = spriteRenderer.getTexture();
                     //TODO: возможно проверка на null не нужна
                     if (texture == null || batch.hasTexture(texture) || batch.hasTextureRoom()) {
@@ -94,7 +93,7 @@ public class Renderer {
             }
 
             if (!added) {
-                TextureRenderBatch newBatch = new TextureRenderBatch(MAX_BATCH_SIZE, spriteRenderer.gameObject.getZIndex());
+                TextureRenderBatch newBatch = new TextureRenderBatch(MAX_BATCH_SIZE, spriteRenderer.gameObject.zIndex);
                 newBatch.start();
                 textureBatches.add(newBatch);
                 newBatch.addElement(spriteRenderer);
@@ -109,7 +108,7 @@ public class Renderer {
             newBatch.start();
             uiRenderBatches.add(newBatch);
 
-            for (UiElement uiElement : canvas.getUiElements()) {
+            for (UiElement uiElement : canvas.uiElements) {
                 newBatch.addElement(uiElement);
             }
 
@@ -149,13 +148,5 @@ public class Renderer {
                 }
             }
         }
-    }
-
-    public static void bindShader(Shader shader) {
-        currentShader = shader;
-    }
-
-    public static Shader getCurrentShader() {
-        return currentShader;
     }
 }

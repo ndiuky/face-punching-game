@@ -6,6 +6,7 @@ import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
+//TODO: перетащить в другой Utils
 public class EngineUtils {
 
     public static final Random RANDOM = new Random();

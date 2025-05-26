@@ -106,13 +106,13 @@ public class UiRenderBatch extends Batch {
 
         //vvvvvv
         numUiSprites = 0;
-        attachedCanvas.getUiElements().stream().filter(UiElement::isEnabled).forEach(this::addElement);
+        attachedCanvas.uiElements.stream().filter(uiElement -> uiElement.isEnabled).forEach(this::addElement);
         //^^^^^^
 
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
-        Shader shader = Renderer.getCurrentShader();
+        Shader shader = Renderer.currentShader;
         shader.use();
 
         for (int i = 0; i < textures.size(); i++) {
@@ -140,7 +140,7 @@ public class UiRenderBatch extends Batch {
     }
 
     public void addElement(UiElement uiElement) {
-        for (UiSprite uiSprite : uiElement.getUiSprites()) {
+        for (UiSprite uiSprite : uiElement.uiSprites) {
             uiSprites[numUiSprites] = uiSprite;
 
             if (!hasTexture(uiSprite.getTexture())) {
@@ -166,15 +166,15 @@ public class UiRenderBatch extends Batch {
         }
 
         Vector4f position;
-        if (uiSprite.isKeepProportions()) {
-            position = uiSprite.getScreenPosWithKeptProportions((float) uiSprite.getTexture().getWidth() / uiSprite.getTexture().getHeight());
+        if (uiSprite.keepProportions) {
+            position = uiSprite.getScreenPosWithKeptProportions((float) uiSprite.getTexture().width / uiSprite.getTexture().height);
         } else {
-            position = uiSprite.getScreenPos();
+            position = uiSprite.screenPos;
         }
 
         float currX = position.z;
         float currY = position.w;
-        Vector4f spriteColor = uiSprite.getColor();
+        Vector4f spriteColor = uiSprite.color;
         for (int i = 0; i < EBO_QUAD_VERTICES_AMOUNT; i++) {
             if (i == 1) {
                 currY = position.y;

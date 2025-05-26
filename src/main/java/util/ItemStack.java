@@ -5,9 +5,9 @@ import registry.ItemType;
 // TODO: нужно как-то обрабатывать добавление нестакабельных предметов
 public class ItemStack {
 
-    private final ItemType item;
+    public final ItemType item;
 
-    private int stackSize;
+    public int stackSize;
 
     public ItemStack(final ItemType item) {
         this.item = item;
@@ -56,14 +56,6 @@ public class ItemStack {
         stackSize -= amount;
 
         return 0;
-    }
-
-    public ItemType getItem() {
-        return item;
-    }
-
-    public int getStackSize() {
-        return stackSize;
     }
 
     @Override

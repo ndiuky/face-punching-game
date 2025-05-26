@@ -11,20 +11,19 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class MouseListener implements MouseEventProducer {
 
-    private static float scrollX;
+    public static float scrollX;
 
-    private static float scrollY;
+    public static float scrollY;
 
-    private static float xPos;
+    public static float xPos;
 
-    private static float yPos;
+    public static float yPos;
 
     private static float lastY;
 
@@ -37,15 +36,6 @@ public class MouseListener implements MouseEventProducer {
     //TODO: 14.06.2024 опустить лимит кнопок до 3, зачем кому-то больше нажимать?
     //TODO: возмножно удалить этот массив вообще, и ограничиться ивентами нажатия/отпускания
     private static final boolean[] mouseButtonPressed = new boolean[9];
-
-    private MouseListener() {
-        scrollX = 0;
-        scrollY = 0;
-        xPos = 0;
-        yPos = 0;
-        lastX = 0;
-        lastY = 0;
-    }
 
     public static void mousePosCallback(long window, double xPos, double yPos) {
         lastX = (float) xPos;
@@ -93,7 +83,7 @@ public class MouseListener implements MouseEventProducer {
     }
 
     public static GameObject getGameObjectUnderCursor() {
-        return Window.getCurrentScene().getGameObjectById(PickingTexture.readPixel((int) getX(), (int) getY()));
+        return Window.currentScene.getGameObjectById(PickingTexture.readPixel((int) xPos, (int) yPos));
     }
 
     public static float getRelativeAngle(Vector2f position) {
@@ -102,43 +92,29 @@ public class MouseListener implements MouseEventProducer {
         return (float) (Math.atan2(position.x - ortho.x, position.y - ortho.y) * 180 / Math.PI);
     }
 
-    public static float getX() {
-        return xPos;
-    }
-
-    public static float getY() {
-        return yPos;
-    }
-
-    public static Vector2f getPos() {
-        return new Vector2f(getX(), getY());
-    }
-
+    // [0; 1]
     public static float getScreenX() {
-        return getX() * Window.getWidth();
+        return xPos / Window.width;
     }
 
+    // [0; 1]
     public static float getScreenY() {
-        return getY() * Window.getHeight();
+        return yPos / Window.height;
     }
 
     public static Vector2f getOrtho() {
-        if (calculatedValuesAtFrame == Window.getCurrentFrame()) {
-            return new Vector2f(cachedOrtho);
+        if (calculatedValuesAtFrame == Window.currentFrame) {
+            return cachedOrtho;
         }
 
-        float currentX = (xPos / (float) Window.getWidth()) * 2.0f - 1.0f;
-        float currentY = -((yPos / (float) Window.getHeight()) * 2.0f - 1.0f);
-        Vector4f tmp = new Vector4f(currentX, currentY, 0, 1);
-
-        Camera camera = Window.getCurrentScene().getCamera();
+        Camera camera = Window.currentScene.camera;
         Matrix4f viewProjection = new Matrix4f();
-        camera.getInverseViewMatrix().mul(camera.getInverseProjectionMatrix(), viewProjection);
+        camera.inverseViewMatrix.mul(camera.inverseProjectionMatrix, viewProjection);
 
-        tmp.mul(viewProjection);
+        Vector4f tmp = new Vector4f(xPos / Window.width * 2 - 1, 1 - yPos / Window.height * 2, 0, 1).mul(viewProjection);
 
         cachedOrtho = new Vector2f(tmp.x, tmp.y);
-        calculatedValuesAtFrame = Window.getCurrentFrame();
+        calculatedValuesAtFrame = Window.currentFrame;
 
         return new Vector2f(cachedOrtho);
     }
@@ -157,13 +133,5 @@ public class MouseListener implements MouseEventProducer {
 
     public static float getDy() {
         return lastY - yPos;
-    }
-
-    public static float getScrollX() {
-        return scrollX;
-    }
-
-    public static float getScrollY() {
-        return scrollY;
     }
 }

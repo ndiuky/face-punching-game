@@ -6,17 +6,16 @@ import engine.component.ui.CTextRenderer;
 import engine.object.Prefab;
 import engine.text.Text;
 import engine.util.Alignment;
-import engine.util.EngineUtils;
 import org.joml.Math;
 import org.joml.Vector2f;
 import registry.ItemType;
 import util.ItemStack;
+import util.Utils;
 
 import static engine.util.EngineUtils.RANDOM;
 import static java.lang.Math.pow;
 
 //TODO: чем больше размер стака, тем больше скейл итема
-//TODO: убрать item из рендера в pickingShader
 public class ItemDrop extends Component {
 
     private static final float FLYING_ACCELERATION_RATE = 20;
@@ -47,7 +46,7 @@ public class ItemDrop extends Component {
 
     private float currFlyingTime = 0;
 
-    private boolean isDroppedManually = false;
+    public boolean isDroppedManually = false;
 
     private ItemDrop(ItemType item) {
         containingStack = new ItemStack(item);
@@ -65,21 +64,20 @@ public class ItemDrop extends Component {
     }
 
     public static ItemDrop generateForItemStack(ItemStack itemStack) {
-        if (itemStack.getStackSize() == 1) {
-            return generateForItem(itemStack.getItem());
+        if (itemStack.stackSize == 1) {
+            return generateForItem(itemStack.item);
         }
 
         ItemDrop itemDrop = new ItemDrop(itemStack);
-        Prefab.generateSpriteObject(itemStack.getItem().sprite, itemStack.getItem().dropSizeMultiplier, 1, itemStack.getItem().name())
+        Text text = new Text(String.valueOf(itemStack.stackSize));
+        // TODO: offset кривой. Фиксить нужно будет после имплементации Anchor point
+        text.offset = new Vector2f(-0.25f * itemStack.item.dropSizeMultiplier);
+        text.alignment = Alignment.TOP_LEFT;
+
+        Prefab.generateSpriteObject(itemStack.item.sprite, itemStack.item.dropSizeMultiplier, 1, itemStack.item.name())
                 .addComponent(itemDrop)
-                .addComponent(
-                        new CTextRenderer(
-                                new Text(String.valueOf(itemStack.getStackSize()))
-                                        // TODO: offset кривой. Фиксить нужно будет после имплементации Anchor point
-                                        .setOffset(new Vector2f(-0.25f * itemStack.getItem().dropSizeMultiplier))
-                                        .setAlignment(Alignment.TOP_LEFT)
-                        )
-                );
+                .addComponent(new CTextRenderer(text));
+
         return itemDrop;
     }
 
@@ -145,7 +143,7 @@ public class ItemDrop extends Component {
     }
 
     private void wobble() {
-        float sizeOffset = Math.sin((EngineUtils.time() + wobbleOffset) * 2) * WOBBLE_SIZE_DELTA;
+        float sizeOffset = Math.sin((Utils.time() + wobbleOffset) * 2) * WOBBLE_SIZE_DELTA;
 
         gameObject.transform.scale = new Vector2f(sizeOffset + initialScale.x, sizeOffset + initialScale.y);
     }
@@ -162,15 +160,5 @@ public class ItemDrop extends Component {
 
     public boolean isBeingPickedUp() {
         return isBeingPickedUp;
-    }
-
-    public boolean isDroppedManually() {
-        return isDroppedManually;
-    }
-
-    public ItemDrop setDroppedManually(final boolean droppedManually) {
-        isDroppedManually = droppedManually;
-
-        return this;
     }
 }

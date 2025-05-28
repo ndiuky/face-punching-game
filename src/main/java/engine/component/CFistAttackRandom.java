@@ -1,7 +1,6 @@
 package engine.component;
 
 import component.object.InteractableComponent;
-import engine.event.MouseEventListener;
 import engine.object.GameObject;
 import engine.object.Prefab;
 import engine.object.Sprite;
@@ -22,14 +21,13 @@ import static engine.component.CFistAttackRandom.AttackState.MOVING_TO_TARGET;
 import static engine.component.CFistAttackRandom.AttackState.RETRACTING;
 import static engine.component.CFistAttackRandom.AttackType.ARC_LEFT;
 import static engine.component.CFistAttackRandom.AttackType.ARC_RIGHT;
-import static engine.event.MouseEventProducer.listenToMousePress;
-import static engine.event.MouseEventProducer.listenToMouseRelease;
 import static engine.util.EngineUtils.RANDOM;
 import static engine.util.EngineUtils.calculateClampedPosition;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static util.Utils.calculateBezierPath;
 
-public class CFistAttackRandom extends Component implements MouseEventListener {
+public class CFistAttackRandom extends Component {
+
+    public boolean isAttemptingToAttack;
 
     private static final Sprite FIST_SPRITE = new Sprite(AssetPool.getTexture(TextureType.FIST));
 
@@ -45,7 +43,6 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
 
     private boolean isLastAttackPerformed = true;
 
-    private boolean isAttemptingToAttack;
 
     //======
 
@@ -73,12 +70,6 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
     private byte arcSegments = 16;
 
     Vector2f currentDestination;
-
-    @Override
-    public void start() {
-        listenToMousePress(GLFW_MOUSE_BUTTON_1, this);
-        listenToMouseRelease(GLFW_MOUSE_BUTTON_1, this);
-    }
 
     @Override
     public void update(float dt) {
@@ -248,16 +239,6 @@ public class CFistAttackRandom extends Component implements MouseEventListener {
             fistGO.transform.position.add(new Vector2f(dir).normalize().mul(fistSpeed * retractingSpeedMultiplier * dt));
         }
 
-    }
-
-    @Override
-    public void onMousePress(int button) {
-        isAttemptingToAttack = true;
-    }
-
-    @Override
-    public void onMouseRelease(int button) {
-        isAttemptingToAttack = false;
     }
 
     enum AttackType {

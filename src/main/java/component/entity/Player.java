@@ -25,6 +25,7 @@ import java.util.List;
 
 import static engine.event.KeyboardEventProducer.listenToKeyboardPress;
 import static engine.event.MouseEventProducer.listenToMousePress;
+import static engine.event.MouseEventProducer.listenToMouseRelease;
 import static engine.util.EngineUtils.inverseLerpUnclamped;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
@@ -41,6 +42,8 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     private CInventory inventory = new CInventory();
 
+    private final CFistAttackRandom fistAttackRandom = new CFistAttackRandom();
+
     private final Canvas canvas = new Canvas();
 
     private final UiInventory uiInventory = new UiInventory(canvas, inventory);
@@ -50,10 +53,10 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
     private float currInventoryAnimationTime = 0;
 
     private final List<Component> REQUIRED_COMPONENTS = List.of(new CMoveWasd(),
-            new CFistAttackRandom(),
             new CRmbInteraction(),
             new CSpriteRenderer(TextureType.DUMMY),
             new CItemPickUp(),
+            fistAttackRandom,
             inventory,
             canvas
     );
@@ -68,18 +71,15 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
         canvas.uiElements.add(new UiTotalItems(canvas, inventory));
         canvas.uiElements.add(uiInventory);
-//        Window.getCurrentScene().addGameObjectToScene(new GameObject("player's canvas", new Transform(new Vector2f(0), new Vector2f(1)), 1).addComponent(canvas));
 
         listenToMousePress(GLFW_MOUSE_BUTTON_1, this);
+        listenToMouseRelease(GLFW_MOUSE_BUTTON_1, this);
         listenToKeyboardPress(GLFW_KEY_Q, this);
         listenToKeyboardPress(GLFW_KEY_E, this);
     }
 
     @Override
     public void update(float dt) {
-//        //TODO: delete!!!
-        uiInventory.getItemUnderCursor();
-        
         if (!inventoryState.isStableState) {
             playInventoryAnimation(dt);
         }
@@ -87,19 +87,25 @@ public class Player extends Entity implements MouseEventListener, KeyboardEventL
 
     @Override
     public void onMousePress(int button) {
-        //TODO: добавить сюда FistAttackRandom
-        if (button == GLFW_MOUSE_BUTTON_1 && InventoryOpeningState.FULLY_OPENED.equals(inventoryState)) {
-            ItemType itemUnderCursor = uiInventory.getItemUnderCursor();
+        if (button == GLFW_MOUSE_BUTTON_1) {
+            //TODO: ограничение не работает с взаимодействием на RMB
+            if (InventoryOpeningState.FULLY_OPENED.equals(inventoryState) && uiInventory.isMouseOverInventory()){
+                ItemType itemUnderCursor = uiInventory.getItemUnderCursor();
 
-            if (itemUnderCursor != null) {
-                selectedItemType = itemUnderCursor;
+                if (itemUnderCursor != null) {
+                    selectedItemType = itemUnderCursor;
+                }
+            } else{
+                fistAttackRandom.isAttemptingToAttack = true;
             }
         }
     }
 
     @Override
     public void onMouseRelease(int button) {
-        //TODO: добавить сюда FistAttackRandom
+        if (button == GLFW_MOUSE_BUTTON_1) {
+            fistAttackRandom.isAttemptingToAttack = false;
+        }
     }
 
     @Override

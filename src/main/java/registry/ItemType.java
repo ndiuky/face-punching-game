@@ -11,6 +11,8 @@ public enum ItemType {
     STONE_PEBBLE(TextureType.STONE, 0.5f),
     CHIP(TextureType.CHIP_SMALL, 0.6f),
     CHIP_LOCKED(TextureType.CHIP_SMALL_LOCKED, 0.4f),
+    //TODO: delete
+    PIXEL(TextureType.PIXEL, 1f),
     ;
 
     public final Sprite sprite;

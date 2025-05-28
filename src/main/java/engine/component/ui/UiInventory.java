@@ -1,11 +1,7 @@
 package engine.component.ui;
 
 import engine.component.CInventory;
-import engine.object.GameObject;
 import engine.object.Sprite;
-import engine.render.Window;
-import engine.text.Text;
-import engine.util.Alignment;
 import engine.util.AssetPool;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
@@ -22,11 +18,11 @@ public class UiInventory extends UiElement {
     // TODO: сделать возможность изменять из настроек
     private CInventory connectedInventory;
 
-    public static final int MAX_COLUMNS = 4;
+    public static final int MAX_COLUMNS = 9;
 
     public static final float COLUMN_RELATIVE_WIDTH_DOUBLED = 1f / MAX_COLUMNS * 2;
 
-    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.9f;
+    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.4f;
 
     private float relativeScreenSize = DEFAULT_RELATIVE_SCREEN_SIZE;
 
@@ -36,20 +32,10 @@ public class UiInventory extends UiElement {
 
     UiSprite bgSprite;
 
-    //TODO: delete
-    CTextRenderer mouseIdOverlay;
-
     public UiInventory(final Canvas canvas, final CInventory connectedInventory) {
         super(canvas);
 
         this.connectedInventory = connectedInventory;
-
-        //TODO: delete
-        //TODO: мб не удалить, а переработать в новый UiElement, типа FollowMouseTextUi
-        Text text = new Text("none").setSizeModifier(0.5f);
-        text.alignment = Alignment.BOTTOM_LEFT;
-        mouseIdOverlay = new CTextRenderer(text);
-        Window.currentScene.addGameObjectToScene(GameObject.create().addComponent(mouseIdOverlay));
 
         updateBgSprite();
 
@@ -94,7 +80,6 @@ public class UiInventory extends UiElement {
 
     private Vector4f getPositionsForItemQuad(int quadNum) {
         return new Vector4f(
-
                 relativeScreenSize * (quadNum % MAX_COLUMNS * COLUMN_RELATIVE_WIDTH_DOUBLED - 1),
                 relativeScreenSize * (1 - (quadNum / MAX_COLUMNS + 1) * COLUMN_RELATIVE_WIDTH_DOUBLED),
                 relativeScreenSize * ((quadNum % MAX_COLUMNS + 1) * COLUMN_RELATIVE_WIDTH_DOUBLED - 1),
@@ -102,16 +87,20 @@ public class UiInventory extends UiElement {
         );
     }
 
+    public boolean isMouseOverInventory(){
+        //TODO: переделать из вычисления вектора прямо в float переменные
+        Vector2f pos = new Vector2f(MouseListener.getScreenX(), MouseListener.getScreenY()).sub(new Vector2f((1 - relativeScreenSize) / 2)).div(relativeScreenSize);
+
+        return pos.x < 1 && pos.x > 0 && pos.y < 1 && pos.y > 0;
+    }
 
     public ItemType getItemUnderCursor() {
-        Vector2f pos = new Vector2f(MouseListener.getScreenX() - 0.5f, 0.5f - MouseListener.getScreenY()).div(relativeScreenSize);
+        //TODO: переделать из вычисления вектора прямо в float переменные
+        Vector2f pos = new Vector2f(MouseListener.getScreenX(), MouseListener.getScreenY()).sub(new Vector2f((1 - relativeScreenSize) / 2)).div(relativeScreenSize);
 
-        int column = (int) Math.floor((pos.x / relativeScreenSize + 1) / COLUMN_RELATIVE_WIDTH_DOUBLED);
-        int row = (int) Math.floor((1 - pos.y / relativeScreenSize) / COLUMN_RELATIVE_WIDTH_DOUBLED);
+        int column = (int) (pos.x * 2 / COLUMN_RELATIVE_WIDTH_DOUBLED);
+        int row = (int) (pos.y * 2 / COLUMN_RELATIVE_WIDTH_DOUBLED);
         int key = row * MAX_COLUMNS + column;
-
-        mouseIdOverlay.setTextContent(String.format("inventorySlotId: %s", key));
-        mouseIdOverlay.gameObject.transform.position = MouseListener.getOrtho();
 
         return itemBySlot.get(key);
     }

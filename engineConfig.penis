@@ -4,11 +4,11 @@ $ don't complain that game has a bug, if you fucked up something in this file pl
 ENABLE_DATA_LOADING = false;
 ENABLE_DATA_SAVING = false;
 ENABLE_VSYNK = false;
-FULLSCREEN_BY_DEFAULT = false;
+FULLSCREEN_BY_DEFAULT = true;
 ENABLE_SMALLER_WINDOWED_SIZE = false;
 IS_DEBUG_MENU_ACTIVE_BY_DEFAULT = true;
 FONT_RESOLUTION = 64;
-CREATE_WINDOW_ON_MONITOR = 2;
+CREATE_WINDOW_ON_MONITOR = 0;
 
 SAVE_FILE_NAME = default; $ saveFile.txt $
 DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH = default; $ 32 $

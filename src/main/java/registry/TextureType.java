@@ -5,6 +5,8 @@ public enum TextureType {
     CHIP_SMALL("chip-small"),
     CHIP_SMALL_BACK("chip-small-back"),
     CHIP_SMALL_LOCKED("chip-small-locked"),
+    CHEST_CLOSED("chest"),
+    CHEST_OPENED("chest-opened"),
     DUMMY("dummy"),
     FIST("fist"),
     GRASS_0("grass-0"),

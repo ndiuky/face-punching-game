@@ -2,8 +2,11 @@ package component.object;
 
 import engine.component.CSpriteRenderer;
 import engine.component.ui.CTextRenderer;
+import engine.object.Sprite;
+import engine.render.Texture;
 import engine.text.Text;
 import engine.util.Alignment;
+import engine.util.AssetPool;
 import engine.util.Color;
 import registry.InteractionType;
 import registry.TextureType;
@@ -15,6 +18,12 @@ public class OpenableTest extends InteractableComponent {
 
     private boolean isOpened = false;
 
+    private CSpriteRenderer spriteRenderer;
+
+    private Sprite openedSprite = new Sprite(AssetPool.getTexture(TextureType.CHEST_OPENED));
+
+    private Sprite closedSprite = new Sprite(AssetPool.getTexture(TextureType.CHEST_CLOSED));
+
     public OpenableTest() {
         Text text = new Text("thing is closed!").setSizeModifier(0.5f);
         text.alignment = Alignment.BOTTOM_CENTER;
@@ -24,8 +33,9 @@ public class OpenableTest extends InteractableComponent {
 
     @Override
     public void start() {
+        spriteRenderer = new CSpriteRenderer(closedSprite);
         gameObject
-                .addComponent(new CSpriteRenderer(TextureType.BLOCK_BUTTON))
+                .addComponent(spriteRenderer)
                 .addComponent(openedStateText);
 
         initInteractableComponent();
@@ -48,6 +58,7 @@ public class OpenableTest extends InteractableComponent {
 
             openedStateText.setTextContent(isOpened ? "thing is opened!" : "thing is closed!");
             openedStateText.getText().color = isOpened ? Color.GREEN : Color.RED;
+            spriteRenderer.setSprite(isOpened ? openedSprite : closedSprite);
         }
     }
 }

@@ -30,7 +30,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public class UiRenderBatch extends Batch {
+public class UiTextureRenderBatch extends Batch {
 
     //TODO: ограничение. Либо поднять, либо добавить возможность одновременно работать сразу с несколькими батчами, либо сделать динамическим
     private static final int MAX_BATCH_SIZE = 1024;
@@ -65,10 +65,11 @@ public class UiRenderBatch extends Batch {
 
     private final Canvas attachedCanvas;
 
-    public UiRenderBatch(Canvas attachedCanvas) {
+    public UiTextureRenderBatch(Canvas attachedCanvas) {
         this.attachedCanvas = attachedCanvas;
 
         vertices = new float[MAX_BATCH_SIZE * EBO_QUAD_VERTICES_AMOUNT * VERTEX_SIZE];
+        //TODO: это распределение размеров батчей уже давно не имеет смысла, ибо постоянно нарушается/игнорируется
         uiSprites = new UiSprite[MAX_BATCH_SIZE];
     }
 
@@ -172,14 +173,14 @@ public class UiRenderBatch extends Batch {
             position = uiSprite.screenPos;
         }
 
-        float currX = position.z;
+        float currX = position.x;
         float currY = position.w;
         Vector4f spriteColor = uiSprite.color;
         for (int i = 0; i < EBO_QUAD_VERTICES_AMOUNT; i++) {
             if (i == 1) {
                 currY = position.y;
             } else if (i == 2) {
-                currX = position.x;
+                currX = position.z;
             } else if (i == 3) {
                 currY = position.w;
             }
@@ -211,9 +212,5 @@ public class UiRenderBatch extends Batch {
 
     public boolean hasTexture(Texture texture) {
         return textures.contains(texture);
-    }
-
-    public Canvas getAttachedCanvas() {
-        return attachedCanvas;
     }
 }

@@ -41,7 +41,7 @@ public class Camera {
 
     public void adjustProjection() {
         projectionMatrix.identity();
-        projectionMatrix.ortho(-projectionSize.x / zoom, projectionSize.x / zoom, -projectionSize.y / zoom, projectionSize.y / zoom, 0.0f, 100.0f);
+        projectionMatrix.ortho(-projectionSize.x / zoom, projectionSize.x / zoom, -projectionSize.y / zoom, projectionSize.y / zoom, 0.0f, 100);
         projectionMatrix.invert(inverseProjectionMatrix);
     }
 
@@ -73,7 +73,7 @@ public class Camera {
         return cachedViewMatrix;
     }
 
-    public void updateProjectionSize(){
+    public void updateProjectionSize() {
         projectionSize = new Vector2f(Window.width, Window.height);
     }
 }

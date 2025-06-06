@@ -24,6 +24,8 @@ public abstract class UiElement {
 
     public List<UiSprite> uiSprites = new ArrayList<>();
 
+    public List<UiText> uiTextBlocks = new ArrayList<>();
+
     public boolean keepProportions = true;
 
     public boolean isClickable = false;

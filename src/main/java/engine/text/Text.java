@@ -10,7 +10,6 @@ import java.util.Objects;
 
 import static engine.text.TextAnimation.NONE;
 import static engine.util.Alignment.BOTTOM_LEFT;
-import static engine.util.EnginePreferences.TEXT_BASE_SIZE;
 
 public class Text {
 
@@ -87,10 +86,10 @@ public class Text {
         positions.clear();
 
         float totalX = alignment.x * width;
-        float y = alignment.y * height * TEXT_BASE_SIZE * sizeModifier;
+        float y = alignment.y * height * sizeModifier;
         for (Glyph glyph : content) {
             positions.add(new Vector2f(totalX, y));
-            totalX += glyph.width * sizeModifier * TEXT_BASE_SIZE;
+            totalX += glyph.width * sizeModifier;
         }
     }
 

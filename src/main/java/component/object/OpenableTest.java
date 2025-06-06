@@ -20,9 +20,8 @@ public class OpenableTest extends InteractableComponent {
 
     private CSpriteRenderer spriteRenderer;
 
-    private Sprite openedSprite = new Sprite(AssetPool.getTexture(TextureType.CHEST_OPENED));
-
-    private Sprite closedSprite = new Sprite(AssetPool.getTexture(TextureType.CHEST_CLOSED));
+    private Texture openedTexture = AssetPool.getTexture(TextureType.CHEST_OPENED);
+    private Texture closedTexture = AssetPool.getTexture(TextureType.CHEST_CLOSED);
 
     public OpenableTest() {
         Text text = new Text("thing is closed!").setSizeModifier(0.5f);
@@ -33,7 +32,7 @@ public class OpenableTest extends InteractableComponent {
 
     @Override
     public void start() {
-        spriteRenderer = new CSpriteRenderer(closedSprite);
+        spriteRenderer = new CSpriteRenderer(new Sprite(closedTexture));
         gameObject
                 .addComponent(spriteRenderer)
                 .addComponent(openedStateText);
@@ -58,7 +57,7 @@ public class OpenableTest extends InteractableComponent {
 
             openedStateText.setTextContent(isOpened ? "thing is opened!" : "thing is closed!");
             openedStateText.getText().color = isOpened ? Color.GREEN : Color.RED;
-            spriteRenderer.setSprite(isOpened ? openedSprite : closedSprite);
+            spriteRenderer.setTexture(isOpened ? openedTexture : closedTexture);
         }
     }
 }

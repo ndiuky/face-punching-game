@@ -16,7 +16,7 @@ public class PickableTest extends InteractableComponent {
 
     private final float rotationSpeed = RANDOM.nextFloat(-25, 25);
 
-    private final ItemStack drop = new ItemStack(ItemType.CHIP_LOCKED, 69);
+    private final ItemStack drop = new ItemStack(ItemType.CHIP_LOCKED, 10);
 
     @Override
     public void start() {

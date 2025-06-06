@@ -106,7 +106,7 @@ public class Window implements KeyboardEventListener {
         try {
             currentScene = sceneClass.getDeclaredConstructor().newInstance();
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to create new instance of the scene from class " + sceneClass.getName() + ". Message: " + ex.getMessage());
+            throw new RuntimeException("Unable to create new instance of the scene from class " + sceneClass.getName() + ": " + ex);
         }
 
         //TODO: понятия не имею почему это ЗДЕСЬ
@@ -259,9 +259,10 @@ public class Window implements KeyboardEventListener {
         float dt = -1.0f;
 
         Shader defaultShader = AssetPool.getShader(ShaderType.DEFAULT);
-        Shader uiShader = AssetPool.getShader(ShaderType.UI);
+        Shader uiTextureShader = AssetPool.getShader(ShaderType.UI_TEXTURE);
+        Shader uiTextShader = AssetPool.getShader(ShaderType.UI_TEXT);
         Shader pickingShader = AssetPool.getShader(ShaderType.PICKING);
-        Shader fontShader = AssetPool.getShader(ShaderType.FONT);
+        Shader textShader = AssetPool.getShader(ShaderType.TEXT);
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
@@ -286,8 +287,9 @@ public class Window implements KeyboardEventListener {
                 // TODO: нужно разделить обновление графики от обновления реального состояния объектов. Это должно увеличить производительность В РАЗЫ
                 currentScene.update(dt);
                 renderSceneWithShader(defaultShader);
-                renderSceneWithShader(fontShader);
-                renderSceneWithShader(uiShader);
+                renderSceneWithShader(textShader);
+                renderSceneWithShader(uiTextureShader);
+                renderSceneWithShader(uiTextShader);
 
                 DebugDraw.draw();
             }

@@ -1,6 +1,7 @@
 package engine.component.ui;
 
 import engine.component.CInventory;
+import engine.text.Text;
 import org.joml.Vector4f;
 import registry.ItemType;
 
@@ -19,6 +20,8 @@ public class UiTotalItems extends UiElement {
         super(canvas);
 
         this.connectedInventory = connectedInventory;
+
+        isEnabled = true;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class UiTotalItems extends UiElement {
     private void redrawSidePanel() {
         //TODO: не нужно полностью очищать лист
         uiSprites.clear();
+        uiTextBlocks.clear();
         //TODO: убрать counter
         int counter = 0;
         for (Map.Entry<ItemType, Integer> currItems : contents.entrySet()) {

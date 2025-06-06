@@ -28,10 +28,9 @@ public class EnginePreferences {
     public static boolean ENABLE_DATA_LOADING = true;
     public static boolean ENABLE_DATA_SAVING = true;
     public static int CREATE_WINDOW_ON_MONITOR = 0;
-    public static float TEXT_BASE_SIZE = 0.01f;
     public static boolean ENABLE_VSYNK = true;
     public static int FONT_RESOLUTION = 64;
-    public static int GRID_SIZE = 32;
+    public static int UNIT_SIZE = 10;
 
     private EnginePreferences() {
     }
@@ -49,6 +48,7 @@ public class EnginePreferences {
 
             try {
                 final Field declaredField = EnginePreferences.class.getDeclaredField(k);
+
                 if (declaredField.getType() == byte.class) {
                     declaredField.setByte(null, Byte.parseByte(v));
                 } else if (declaredField.getType() == short.class) {

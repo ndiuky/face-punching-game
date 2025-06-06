@@ -46,6 +46,8 @@ public class Shader {
 
     public final int shaderProgramID;
 
+    private final String name;
+
     private boolean beingUsed = false;
 
     // TODO: парсинг некрасивый, переделай на какие-нибудь мапки и листы
@@ -92,6 +94,8 @@ public class Shader {
             if (glGetProgrami(shaderProgramID, GL_LINK_STATUS) == GL_FALSE) {
                 throw new RuntimeException("ERROR: '" + filepath + "'\n\tLinking of shaders failed. " + glGetShaderInfoLog(shaderProgramID, glGetProgrami(shaderProgramID, GL_INFO_LOG_LENGTH)));
             }
+
+            name = filepath;
 
         } catch (IOException e) {
             throw new RuntimeException("Error: Could not open file for shader: '" + filepath + "'");
@@ -193,5 +197,12 @@ public class Shader {
     @Override
     public int hashCode() {
         return Objects.hashCode(shaderProgramID);
+    }
+
+    @Override
+    public String toString() {
+        return "Shader{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

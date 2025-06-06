@@ -4,7 +4,7 @@ $ don't complain that game has a bug, if you fucked up something in this file pl
 ENABLE_DATA_LOADING = false;
 ENABLE_DATA_SAVING = false;
 ENABLE_VSYNK = false;
-FULLSCREEN_BY_DEFAULT = true;
+FULLSCREEN_BY_DEFAULT = false;
 ENABLE_SMALLER_WINDOWED_SIZE = false;
 IS_DEBUG_MENU_ACTIVE_BY_DEFAULT = true;
 FONT_RESOLUTION = 64;
@@ -14,5 +14,4 @@ SAVE_FILE_NAME = default; $ saveFile.txt $
 DEBUG_CIRCLE_SEGMENTS_AMOUNT_HIGH = default; $ 32 $
 DEBUG_CIRCLE_SEGMENTS_AMOUNT_MID = default; $ 16 $
 DEBUG_CIRCLE_SEGMENTS_AMOUNT_LOW = default; $ 8 $
-GRID_SIZE = default; $ 32 $
-TEXT_BASE_SIZE = default; $ 0.01f $
+GRID_SIZE = default; $ 100 $

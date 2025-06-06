@@ -203,6 +203,12 @@ public class TextureRenderBatch extends Batch implements Comparable<TextureRende
             }
         }
 
+        //TODO: сейчас я вручную добавляю текстуру, если она не была найдена, но по-хорошему надо бы добавлять все возможные текстуры, которые может иметь спрайт при его добавлении в батч
+        if (textureId == 0) {
+            textures.add(sprite.getTexture());
+            textureId = textures.size() + 1;
+        }
+
         boolean isRotated = sprite.gameObject.transform.rotation != 0;
         Matrix4f transformMatrix = new Matrix4f().identity();
         if (isRotated) {

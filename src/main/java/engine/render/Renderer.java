@@ -4,6 +4,8 @@ import engine.component.CSpriteRenderer;
 import engine.component.ui.CTextRenderer;
 import engine.component.ui.Canvas;
 import engine.component.ui.UiElement;
+import engine.component.ui.UiSprite;
+import engine.component.ui.UiText;
 import engine.object.GameObject;
 import engine.text.Text;
 import engine.util.AssetPool;
@@ -22,13 +24,17 @@ public class Renderer {
 
     private final List<TextRenderBatch> textBatches = new ArrayList<>();
 
-    private final List<UiRenderBatch> uiRenderBatches = new ArrayList<>();
+    private final List<UiTextureRenderBatch> uiTextureRenderBatches = new ArrayList<>();
+
+    private final List<UiTextRenderBatch> uiTextRenderBatches = new ArrayList<>();
 
     private final Map<Shader, List<List<? extends Batch>>> shaderBatchesMapping = Map.ofEntries(
             Map.entry(AssetPool.getShader(ShaderType.DEFAULT), List.of(textureBatches)),
-            Map.entry(AssetPool.getShader(ShaderType.PICKING), List.of(textureBatches, uiRenderBatches)),
-            Map.entry(AssetPool.getShader(ShaderType.UI), List.of(uiRenderBatches)),
-            Map.entry(AssetPool.getShader(ShaderType.FONT), List.of(textBatches))
+            //TODO: пожалуй тут не нужно рендерить ui текстурки для picking шейдера, ибо детект клика происходит по другой схеме
+            Map.entry(AssetPool.getShader(ShaderType.PICKING), List.of(textureBatches, uiTextureRenderBatches)),
+            Map.entry(AssetPool.getShader(ShaderType.UI_TEXTURE), List.of(uiTextureRenderBatches)),
+            Map.entry(AssetPool.getShader(ShaderType.UI_TEXT), List.of(uiTextRenderBatches)),
+            Map.entry(AssetPool.getShader(ShaderType.TEXT), List.of(textBatches))
     );
 
     public static Shader currentShader;
@@ -103,13 +109,22 @@ public class Renderer {
     }
 
     public void addCanvases(List<Canvas> canvases) {
+        //TODO: тут нужно добавить отдельные батчи с ui текстом
         for (Canvas canvas : canvases) {
-            UiRenderBatch newBatch = new UiRenderBatch(canvas);
-            newBatch.start();
-            uiRenderBatches.add(newBatch);
+            UiTextureRenderBatch newTextureBatch = new UiTextureRenderBatch(canvas);
+            UiTextRenderBatch newTextBatch = new UiTextRenderBatch(canvas);
+            newTextureBatch.start();
+            newTextBatch.start();
+            uiTextureRenderBatches.add(newTextureBatch);
+            uiTextRenderBatches.add(newTextBatch);
 
             for (UiElement uiElement : canvas.uiElements) {
-                newBatch.addElement(uiElement);
+                if (uiElement instanceof UiSprite) {
+                    newTextureBatch.addElement(uiElement);
+                }
+                if (uiElement instanceof UiText) {
+                    newTextBatch.addElement(uiElement);
+                }
             }
 
             //TODO: implement

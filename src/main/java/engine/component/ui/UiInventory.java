@@ -2,6 +2,7 @@ package engine.component.ui;
 
 import engine.component.CInventory;
 import engine.object.Sprite;
+import engine.text.Text;
 import engine.util.AssetPool;
 import engine.util.listener.MouseListener;
 import org.joml.Vector2f;
@@ -22,13 +23,11 @@ public class UiInventory extends UiElement {
 
     public static final float COLUMN_RELATIVE_WIDTH_DOUBLED = 1f / MAX_COLUMNS * 2;
 
-    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.4f;
+    public static final float DEFAULT_RELATIVE_SCREEN_SIZE = 0.6f;
 
     private float relativeScreenSize = DEFAULT_RELATIVE_SCREEN_SIZE;
 
     private final Map<Integer, ItemType> itemBySlot = new HashMap<>();
-
-    private int itemsCount = 0;
 
     UiSprite bgSprite;
 
@@ -45,19 +44,25 @@ public class UiInventory extends UiElement {
     @Override
     protected void update() {
         uiSprites.clear();
+        uiTextBlocks.clear();
         itemBySlot.clear();
 
         uiSprites.add(bgSprite);
         int counter = 0;
         for (Map.Entry<ItemType, Integer> currItems : connectedInventory.contents.entrySet()) {
+            Vector4f screenPositions = getPositionsForItemQuad(counter);
+
             UiSprite uiSprite = new UiSprite(canvas, currItems.getKey().sprite);
-            uiSprite.screenPos = getPositionsForItemQuad(counter);
+            uiSprite.screenPos = screenPositions;
             uiSprite.isClickable = true;
             uiSprites.add(uiSprite);
+
+            UiText uiText = new UiText(canvas, new Text(currItems.getValue().toString()));
+            uiText.screenPos = screenPositions;
+            uiTextBlocks.add(uiText);
+
             itemBySlot.put(counter++, currItems.getKey());
         }
-
-        itemsCount = counter;
     }
 
     public float getRelativeScreenSize() {
@@ -87,7 +92,7 @@ public class UiInventory extends UiElement {
         );
     }
 
-    public boolean isMouseOverInventory(){
+    public boolean isMouseOverInventory() {
         //TODO: переделать из вычисления вектора прямо в float переменные
         Vector2f pos = new Vector2f(MouseListener.getScreenX(), MouseListener.getScreenY()).sub(new Vector2f((1 - relativeScreenSize) / 2)).div(relativeScreenSize);
 

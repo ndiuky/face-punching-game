@@ -16,7 +16,7 @@ import java.util.List;
 
 import static engine.util.EnginePreferences.DEFAULT_QUAD_VERTICES_AMOUNT;
 import static engine.util.EnginePreferences.EBO_QUAD_VERTICES_AMOUNT;
-import static engine.util.EnginePreferences.TEXT_BASE_SIZE;
+import static engine.util.EnginePreferences.UNIT_SIZE;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -191,7 +191,7 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
         Text text = textRenderer.getText();
 
         for (int i = 0; i < text.textContent.length(); i++) {
-            Vector2f pos = new Vector2f(text.positions.get(i)).mul(textRenderer.gameObject.transform.scale);
+            Vector2f pos = new Vector2f(text.positions.get(i));
             Glyph glyph = text.content.get(i);
 
             // TODO: текст нельзя вращать
@@ -230,8 +230,8 @@ public class TextRenderBatch extends Batch implements Comparable<TextRenderBatch
                     }
                 }
 
-                vertices[offset] = text.offset.x + textRenderer.gameObject.transform.position.x + pos.x + xAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.x * TEXT_BASE_SIZE;
-                vertices[offset + 1] = text.offset.y + textRenderer.gameObject.transform.position.y + pos.y + yAdd * text.getSizeModifier() * textRenderer.gameObject.transform.scale.y * glyphSizeModY * TEXT_BASE_SIZE;
+                vertices[offset] = text.offset.x + textRenderer.gameObject.transform.position.x + (pos.x + xAdd * text.getSizeModifier()) / Window.width;
+                vertices[offset + 1] = text.offset.y + textRenderer.gameObject.transform.position.y + (pos.y + yAdd * text.getSizeModifier() * glyphSizeModY) * Window.height;
                 vertices[offset + 2] = text.color.r;
                 vertices[offset + 3] = text.color.g;
                 vertices[offset + 4] = text.color.b;

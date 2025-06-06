@@ -4,6 +4,8 @@ import engine.component.Component;
 import engine.text.Text;
 import engine.text.TextAnimation;
 import engine.util.Color;
+import engine.util.EngineUtils;
+import org.joml.Vector2f;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class CFpsCounter extends Component {
     public void start() {
         final Text text = new Text("calculating...");
         text.color = Color.GREY3;
-        text.animation = TextAnimation.SIZE_WAVING_BACKWARDS;
+//        text.animation = TextAnimation.SIZE_WAVING_BACKWARDS;
         textRenderer = new CTextRenderer(text);
 
         gameObject.addComponent(textRenderer);
@@ -32,6 +34,7 @@ public class CFpsCounter extends Component {
 
     @Override
     public void update(float dt) {
+        gameObject.transform.position = new Vector2f((float) Math.sin(EngineUtils.time()));
         switch (displayMode) {
             case EVERY_FRAME -> {
                 setNewText((int) (1 / dt));
